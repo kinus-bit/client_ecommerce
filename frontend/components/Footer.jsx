@@ -27,28 +27,18 @@ const Footer = () => {
       { name: 'Fashion', path: '/products?category=fashion' },
       { name: 'Home & Living', path: '/products?category=home' },
       { name: 'Sports', path: '/products?category=sports' },
-      { name: 'Sale', path: '/products?sale=true' },
     ],
     company: [
       { name: 'About Us', path: '/about' },
       { name: 'Contact', path: '/contact' },
-      { name: 'Careers', path: '/careers' },
-      { name: 'Blog', path: '/blog' },
-      { name: 'Press', path: '/press' },
     ],
-    support: [
-      { name: 'Help Center', path: '/help' },
-      { name: 'Track Order', path: '/track-order' },
-      { name: 'Returns', path: '/returns' },
-      { name: 'Shipping Info', path: '/shipping' },
-      { name: 'FAQs', path: '/faqs' },
-    ],
-    legal: [
-      { name: 'Privacy Policy', path: '/privacy' },
-      { name: 'Terms of Service', path: '/terms' },
-      { name: 'Cookie Policy', path: '/cookies' },
-      { name: 'Accessibility', path: '/accessibility' },
-    ]
+    // support: [
+    //   { name: 'Help Center', path: '/help' },
+    //   { name: 'Track Order', path: '/track-order' },
+    //   { name: 'Returns', path: '/returns' },
+    //   { name: 'Shipping Info', path: '/shipping' },
+      // { name: 'FAQs', path: '/faqs' },
+    // ]
   };
 
   const socialLinks = [
@@ -59,10 +49,8 @@ const Footer = () => {
   ];
 
   const paymentIcons = [
-    { icon: CreditCard, name: 'Visa' },
-    { icon: CreditCard, name: 'Mastercard' },
-    { icon: CreditCard, name: 'Amex' },
-    { icon: CreditCard, name: 'PayPal' },
+    { icon: CreditCard, name: 'M-Pesa' },
+    { icon: CreditCard, name: 'PayPal' }
   ];
 
   const features = [
@@ -104,7 +92,7 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-4">
               <span className="text-xl font-bold text-white">ShopEase</span>
-              <span className="block text-xs text-gray-400 mt-1">since 2020</span>
+              <span className="block text-xs text-gray-400 mt-1">since 2026</span>
             </Link>
             
             <p className="text-sm text-gray-400 mb-4 leading-relaxed">
@@ -115,18 +103,18 @@ const Footer = () => {
             <div className="space-y-2 mb-4">
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <MapPin className="w-4 h-4 text-gray-500" />
-                <span>San Francisco, CA</span>
+                <span>Karatina, Nyeri</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <Mail className="w-4 h-4 text-gray-500" />
                 <a href="mailto:hello@shopease.com" className="hover:text-amber-400 transition-colors">
-                  hello@shopease.com
+                  mungaiallan540@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <Phone className="w-4 h-4 text-gray-500" />
-                <a href="tel:+15551234567" className="hover:text-amber-400 transition-colors">
-                  +1 (555) 123-4567
+                <a href="tel: +254768332588" className="hover:text-amber-400 transition-colors">
+                  +254 768332588
                 </a>
               </div>
             </div>
@@ -188,7 +176,8 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div>
+          {/* --------------------------------------------TO BE IMPLEMENTED LATER ------------------------------------*/}
+          {/* <div>
             <h3 className="font-semibold text-white mb-4">Support</h3>
             <ul className="space-y-2">
               {footerLinks.support.map((link) => (
@@ -203,28 +192,14 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
+           {/* --------------------------------------------------------------------------------------------------------------- */}
 
-          <div>
-            <h3 className="font-semibold text-white mb-4">Legal</h3>
-            <ul className="space-y-2">
-              {footerLinks.legal.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-sm text-gray-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1 group"
-                  >
-                    <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
-
-        {/* Newsletter Signup */}
-        <div className="mt-12 pt-8 border-t border-gray-800">
+         
+         {/* --------------------------------------------TO BE IMPLEMENTED LATER ------------------------------------*/}
+        {/* Newsletter Signup */} 
+        {/* <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
               <h3 className="font-semibold text-white mb-2">Join the club</h3>
@@ -243,12 +218,13 @@ const Footer = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
+        {/* --------------------------------------------------------------------------------------------------------------- */}
 
         {/* Bottom Bar */}
         <div className="mt-8 pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-400">
-            © {currentYear} ShopEase. All rights reserved. Made with <span className="text-red-500">❤️</span> in SF
+            &copy;{currentYear} ShopEase. All rights reserved.
           </p>
           
           <div className="flex items-center gap-4">
