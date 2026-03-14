@@ -53,7 +53,7 @@ const Navbar = () => {
                 ShopEase
               </motion.div>
               <span className="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">
-                since 2020
+                since 2026
               </span>
             </Link>
 
@@ -142,7 +142,8 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-
+        
+        {/* ---------------------------SEARCH FUNCTIONALITY NOT COMPLETED BUT TO BE COMPLETED NEXT------------------------------------------ */}
         {/* Search Bar */}
         <AnimatePresence>
           {searchOpen && (
@@ -178,6 +179,7 @@ const Navbar = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        {/* ------------------------------------------------------------------------------------------------------------------------- */}
       </nav>
 
       {/* Mobile Menu */}
@@ -239,11 +241,12 @@ const Navbar = () => {
                     <Search className="w-4 h-4" />
                     <span>Search</span>
                   </button>
-                  
-                  <button className="w-full flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                  {/*------------------------------------------- TO BE IMPLEMENTED LATER ------------------------------------------------*/}
+                  {/* <button className="w-full flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
                     <User className="w-4 h-4" />
                     <span>Account</span>
-                  </button>
+                  </button> */}
+                  {/* --------------------------------------------------------------------------------------------------------------------- */}
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4">
