@@ -85,7 +85,7 @@ const Navbar = () => {
                   searchOpen ? 'bg-gray-100' : 'hover:bg-gray-100'
                 }`}
               >
-                <Search className="w-5 h-5 text-gray-700" />
+                {/* <Search className="w-5 h-5 text-gray-700" /> */}
               </motion.button>
 
               {/* Account Button (placeholder) */}
@@ -94,7 +94,7 @@ const Navbar = () => {
                 whileTap={{ scale: 0.98 }}
                 className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <User className="w-5 h-5 text-gray-700" />
+                {/* <User className="w-5 h-5 text-gray-700" /> */}
               </motion.button>
 
               {/* Cart */}
@@ -145,7 +145,7 @@ const Navbar = () => {
         
         {/* ---------------------------SEARCH FUNCTIONALITY NOT COMPLETED BUT TO BE COMPLETED NEXT------------------------------------------ */}
         {/* Search Bar */}
-        <AnimatePresence>
+        {/* <AnimatePresence>
           {searchOpen && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
@@ -178,7 +178,7 @@ const Navbar = () => {
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
+        </AnimatePresence> */}
         {/* ------------------------------------------------------------------------------------------------------------------------- */}
       </nav>
 
@@ -238,8 +238,8 @@ const Navbar = () => {
                     }}
                     className="w-full flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                   >
-                    <Search className="w-4 h-4" />
-                    <span>Search</span>
+                    {/* <Search className="w-4 h-4" />
+                    <span>Search</span> */}
                   </button>
                   {/*------------------------------------------- TO BE IMPLEMENTED LATER ------------------------------------------------*/}
                   {/* <button className="w-full flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
