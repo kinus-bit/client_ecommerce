@@ -8,37 +8,13 @@ const ProductCatalog = () => {
   const [view, setView] = useState('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSubCategory, setSelectedSubCategory] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
+  // const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  const categories = {
-    electronics: {
-      name: 'Electronics',
-      subCategories: ['Smartphones', 'Laptops', 'Tablets', 'Accessories'],
-      icon: '💻',
-      color: 'blue'
-    },
-    fashion: {
-      name: 'Fashion',
-      subCategories: ['Men', 'Women', 'Kids', 'Accessories'],
-      icon: '👔',
-      color: 'rose'
-    },
-    home: {
-      name: 'Home & Living',
-      subCategories: ['Furniture', 'Decor', 'Kitchen', 'Bedding'],
-      icon: '🏠',
-      color: 'amber'
-    },
-    sports: {
-      name: 'Sports',
-      subCategories: ['Equipment', 'Clothing', 'Footwear', 'Accessories'],
-      icon: '⚽',
-      color: 'emerald'
-    }
-  };
-
+  //states to handle searching in the searching bar
+  // const [originalProducts, setOriginalProducts] = useState(products);
+  const [searchTerm, setSearchTerm] = useState('');
+  // const [filteredOriginalProducts, setFilteredOriginalProducts] = useState(products);
   const products = [
     {
       id: 1,
@@ -158,13 +134,64 @@ const ProductCatalog = () => {
       description: 'Minimalist design with solid wood'
     }
   ];
+  
+  const categories = {
+    electronics: {
+      name: 'Electronics',
+      subCategories: ['Smartphones', 'Laptops', 'Tablets', 'Accessories'],
+      icon: '💻',
+      color: 'blue'
+    },
+    fashion: {
+      name: 'Fashion',
+      subCategories: ['Men', 'Women', 'Kids', 'Accessories'],
+      icon: '👔',
+      color: 'rose'
+    },
+    home: {
+      name: 'Home & Living',
+      subCategories: ['Furniture', 'Decor', 'Kitchen', 'Bedding'],
+      icon: '🏠',
+      color: 'amber'
+    },
+    sports: {
+      name: 'Sports',
+      subCategories: ['Equipment', 'Clothing', 'Footwear', 'Accessories'],
+      icon: '⚽',
+      color: 'emerald'
+    }
+  };
 
-  const filteredProducts = products.filter(product => {
-    if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
-    if (selectedSubCategory !== 'all' && product.subCategory !== selectedSubCategory) return false;
-    return true;
-  });
+  //function to handle filtering by searching by handling search input change from search bar
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+   };
 
+    //filtering products based on search term
+    const filteredProducts = products.filter(product => {
+
+       //Category filter
+       if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
+
+       //Subcategory filter
+       if (selectedSubCategory !== 'all' && product.subCategory !== selectedSubCategory) return false;
+
+       //Search filter
+       if(searchTerm){
+        const matchesSearch = 
+          product.name.toLowerCase().includes(searchTerm) ||
+          product.description.toLowerCase().includes(searchTerm)||
+          product.category.toLowerCase().includes(searchTerm) ||
+          product.subCategory.toLowerCase().includes(searchTerm);
+        
+        if(!matchesSearch) return false
+       }
+
+      return true;
+    });
+
+    //Applying sorting
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case 'price-low':
@@ -179,16 +206,6 @@ const ProductCatalog = () => {
         return 0;
     }
   });
-
-  const getCategoryColor = (category) => {
-    const colors = {
-      electronics: 'blue',
-      fashion: 'rose',
-      home: 'amber',
-      sports: 'emerald'
-    };
-    return colors[category] || 'gray';
-  };
 
   return (
     <motion.div
@@ -219,11 +236,21 @@ const ProductCatalog = () => {
               <input
                 type="text"
                 placeholder="Search products..."
+                value={searchTerm}
+                onChange={handleSearch}
                 className="w-full md:w-80 px-4 py-3 pl-10 bg-gray-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 transition-all"
               />
               <svg className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
+               {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
             </div>
           </motion.div>
         </div>
@@ -296,9 +323,9 @@ const ProductCatalog = () => {
             >
               <SlidersHorizontal className="w-4 h-4" />
               Filters
-              {(selectedCategory !== 'all' || selectedSubCategory !== 'all') && (
+              {(selectedCategory !== 'all' || selectedSubCategory !== 'all' || searchTerm) && (
                 <span className="w-5 h-5 bg-amber-400 text-white rounded-full text-xs flex items-center justify-center">
-                  {selectedCategory !== 'all' && selectedSubCategory !== 'all' ? 2 : 1}
+                  {(selectedCategory !== 'all' ? 1 : 0) + (selectedSubCategory !== 'all' ? 1 : 0) + (searchTerm ? 1 : 0)}
                 </span>
               )}
             </motion.button>
@@ -349,11 +376,12 @@ const ProductCatalog = () => {
                       <SlidersHorizontal className="w-5 h-5 text-amber-500" />
                       Filters
                     </h2>
-                    {(selectedCategory !== 'all' || selectedSubCategory !== 'all') && (
+                    {(selectedCategory !== 'all' || selectedSubCategory !== 'all' || searchTerm) && (
                       <button
                         onClick={() => {
                           setSelectedCategory('all');
                           setSelectedSubCategory('all');
+                          setSearchTerm('')
                         }}
                         className="text-sm text-amber-600 hover:text-amber-700 font-medium"
                       >
@@ -434,6 +462,14 @@ const ProductCatalog = () => {
                       </div>
                     </motion.div>
                   )}
+                   {/* Search Term Display */}
+                  {searchTerm && (
+                    <div className="mt-4 p-3 bg-amber-50 rounded-lg">
+                      <p className="text-sm text-amber-800">
+                        Searching for: "{searchTerm}"
+                      </p>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -448,8 +484,19 @@ const ProductCatalog = () => {
               </p>
               
               {/* Active Filters */}
-              {(selectedCategory !== 'all' || selectedSubCategory !== 'all') && (
-                <div className="flex items-center gap-2">
+              {(selectedCategory !== 'all' || selectedSubCategory !== 'all' || searchTerm) && (
+                <div className="flex items-center gap-2 flex-wrap">
+                   {searchTerm && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm">
+                      🔍 "{searchTerm}"
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="ml-1 hover:text-amber-900"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  )}
                   {selectedCategory !== 'all' && (
                     <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
                       {categories[selectedCategory]?.icon} {categories[selectedCategory]?.name}
@@ -487,11 +534,14 @@ const ProductCatalog = () => {
               >
                 <div className="text-6xl mb-4">🔍</div>
                 <p className="text-xl text-gray-900 mb-2">No products found</p>
-                <p className="text-gray-600 mb-6">Try adjusting your filters</p>
+                <p className="text-gray-600 mb-6">
+                  {searchTerm ? `No results for "${searchTerm}"` : 'Try adjusting your filters'}
+                </p>
                 <button
                   onClick={() => {
                     setSelectedCategory('all');
                     setSelectedSubCategory('all');
+                    setSearchTerm('');
                   }}
                   className="px-6 py-2 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors"
                 >
@@ -579,7 +629,7 @@ const ProductCatalog = () => {
                             className="px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity hover:bg-amber-500"
                             onClick={(e) => {
                               e.preventDefault();
-                              // Add to cart logic
+                              // Add to cart logic that will be implemented later
                             }}
                           >
                             Quick Add
