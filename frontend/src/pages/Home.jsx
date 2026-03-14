@@ -64,8 +64,8 @@ const Home = () => {
   ];
 
   const testimonials = [
-    { name: 'Sarah Johnson', text: 'Best shopping experience ever! The quality is amazing and delivery was super fast.', rating: 5, role: 'Fashion Enthusiast', image: 'https://images.unsplash.com/photo-1494790108777-583fd5c3d601?w=200&auto=format' },
-    { name: 'Michael Chen', text: 'Found exactly what I needed at the best price. Customer service is top-notch!', rating: 5, role: 'Tech Reviewer', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&auto=format' },
+    { name: ' H.E. Uhuru Muigai Kenyatta', text: 'Best shopping experience ever! The quality is amazing and delivery was super fast.', rating: 5, role: 'Fashion Enthusiast', image: 'https://swalanyeti.co.ke/storage/uploads/2022/11/IMG-20221102005620.jpeg' },
+    { name: 'Elon Musk', text: 'Found exactly what I needed at the best price. Customer service is top-notch!', rating: 5, role: 'Tech Reviewer', image: 'https://www.indyturk.com/sites/default/files/styles/1368x911/public/article/main_image/2023/05/21/1144956-229631373.jpeg?itok=-YL3bX2E' },
   ];
 
   return (
@@ -183,7 +183,7 @@ const Home = () => {
           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
             <motion.div 
               animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
+              transition={{ duration: 1.7, repeat: Infinity }}
               className="w-1 h-2 bg-white rounded-full mt-2"
             />
           </div>
@@ -265,10 +265,11 @@ const Home = () => {
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform">
                   <h3 className="text-2xl font-bold mb-1">{category.name}</h3>
                   <p className="text-white/90 mb-3">{category.count} Products</p>
-                  <button className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold inline-flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Link to="/products"><button className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold inline-flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     Explore Now
                     <ArrowRight className="w-4 h-4" />
                   </button>
+                  </Link>
                 </div>
               </motion.div>
             ))}
@@ -331,6 +332,7 @@ const Home = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-gray-900">${product.price}</span>
+                    {/* -------  -------------------------FUNCTIONALITY OF ADD TO CART TO BE IMPLEMENTED LATER -------------------------------------------- */}
                     <button className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-amber-400 hover:text-gray-900 transition-colors">
                       Add to Cart
                     </button>
