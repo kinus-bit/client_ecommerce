@@ -12,10 +12,12 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import { CartProvider } from './context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import WishlistProvider from './context/WishlistContext';
 
 function App() {
   return (
     <CartProvider>
+      <WishlistProvider>
       <Router>
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
           <Navbar />
@@ -33,6 +35,7 @@ function App() {
           <Footer/>
         </div>
       </Router>
+      </WishlistProvider>
     </CartProvider>
   );
 }
