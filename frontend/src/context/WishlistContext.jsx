@@ -53,8 +53,16 @@ export const WishlistProvider = ({ children }) => {
         return prevItems;
       } else {
         // Add new item with timestamp
+         
+        //XXXXXXXXXXXXXXXXXXXXXXXsolving CIRCULAR STRUCTURE ERRORXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        //first we remove the features which contains icons because React
+        //elements cannot be serialized to JSON
+
+        //clean version of the product without React element
+        const { features, ...cleanProduct } = product //removing features
         const newItem = {
-          ...product,
+          // ...product,//removing this
+          ...cleanProduct, //using this to eliminate features
           addedAt: new Date().toISOString()
         };
         showNotification(`${product.name} added to wishlist`, 'success');

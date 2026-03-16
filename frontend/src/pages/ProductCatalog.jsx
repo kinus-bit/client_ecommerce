@@ -126,7 +126,7 @@ const ProductCatalog = () => {
       price: 199,
       category: 'home',
       subCategory: 'Furniture',
-      image: 'https://images.unsplash.com/photo-1532372320978-9b4b38f2c8b4?w=400',
+      image: 'https://dignity.co.ke/wp-content/uploads/2025/04/COFFEE-TABLE-92350-CTGY-GD.webp',
       rating: 4.3,
       reviews: 89,
       isNew: false,

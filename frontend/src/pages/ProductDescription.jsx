@@ -37,9 +37,9 @@ const ProductDescription = () => {
       description: 'Experience the power of the iPhone 15 Pro with its advanced camera system, A17 Pro chip, and stunning design. Built to last, designed to impress.',
       images: [
         'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600',
-        'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&angle=90',
-        'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&angle=180',
-        'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&angle=270',
+        'https://istore.co.bw/cdn/shop/files/iPhone_15_Pro_Max_Blue_Titanium_PDP_Image_Position-2__WWEN_59655904-0c0a-49a0-91c0-e1d06b4536a5_2048x.jpg?v=1697794578',
+        'https://epicdeals.co.za/wp-content/uploads/2025/09/AB472339-84A9-4593-A261-92173EEC91D4.jpg',
+        'https://i.ytimg.com/vi/whGOeFAA5Q8/hqdefault.jpg',
       ],
       rating: 4.8,
       reviews: 245,
@@ -69,17 +69,14 @@ const ProductDescription = () => {
       brand: 'Apple',
       warranty: '1 Year Limited',
       deliveryEstimate: 'Dec 15 - Dec 18',
-      pickupLocation: 'San Francisco Store',
+      pickupLocation: 'Thika Store',
       video: 'https://www.youtube.com/embed/8QWgLcYyN7c',
       features: [
         { icon: <Camera />, text: '48MP Main Camera' },
         { icon: <Zap />, text: 'A17 Pro Chip' },
         { icon: <Battery />, text: 'All-day Battery' }
       ],
-      reviews: [
-        { id: 1, user: 'John D.', rating: 5, comment: 'Best phone I\'ve ever owned!', date: '2024-01-15', helpful: 24 },
-        { id: 2, user: 'Sarah M.', rating: 5, comment: 'Camera is incredible', date: '2024-01-10', helpful: 18 }
-      ]
+      reviews: []
     },
     {
       id: 2,
@@ -121,13 +118,14 @@ const ProductDescription = () => {
       brand: 'Apple',
       warranty: '1 Year Limited',
       deliveryEstimate: 'Dec 14 - Dec 16',
-      pickupLocation: 'San Francisco Store',
+      pickupLocation: 'Thika Store',
       video: 'https://www.youtube.com/embed/0a9iDp46gHc',
       features: [
         { icon: <Zap />, text: 'M3 Chip' },
         { icon: <Battery />, text: '22 Hours Battery' },
         { icon: <Award />, text: 'Pro Display' }
       ]
+      
     },
     {
       id: 3,
@@ -137,7 +135,6 @@ const ProductDescription = () => {
       description: 'Classic men\'s genuine leather jacket crafted from premium quality materials. Features a stylish design with comfortable fit, perfect for casual outings and formal events.',
       images: [
         'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600',
-        'https://images.unsplash.com/photo-1551028719-00167b16eac3?w=600',
         'https://images.unsplash.com/photo-1520975954732-35dd22299614?w=600',
         'https://images.unsplash.com/photo-1520975661595-6453be3f7070?w=600',
       ],
@@ -169,7 +166,7 @@ const ProductDescription = () => {
       brand: 'Urban Style',
       warranty: '30 Days',
       deliveryEstimate: 'Dec 13 - Dec 15',
-      pickupLocation: 'LA Store',
+      pickupLocation: 'Thika Store',
       reviews: []
     },
     {
@@ -389,10 +386,10 @@ const ProductDescription = () => {
       originalPrice: 209,
       description: 'Minimalist coffee table crafted from solid wood with a sleek modern design. Features a lower shelf for additional storage and magazines.',
       images: [
-        'https://images.unsplash.com/photo-1532372320978-9b4b38f2c8b4?w=600',
-        'https://images.unsplash.com/photo-1532372320978-9b4b38f2c8b4?w=600&angle=90',
-        'https://images.unsplash.com/photo-1634712282287-14ed57b9cc89?w=600',
-        'https://images.unsplash.com/photo-1532372320978-9b4b38f2c8b4?w=600&angle=180',
+        'https://dignity.co.ke/wp-content/uploads/2025/04/COFFEE-TABLE-92350-CTGY-GD.webp',
+        'https://target.scene7.com/is/image/Target/GUEST_fc9fb958-4d17-47a2-a540-f5784a25846e?wid=300&hei=300&fmt=pjpeg',
+        'https://ak1.ostkcdn.com/images/products/is/images/direct/8be1ebabf298e1f2755cd0b4b6ad2bf1a7d1a011/High-Gloss-Multi-Storage-Coffee-Table-with-4-Drawers.jpg?impolicy=medium',
+        'https://img5.su-cdn.com/cdn-cgi/image/width=1000,height=1000/mall/file/2023/05/23/0d731e5baa3d95cf421a398d62c1345e.jpg',
       ],
       rating: 4.3,
       reviews: 89,
@@ -439,7 +436,7 @@ const ProductDescription = () => {
     return false;
   }, [product, isInWishlist]);
 
-  // Fixed useEffect with proper dependencies
+  // useEffect with proper dependencies
   useEffect(() => {
     if (product) {
       // Set initial color if available
@@ -939,18 +936,6 @@ const ProductDescription = () => {
                   <p className="font-medium text-gray-900">Pickup available</p>
                   <p className="text-gray-600">at {product.pickupLocation || 'San Francisco store'} - Ready today</p>
                 </div>
-              </div>
-            </div>
-
-            {/* Social Proof */}
-            <div className="mt-4 flex items-center gap-4 text-sm text-gray-500">
-              <div className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                <span>{Math.floor(Math.random() * 100) + 50} people viewing</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <TrendingUp className="w-4 h-4" />
-                <span>Sold {Math.floor(Math.random() * 200) + 100} today</span>
               </div>
             </div>
           </motion.div>
