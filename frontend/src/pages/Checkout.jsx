@@ -21,10 +21,12 @@ const Checkout = () => {
     city: '',
     state: '',
     zipCode: '',
-    cardNumber: '',
-    cardName: '',
-    expiry: '',
-    cvv: '',
+    M_pesaNumber:'',
+    MpesaName:'',
+    // cardNumber: '',
+    // cardName: '',
+    // expiry: '',
+    // cvv: '',
     saveInfo: false
   });
 
@@ -66,14 +68,10 @@ const Checkout = () => {
     }
     
     if (step === 3) {
-      if (!formData.cardNumber) newErrors.cardNumber = 'Card number is required';
-      else if (formData.cardNumber.replace(/\s/g, '').length < 16) {
-        newErrors.cardNumber = 'Card number must be 16 digits';
+      if (!formData.M_pesaNumber) newErrors.M_pesaNumber = 'M-pesa  number is required';
+      else if (formData.M_pesaNumber.length < 10) {
+        newErrors.M_pesaNumber = 'M-pesa number must be 10 digits';
       }
-      if (!formData.cardName) newErrors.cardName = 'Name on card is required';
-      if (!formData.expiry) newErrors.expiry = 'Expiry date is required';
-      if (!formData.cvv) newErrors.cvv = 'CVV is required';
-      else if (formData.cvv.length < 3) newErrors.cvv = 'CVV must be 3 digits';
     }
     
     setErrors(newErrors);
@@ -106,23 +104,7 @@ const Checkout = () => {
     }
   };
 
-  const formatCardNumber = (value) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    const matches = v.match(/\d{4,16}/g);
-    const match = (matches && matches[0]) || '';
-    const parts = [];
-    
-    for (let i = 0; i < match.length; i += 4) {
-      parts.push(match.substring(i, i + 4));
-    }
-    
-    if (parts.length) {
-      return parts.join(' ');
-    } else {
-      return value;
-    }
-  };
-
+  
   if (orderComplete) {
     return (
       <motion.div
@@ -305,7 +287,7 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      {/* <div className="flex items-center gap-2">
                         <input
                           type="checkbox"
                           name="saveInfo"
@@ -314,10 +296,11 @@ const Checkout = () => {
                           onChange={handleInputChange}
                           className="rounded border-gray-300 text-amber-500 focus:ring-amber-500"
                         />
-                        <label htmlFor="saveInfo" className="text-sm text-gray-600">
+                        {/* -----------------------------TO BE IMPLEMENTED LATTER---------------------------------------------- */}
+                        {/* <label htmlFor="saveInfo" className="text-sm text-gray-600">
                           Keep me updated on new products and offers
-                        </label>
-                      </div>
+                        </label> 
+                      </div> */}
                     </div>
                   </motion.div>
                 )}
@@ -483,83 +466,41 @@ const Checkout = () => {
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Card number
+                          M-pesa number
                         </label>
                         <input
-                          type="text"
-                          name="cardNumber"
-                          value={formatCardNumber(formData.cardNumber)}
+                          type="Number"
+                          name="M_pesaNumber"
+                          value={formData.M_pesaNumber}
                           onChange={handleInputChange}
-                          placeholder="1234 5678 9012 3456"
-                          maxLength="19"
+                          placeholder="0768332588"
+                          maxLength="10"
                           className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-                            errors.cardNumber ? 'border-red-500' : 'border-gray-300'
+                            errors.M_pesaNumber ? 'border-red-500' : 'border-gray-300'
                           }`}
                         />
-                        {errors.cardNumber && (
-                          <p className="text-red-500 text-xs mt-1">{errors.cardNumber}</p>
+                        {errors.M_pesaNumber && (
+                          <p className="text-red-500 text-xs mt-1">{errors.M_pesaNumber}</p>
                         )}
                       </div>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Name on card
+                          M-pesa name
                         </label>
                         <input
                           type="text"
-                          name="cardName"
+                          name="MpesaName"
                           value={formData.cardName}
                           onChange={handleInputChange}
-                          placeholder="John Doe"
+                          placeholder="Jose Murinyo"
                           className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
                             errors.cardName ? 'border-red-500' : 'border-gray-300'
                           }`}
                         />
-                        {errors.cardName && (
-                          <p className="text-red-500 text-xs mt-1">{errors.cardName}</p>
+                        {errors.MpesaName && (
+                          <p className="text-red-500 text-xs mt-1">{errors.MpesaName}</p>
                         )}
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Expiry date
-                          </label>
-                          <input
-                            type="text"
-                            name="expiry"
-                            value={formData.expiry}
-                            onChange={handleInputChange}
-                            placeholder="MM/YY"
-                            maxLength="5"
-                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-                              errors.expiry ? 'border-red-500' : 'border-gray-300'
-                            }`}
-                          />
-                          {errors.expiry && (
-                            <p className="text-red-500 text-xs mt-1">{errors.expiry}</p>
-                          )}
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            CVV
-                          </label>
-                          <input
-                            type="text"
-                            name="cvv"
-                            value={formData.cvv}
-                            onChange={handleInputChange}
-                            placeholder="123"
-                            maxLength="3"
-                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-                              errors.cvv ? 'border-red-500' : 'border-gray-300'
-                            }`}
-                          />
-                          {errors.cvv && (
-                            <p className="text-red-500 text-xs mt-1">{errors.cvv}</p>
-                          )}
-                        </div>
                       </div>
                     </div>
 
