@@ -35,19 +35,19 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'Visit our office',
-      details: ['123 Business Avenue', 'San Francisco, CA 94105', 'United States'],
+      details: ['C74', 'Karatina, Nyeri 10100', 'Kenya'],
       color: 'blue'
     },
     {
       icon: Phone,
       title: 'Give us a call',
-      details: ['+1 (555) 123-4567', 'Mon-Fri, 9am to 6pm PST'],
+      details: ['+254 768332588', 'Mon-Fri, 9am to 6pm EAT'],
       color: 'amber'
     },
     {
       icon: Mail,
       title: 'Send an email',
-      details: ['hello@shopease.com', 'support@shopease.com'],
+      details: ['mungaiallan540@gmail.com', 'allankinuthia68@gmail.com'],
       color: 'emerald'
     },
     {
@@ -65,11 +65,11 @@ const Contact = () => {
     },
     {
       question: 'Do you have phone support?',
-      answer: 'Yep! Give us a call at +1 (555) 123-4567. No automated menus, we promise.'
+      answer: 'Yep! Give us a call at +254 768332588. No automated menus, we promise.'
     },
     {
       question: 'Where are you located?',
-      answer: 'Our main office is in San Francisco, but our team works remotely from all over.'
+      answer: 'Our main office is in Karatina, but our team works remotely from all over.'
     }
   ];
 
@@ -167,7 +167,7 @@ const Contact = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="John Doe"
+                      placeholder="Jose murinyo"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-shadow"
                       required
                     />
@@ -182,7 +182,7 @@ const Contact = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="john@example.com"
+                      placeholder="jose@example.com"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-shadow"
                       required
                     />
@@ -258,19 +258,19 @@ const Contact = () => {
               <div className="bg-white rounded-xl p-6 shadow-sm">
                 <h3 className="font-semibold text-gray-900 mb-4">Find us here</h3>
                 <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2219901290355!2d-74.00369368400567!3d40.71312937933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a316f7e3e5f%3A0xb67a8b3a7f9d4c9!2sFulton%20St%2C%20New%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen=""
-                    loading="lazy"
-                    title="Google Maps"
-                    className="w-full h-full"
-                  ></iframe>
+                  
+                  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7245254216514!2d37.13464300576236!3d-0.3928724571503294!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18287b2f2df1821f%3A0xc7b490ceb1746c11!2sBlasmart%20Mini-Supermarket!5e0!3m2!1sen!2ske!4v1773668958337!5m2!1sen!2ske"
+                   width="100%" 
+                   height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen="" 
+                  loading="lazy" 
+                  title="Google Maps"
+                  className="w-full h-full"
+                  referrerPolicy="no-referrer-when-downgrade"></iframe>
                 </div>
                 <p className="text-sm text-gray-600 mt-3">
-                  123 Business Avenue, San Francisco, CA 94105
+                  C74, Karatina, Nyeri 10101
                 </p>
               </div>
 
