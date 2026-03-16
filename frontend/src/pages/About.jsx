@@ -14,30 +14,30 @@ const About = () => {
 
   const team = [
     {
-      name: 'John Doe',
+      name: 'Stephen ',
       role: 'CEO & Founder',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
-      bio: 'Started ShopEase from his garage in 2020. Believes online shopping should feel personal.',
+      image: 'https://www.monitor.co.ke/wp-content/uploads/2025/03/Nick-Mudimba-485x360.jpeg',
+      bio: 'Started ShopEase from his hostel in 2026. Believes online shopping should feel personal.',
       quote: "We're not just selling products, we're building relationships."
     },
     {
-      name: 'Jane Smith',
+      name: 'Jeff Kihara',
       role: 'Head of Operations',
-      image: 'https://images.unsplash.com/photo-1494790108777-583fd5c3d601?w=400',
-      bio: '15 years in supply chain. Ensures your packages arrive faster than expected.',
+      image: 'https://gijn.org/wp-content/uploads/2025/06/Maurice-Oniango.jpg',
+      bio: '1 years in supply chain. Ensures your packages arrive faster than expected.',
       quote: "Every order is a promise we make to our customers."
     },
     {
-      name: 'Mike Johnson',
+      name: 'Brian Majimbo',
       role: 'Product Manager',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+      image: 'https://media.muckrack.com/profile/images/211364/eric-mugendi.jpeg.256x256_q100_crop-smart.jpg',
       bio: 'Tech enthusiast who tests every product before it hits our catalog.',
       quote: "If I wouldn't buy it myself, it doesn't go on the site."
     },
     {
-      name: 'Sarah Chen',
+      name: 'Kennedy Waweru',
       role: 'Customer Experience',
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
+      image: 'https://media.licdn.com/dms/image/v2/D4E03AQHuiI72hw9Eqg/profile-displayphoto-scale_200_200/B4EZeRTy1OHgAY-/0/1750489597424?e=2147483647&v=beta&t=YTQGtffS3wl7pM-t3UvvjddNvfhHoVi1FeD6rJNDGfk',
       bio: 'Former hospitality manager bringing warmth to customer service.',
       quote: "I treat every customer like they're sitting across from me."
     }
@@ -88,7 +88,7 @@ const About = () => {
               We're just regular people trying to make online shopping less annoying
             </h1>
             <p className="text-lg text-gray-600 leading-relaxed">
-              ShopEase started in 2020 because we were tired of complicated checkout processes, 
+              ShopEase started in 2026 because we were tired of complicated checkout processes, 
               hidden fees, and products that looked nothing like their photos. So we built 
               something better.
             </p>
@@ -143,15 +143,15 @@ const About = () => {
               </h2>
               <div className="space-y-4 text-gray-600">
                 <p>
-                  It was 2020, and our founder John was trying to buy a simple birthday gift 
+                  It was 2026, and our founder Stephen was trying to buy a simple birthday gift 
                   for his sister. Three hours later, after dealing with five different websites, 
                   confusing shipping calculators, and a checkout process that asked for his 
                   mother's maiden name, he gave up.
                 </p>
                 <p>
                   That's when it clicked. Shopping online shouldn't feel like filing taxes. 
-                  So John gathered a small team of friends who felt the same way, and we built 
-                  ShopEase in a tiny San Francisco apartment.
+                  So Stephen gathered a small team of friends who felt the same way, and we built 
+                  ShopEase in a tiny Karatina Hostel.
                 </p>
                 <p className="font-medium text-gray-900">
                   Four years later, we're still guided by that same simple idea: make it easy, 
@@ -168,13 +168,13 @@ const About = () => {
             >
               <div className="relative rounded-2xl overflow-hidden shadow-lg">
                 <img
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800"
+                  src="https://cioafrica.co/wp-content/uploads/2024/01/African-startups.webp"
                   alt="Our team"
                   className="w-full h-auto"
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
                   <p className="text-white text-sm">
-                    The original team in 2020. Still mostly the same, just more coffee now.
+                    The original team in 2026. Still mostly the same, just more coffee now.
                   </p>
                 </div>
               </div>
