@@ -29,7 +29,7 @@ function App() {
               <Route path="/products" element={<ProductCatalog />} />
               <Route path="/product/:id" element={<ProductDescription />} />
               <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
+              {/* <Route path="/checkout" element={<Checkout />} /> */}
             </Routes>
           </AnimatePresence>
           <Footer/>
