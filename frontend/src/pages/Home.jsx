@@ -1,8 +1,9 @@
 // pages/Home.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useCallback,useMemo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Truck, Shield, Headphones, TrendingUp, Clock, Award, ChevronRight } from 'lucide-react';
+
 
 const Home = () => {
   const { scrollY } = useScroll();
@@ -10,6 +11,13 @@ const Home = () => {
   
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0.8]);
   const heroScale = useTransform(scrollY, [0, 300], [1, 1.1]);
+
+   const products = [
+    { id: 1, name: 'Wireless Headphones', price: 79.99, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&auto=format', rating: 4.8, sales: 1234 },
+    { id: 2, name: 'Smart Watch Series 5', price: 299.99, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format', rating: 4.9, sales: 2341 },
+    { id: 3, name: 'Minimalist Backpack', price: 49.99, image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&auto=format', rating: 4.7, sales: 3456 },
+  ];
+
   
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -336,7 +344,9 @@ const Home = () => {
                     <span className="text-2xl font-bold text-gray-900">${product.price}</span>
                     {/* -------  -------------------------FUNCTIONALITY OF ADD TO CART TO BE IMPLEMENTED LATER -------------------------------------------- */}
                     <button className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-amber-400 hover:text-gray-900 transition-colors">
-                      Add to Cart
+                      <Link to='/products'>
+                      view
+                      </Link>
                     </button>
                   </div>
                 </div>
