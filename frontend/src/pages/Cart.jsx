@@ -268,8 +268,8 @@ const Cart = () => {
                   </div>
                 </div>
 
-                {/* Checkout Button */}
-                <Link to="/checkout">
+                {/* Checkout Button and to="/checkout" to be implemented later*/}
+                <Link to="/nextstage">
                   <button className="w-full bg-gray-900 text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 mb-4">
                     Proceed to Checkout
                     <ArrowRight className="w-4 h-4" />

@@ -815,7 +815,8 @@ const ProductDescription = () => {
             )}
 
             {/* Quantity */}
-            <div className="mb-6">
+            {/* *************************TO BE IMPLEMENTED LATER**************************** */}
+            {/* <div className="mb-6">
               <h3 className="font-medium text-gray-900 mb-3">Quantity</h3>
               <div className="flex items-center gap-4">
                 <div className="flex items-center border border-gray-300 rounded-lg">
@@ -846,7 +847,7 @@ const ProductDescription = () => {
                   </span>
                 )}
               </div>
-            </div>
+            </div> */}
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
@@ -888,18 +889,7 @@ const ProductDescription = () => {
               >
                 <Heart className={`w-5 h-5 ${isInWishlistState ? 'fill-current' : ''}`} />
                 <span className="hidden sm:inline">{isInWishlistState ? 'Saved' : 'Save'}</span>
-              </motion.button>
-
-              {/* Buy Now Button */}
-              <motion.button
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                disabled={!product.inStock}
-                className="px-6 py-3 bg-amber-500 text-white rounded-lg font-medium hover:bg-amber-600 transition-colors flex items-center justify-center gap-2"
-              >
-                <Zap className="w-5 h-5" />
-                Buy Now
-              </motion.button>
+              </motion.button>    
             </div>
 
             {/* Features Grid */}

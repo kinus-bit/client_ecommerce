@@ -8,13 +8,14 @@ const ProductCatalog = () => {
   const [view, setView] = useState('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSubCategory, setSelectedSubCategory] = useState('all');
-  // const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  //states to handle searching in the searching bar
-  // const [originalProducts, setOriginalProducts] = useState(products);
   const [searchTerm, setSearchTerm] = useState('');
-  // const [filteredOriginalProducts, setFilteredOriginalProducts] = useState(products);
+  
+  // NEW STATE: Track how many products to show
+  const [visibleCount, setVisibleCount] = useState(5); // Start with 5 products
+  
+  // All products data (unchanged)
   const products = [
     {
       id: 1,
@@ -162,36 +163,30 @@ const ProductCatalog = () => {
     }
   };
 
-  //function to handle filtering by searching by handling search input change from search bar
+  // Handle search
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
-   };
+    // Reset visible count when searching
+    setVisibleCount(5);
+  };
 
-    //filtering products based on search term
-    const filteredProducts = products.filter(product => {
+  // Filter products
+  const filteredProducts = products.filter(product => {
+    if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
+    if (selectedSubCategory !== 'all' && product.subCategory !== selectedSubCategory) return false;
+    if (searchTerm) {
+      const matchesSearch = 
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm) ||
+        product.category.toLowerCase().includes(searchTerm) ||
+        product.subCategory.toLowerCase().includes(searchTerm);
+      if (!matchesSearch) return false;
+    }
+    return true;
+  });
 
-       //Category filter
-       if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
-
-       //Subcategory filter
-       if (selectedSubCategory !== 'all' && product.subCategory !== selectedSubCategory) return false;
-
-       //Search filter
-       if(searchTerm){
-        const matchesSearch = 
-          product.name.toLowerCase().includes(searchTerm) ||
-          product.description.toLowerCase().includes(searchTerm)||
-          product.category.toLowerCase().includes(searchTerm) ||
-          product.subCategory.toLowerCase().includes(searchTerm);
-        
-        if(!matchesSearch) return false
-       }
-
-      return true;
-    });
-
-    //Applying sorting
+  // Sort products
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case 'price-low':
@@ -206,6 +201,27 @@ const ProductCatalog = () => {
         return 0;
     }
   });
+
+  // NEW FUNCTION: Load more products
+  const loadMoreProducts = () => {
+    setVisibleCount(prevCount => prevCount + 5);
+  };
+
+  // NEW: Get the visible products based on visibleCount
+  const visibleProducts = sortedProducts.slice(0, visibleCount);
+  
+  // NEW: Check if there are more products to load
+  const hasMoreProducts = visibleCount < sortedProducts.length;
+
+  // Reset visible count when filters change
+  const handleFilterChange = (action) => {
+    setVisibleCount(5);
+    if (action === 'clear') {
+      setSelectedCategory('all');
+      setSelectedSubCategory('all');
+      setSearchTerm('');
+    }
+  };
 
   return (
     <motion.div
@@ -243,9 +259,12 @@ const ProductCatalog = () => {
               <svg className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-               {searchTerm && (
+              {searchTerm && (
                 <button
-                  onClick={() => setSearchTerm('')}
+                  onClick={() => {
+                    setSearchTerm('');
+                    setVisibleCount(5);
+                  }}
                   className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
                 >
                   <X className="w-5 h-5" />
@@ -267,6 +286,7 @@ const ProductCatalog = () => {
               onClick={() => {
                 setSelectedCategory('all');
                 setSelectedSubCategory('all');
+                setVisibleCount(5);
               }}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 selectedCategory === 'all'
@@ -284,6 +304,7 @@ const ProductCatalog = () => {
                 onClick={() => {
                   setSelectedCategory(key);
                   setSelectedSubCategory('all');
+                  setVisibleCount(5);
                 }}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-1 ${
                   selectedCategory === key
@@ -302,7 +323,10 @@ const ProductCatalog = () => {
             <div className="relative flex-1 sm:flex-none">
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                onChange={(e) => {
+                  setSortBy(e.target.value);
+                  setVisibleCount(5);
+                }}
                 className="w-full sm:w-48 appearance-none px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm font-medium text-gray-700 cursor-pointer"
               >
                 <option value="featured">✨ Featured</option>
@@ -381,7 +405,8 @@ const ProductCatalog = () => {
                         onClick={() => {
                           setSelectedCategory('all');
                           setSelectedSubCategory('all');
-                          setSearchTerm('')
+                          setSearchTerm('');
+                          setVisibleCount(5);
                         }}
                         className="text-sm text-amber-600 hover:text-amber-700 font-medium"
                       >
@@ -398,6 +423,7 @@ const ProductCatalog = () => {
                         onClick={() => {
                           setSelectedCategory('all');
                           setSelectedSubCategory('all');
+                          setVisibleCount(5);
                         }}
                         className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm ${
                           selectedCategory === 'all'
@@ -413,6 +439,7 @@ const ProductCatalog = () => {
                           onClick={() => {
                             setSelectedCategory(key);
                             setSelectedSubCategory('all');
+                            setVisibleCount(5);
                           }}
                           className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm flex items-center gap-2 ${
                             selectedCategory === key
@@ -437,7 +464,10 @@ const ProductCatalog = () => {
                       <h3 className="font-medium text-gray-900 mb-3">Sub Categories</h3>
                       <div className="space-y-1">
                         <button
-                          onClick={() => setSelectedSubCategory('all')}
+                          onClick={() => {
+                            setSelectedSubCategory('all');
+                            setVisibleCount(5);
+                          }}
                           className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm ${
                             selectedSubCategory === 'all'
                               ? 'bg-gray-900 text-white font-medium'
@@ -449,7 +479,10 @@ const ProductCatalog = () => {
                         {categories[selectedCategory]?.subCategories.map(sub => (
                           <button
                             key={sub}
-                            onClick={() => setSelectedSubCategory(sub)}
+                            onClick={() => {
+                              setSelectedSubCategory(sub);
+                              setVisibleCount(5);
+                            }}
                             className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm ${
                               selectedSubCategory === sub
                                 ? 'bg-gray-900 text-white font-medium'
@@ -462,7 +495,7 @@ const ProductCatalog = () => {
                       </div>
                     </motion.div>
                   )}
-                   {/* Search Term Display */}
+                  {/* Search Term Display */}
                   {searchTerm && (
                     <div className="mt-4 p-3 bg-amber-50 rounded-lg">
                       <p className="text-sm text-amber-800">
@@ -480,17 +513,20 @@ const ProductCatalog = () => {
             {/* Results Header */}
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm text-gray-600">
-                Showing <span className="font-medium text-gray-900">{sortedProducts.length}</span> {sortedProducts.length === 1 ? 'product' : 'products'}
+                Showing <span className="font-medium text-gray-900">{visibleProducts.length}</span> of <span className="font-medium text-gray-900">{sortedProducts.length}</span> {sortedProducts.length === 1 ? 'product' : 'products'}
               </p>
               
               {/* Active Filters */}
               {(selectedCategory !== 'all' || selectedSubCategory !== 'all' || searchTerm) && (
                 <div className="flex items-center gap-2 flex-wrap">
-                   {searchTerm && (
+                  {searchTerm && (
                     <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm">
                       🔍 "{searchTerm}"
                       <button
-                        onClick={() => setSearchTerm('')}
+                        onClick={() => {
+                          setSearchTerm('');
+                          setVisibleCount(5);
+                        }}
                         className="ml-1 hover:text-amber-900"
                       >
                         <X className="w-3 h-3" />
@@ -504,6 +540,7 @@ const ProductCatalog = () => {
                         onClick={() => {
                           setSelectedCategory('all');
                           setSelectedSubCategory('all');
+                          setVisibleCount(5);
                         }}
                         className="ml-1 hover:text-gray-900"
                       >
@@ -515,7 +552,10 @@ const ProductCatalog = () => {
                     <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
                       {selectedSubCategory}
                       <button
-                        onClick={() => setSelectedSubCategory('all')}
+                        onClick={() => {
+                          setSelectedSubCategory('all');
+                          setVisibleCount(5);
+                        }}
                         className="ml-1 hover:text-gray-900"
                       >
                         <X className="w-3 h-3" />
@@ -542,6 +582,7 @@ const ProductCatalog = () => {
                     setSelectedCategory('all');
                     setSelectedSubCategory('all');
                     setSearchTerm('');
+                    setVisibleCount(5);
                   }}
                   className="px-6 py-2 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors"
                 >
@@ -549,97 +590,144 @@ const ProductCatalog = () => {
                 </button>
               </motion.div>
             ) : (
-              <div className={`grid ${view === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6`}>
-                {sortedProducts.map((product, index) => (
+              <>
+                <div className={`grid ${view === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6`}>
+                  {visibleProducts.map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      whileHover={{ y: -4 }}
+                      className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-200 overflow-hidden transition-all ${
+                        view === 'list' ? 'flex' : ''
+                      }`}
+                    >
+                      <Link to={`/product/${product.id}`} className={view === 'list' ? 'flex w-full' : ''}>
+                        <div className={`relative overflow-hidden ${view === 'list' ? 'w-48 shrink-0' : ''}`}>
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className={`w-full ${view === 'list' ? 'h-48' : 'h-64'} object-cover group-hover:scale-105 transition-transform duration-700`}
+                          />
+                          
+                          {/* Badges */}
+                          <div className="absolute top-3 left-3 flex flex-col gap-2">
+                            {product.isNew && (
+                              <span className="bg-emerald-500 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg">
+                                NEW
+                              </span>
+                            )}
+                            {product.discount > 0 && (
+                              <span className="bg-rose-500 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg">
+                                -{product.discount}%
+                              </span>
+                            )}
+                          </div>
+                          
+                          {/* Price */}
+                          <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-gray-900 px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg">
+                            ${product.price}
+                          </div>
+                        </div>
+                        
+                        <div className={`p-5 ${view === 'list' ? 'flex-1' : ''}`}>
+                          <div className="flex items-start justify-between mb-2">
+                            <h3 className="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors line-clamp-1">
+                              {product.name}
+                            </h3>
+                          </div>
+                          
+                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                            {product.description}
+                          </p>
+                          
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-4 h-4 ${
+                                    i < Math.floor(product.rating)
+                                      ? 'text-amber-400 fill-current'
+                                      : 'text-gray-300'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm text-gray-500">
+                              ({product.reviews})
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                              {product.subCategory}
+                            </span>
+                            
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity hover:bg-amber-500"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                // Add to cart logic that will be implemented later
+                              }}
+                            >
+                              <Link to={`/product/${product.id}`}>
+                               Details
+                              </Link>
+                            </motion.button>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* NEW: Show More Button */}
+                {hasMoreProducts && (
                   <motion.div
-                    key={product.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={{ y: -4 }}
-                    className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-200 overflow-hidden transition-all ${
-                      view === 'list' ? 'flex' : ''
-                    }`}
+                    className="flex justify-center mt-12"
                   >
-                    <Link to={`/product/${product.id}`} className={view === 'list' ? 'flex w-full' : ''}>
-                      <div className={`relative overflow-hidden ${view === 'list' ? 'w-48 shrink-0' : ''}`}>
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className={`w-full ${view === 'list' ? 'h-48' : 'h-64'} object-cover group-hover:scale-105 transition-transform duration-700`}
-                        />
-                        
-                        {/* Badges */}
-                        <div className="absolute top-3 left-3 flex flex-col gap-2">
-                          {product.isNew && (
-                            <span className="bg-emerald-500 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg">
-                              NEW
-                            </span>
-                          )}
-                          {product.discount > 0 && (
-                            <span className="bg-rose-500 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg">
-                              -{product.discount}%
-                            </span>
-                          )}
-                        </div>
-                        
-                        {/* Price */}
-                        <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-gray-900 px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg">
-                          ${product.price}
-                        </div>
-                      </div>
-                      
-                      <div className={`p-5 ${view === 'list' ? 'flex-1' : ''}`}>
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors line-clamp-1">
-                            {product.name}
-                          </h3>
-                        </div>
-                        
-                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                          {product.description}
-                        </p>
-                        
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${
-                                  i < Math.floor(product.rating)
-                                    ? 'text-amber-400 fill-current'
-                                    : 'text-gray-300'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            ({product.reviews})
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                            {product.subCategory}
-                          </span>
-                          
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity hover:bg-amber-500"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              // Add to cart logic that will be implemented later
-                            }}
-                          >
-                            Quick Add
-                          </motion.button>
-                        </div>
-                      </div>
-                    </Link>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={loadMoreProducts}
+                      className="group relative px-8 py-4 bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all overflow-hidden"
+                    >
+                      <span className="relative z-10 flex items-center gap-2">
+                        Show More Products
+                        <svg 
+                          className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </motion.button>
                   </motion.div>
-                ))}
-              </div>
+                )}
+
+                {/* Optional: Show "All products loaded" message */}
+                {!hasMoreProducts && sortedProducts.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center mt-12 py-6"
+                  >
+                    <p className="text-gray-500 text-sm flex items-center justify-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      You've reached the end! {sortedProducts.length} products loaded
+                    </p>
+                  </motion.div>
+                )}
+              </>
             )}
           </div>
         </div>
