@@ -23,10 +23,10 @@ const Footer = () => {
   const footerLinks = {
     shop: [
       { name: 'All Products', path: '/products' },
-      { name: 'Electronics', path: '/products?category=electronics' },
-      { name: 'Fashion', path: '/products?category=fashion' },
-      { name: 'Home & Living', path: '/products?category=home' },
-      { name: 'Sports', path: '/products?category=sports' },
+      // { name: 'Electronics', path: '/products?category=electronics' },
+      // { name: 'Fashion', path: '/products?category=fashion' },
+      // { name: 'Home & Living', path: '/products?category=home' },
+      // { name: 'Sports', path: '/products?category=sports' },
     ],
     company: [
       { name: 'About Us', path: '/about' },
@@ -49,7 +49,7 @@ const Footer = () => {
   ];
 
   const paymentIcons = [
-    { icon: CreditCard, name: 'M-Pesa' },
+    { icon: CreditCard, name: 'MPESA' },
     { icon: CreditCard, name: 'PayPal' }
   ];
 
@@ -235,10 +235,11 @@ const Footer = () => {
                 {paymentIcons.map((payment, index) => (
                   <div
                     key={index}
-                    className="w-8 h-5 bg-gray-800 rounded flex items-center justify-center"
+                    className="w-10 h-5 bg-gray-800 rounded flex items-center justify-center"
                     title={payment.name}
                   >
-                    <payment.icon className="w-4 h-3 text-gray-400" />
+                     <payment.icon className="w-4 h-4 text-gray-400" />
+                    <span className="text-xs text-gray-300">{payment.name}</span>
                   </div>
                 ))}
               </div>
