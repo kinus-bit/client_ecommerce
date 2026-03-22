@@ -668,7 +668,8 @@ const ProductCatalog = () => {
                             <motion.button
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
-                              className="px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity hover:bg-amber-500"
+                              className="px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-medium transition-opacity hover:bg-amber-500 
+                                 md:opacity-0 md:group-hover:opacity-100 opacity-100"
                               onClick={(e) => {
                                 e.preventDefault();
                                 // Add to cart logic that will be implemented later
