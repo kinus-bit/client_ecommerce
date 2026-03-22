@@ -7,24 +7,10 @@ import { useCart } from '../context/CartContext';
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
-  const [promoCode, setPromoCode] = useState('');
-  const [promoApplied, setPromoApplied] = useState(false);
-  const [promoError, setPromoError] = useState('');
-
   const shippingCost = cartItems.length > 0 ? 5 : 0;
-  const taxRate = 0.1;
   const subtotal = getCartTotal();
-  const tax = subtotal * taxRate;
-  const total = subtotal + shippingCost + tax;
+  const total = subtotal + shippingCost;
 
-  const handleApplyPromo = () => {
-    if (promoCode.toLowerCase() === 'save10') {
-      setPromoApplied(true);
-      setPromoError('');
-    } else {
-      setPromoError('Invalid promo code');
-    }
-  };
 
   const getItemTotal = (item) => {
     return (item.price * item.quantity).toFixed(2);
@@ -195,34 +181,6 @@ const Cart = () => {
             <div className="lg:col-span-1">
               <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
-                
-                {/* Promo Code */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Have a promo code?
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={promoCode}
-                      onChange={(e) => setPromoCode(e.target.value)}
-                      placeholder="Enter code"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
-                    />
-                    <button
-                      onClick={handleApplyPromo}
-                      className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-                    >
-                      Apply
-                    </button>
-                  </div>
-                  {promoError && (
-                    <p className="text-red-500 text-xs mt-1">{promoError}</p>
-                  )}
-                  {promoApplied && (
-                    <p className="text-green-600 text-xs mt-1">✓ Promo applied! (10% off)</p>
-                  )}
-                </div>
 
                 {/* Price Breakdown */}
                 <div className="space-y-3 mb-4">
@@ -244,27 +202,14 @@ const Cart = () => {
                       Add ${(50 - subtotal).toFixed(2)} more for free shipping
                     </p>
                   )}
-                  
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Estimated Tax</span>
-                    <span className="font-medium text-gray-900">${tax.toFixed(2)}</span>
-                  </div>
-
-                  {promoApplied && (
-                    <div className="flex justify-between text-sm text-green-600">
-                      <span>Discount (SAVE10)</span>
-                      <span>-${(subtotal * 0.1).toFixed(2)}</span>
-                    </div>
-                  )}
 
                   <div className="border-t border-gray-200 pt-3 mt-3">
                     <div className="flex justify-between">
                       <span className="font-semibold text-gray-900">Total</span>
                       <span className="font-bold text-xl text-gray-900">
-                        ${(promoApplied ? total * 0.9 : total).toFixed(2)}
+                        {total.toFixed(2)}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Including all taxes</p>
                   </div>
                 </div>
 
@@ -278,14 +223,14 @@ const Cart = () => {
 
                 {/* Trust Badges */}
                 <div className="space-y-2 text-xs text-gray-600">
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <Shield className="w-4 h-4 text-gray-400" />
-                    <span>Secure checkout powered by Stripe</span>
-                  </div>
-                  <div className="flex items-center gap-2">
+                    <span>Secure checkout powered by mpesa</span>
+                  </div> */}
+                  {/* <div className="flex items-center gap-2">
                     <Gift className="w-4 h-4 text-gray-400" />
                     <span>Free gift wrapping available</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center gap-2">
                     <Truck className="w-4 h-4 text-gray-400" />
                     <span>30-day easy returns</span>
@@ -296,10 +241,8 @@ const Cart = () => {
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <p className="text-xs text-gray-500 mb-3">We accept:</p>
                   <div className="flex gap-2">
-                    <span className="text-sm bg-gray-100 px-2 py-1 rounded">Visa</span>
-                    <span className="text-sm bg-gray-100 px-2 py-1 rounded">Mastercard</span>
                     <span className="text-sm bg-gray-100 px-2 py-1 rounded">PayPal</span>
-                    <span className="text-sm bg-gray-100 px-2 py-1 rounded">Apple Pay</span>
+                    <span className="text-sm bg-gray-100 px-2 py-1 rounded">Mpesa</span>
                   </div>
                 </div>
               </div>
