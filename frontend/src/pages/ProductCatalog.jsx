@@ -47,8 +47,8 @@ const ProductCatalog = () => {
       id: 3,
       name: 'Men\'s Leather Jacket',
       price: 89,
-      category: 'fashion',
-      subCategory: 'Men',
+      category: 'menfashion',
+      subCategory: 'Jackets',
       image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400',
       rating: 4.5,
       reviews: 78,
@@ -73,8 +73,8 @@ const ProductCatalog = () => {
       id: 5,
       name: 'Women\'s Summer Dress',
       price: 59,
-      category: 'fashion',
-      subCategory: 'Women',
+      category: 'womenfashion',
+      subCategory: 'dress',
       image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400',
       rating: 4.6,
       reviews: 92,
@@ -86,8 +86,8 @@ const ProductCatalog = () => {
       id: 6,
       name: 'Modern Sofa Set',
       price: 799,
-      category: 'home',
-      subCategory: 'Furniture',
+      category: 'furniture',
+      subCategory: 'chair',
       image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
       rating: 4.4,
       reviews: 67,
@@ -110,23 +110,10 @@ const ProductCatalog = () => {
     },
     {
       id: 8,
-      name: 'Yoga Mat',
-      price: 29,
-      category: 'sports',
-      subCategory: 'Equipment',
-      image: 'https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=400',
-      rating: 4.5,
-      reviews: 234,
-      isNew: true,
-      discount: 0,
-      description: 'Eco-friendly non-slip yoga mat'
-    },
-    {
-      id: 9,
       name: 'Coffee Table',
       price: 199,
-      category: 'home',
-      subCategory: 'Furniture',
+      category: 'furniture',
+      subCategory: 'Table',
       image: 'https://dignity.co.ke/wp-content/uploads/2025/04/COFFEE-TABLE-92350-CTGY-GD.webp',
       rating: 4.3,
       reviews: 89,
@@ -141,27 +128,83 @@ const ProductCatalog = () => {
       name: 'Electronics',
       subCategories: ['Smartphones', 'Laptops', 'Tablets', 'Accessories'],
       icon: '💻',
-      color: 'blue'
+      color: 'cyan'
     },
-    fashion: {
-      name: 'Fashion',
-      subCategories: ['Men', 'Women', 'Kids', 'Accessories'],
-      icon: '👔',
+    furniture: {
+      name: 'Furniture',
+      subCategories: ['Bed','chair','Table'],
+      icon: '🪑',
       color: 'rose'
     },
-    home: {
-      name: 'Home & Living',
-      subCategories: ['Furniture', 'Decor', 'Kitchen', 'Bedding'],
-      icon: '🏠',
+    drinks: {
+      name: 'Drinks',
+      subCategories: [],
+      icon: '🥤',
       color: 'amber'
     },
-    sports: {
-      name: 'Sports',
-      subCategories: ['Equipment', 'Clothing', 'Footwear', 'Accessories'],
-      icon: '⚽',
+    decor: {
+      name: 'Home Decor',
+      subCategories: [],
+      icon: '🖼️',
       color: 'emerald'
+    },
+    cutlery: {
+      name: 'Cutlery',
+      subCategories: [],
+      icon: '🍴',
+      color: 'yellow'
+    },
+    menfashion: {
+      name: 'Men Fashion',
+      subCategories: ['Jeans','T-shirts','Sweaters','Jackets','shoes'],
+      icon: '👔',
+      color: 'violet'
+    },
+    womenfashion: {
+      name: 'Women Fashion',
+      subCategories: ['Tops','jeans','Trousers','skirts','jackets','bags','dress'],
+      icon: '👗',
+      color: 'pink'
+    },
+    curtains: {
+      name: 'Curtains',
+      subCategories: [],
+      icon: '🪟',
+      color: 'teal'
+    },
+    carpets: {
+      name: 'Carpets',
+      subCategories: [],
+      icon: '🧵',
+      color: 'orange'
     }
   };
+
+  // Add this mapping object after your categories definition
+const colorClasses = {
+  cyan: 'bg-cyan-500 text-white shadow-md',
+  rose: 'bg-rose-500 text-white shadow-md',
+  amber: 'bg-amber-500 text-white shadow-md',
+  emerald: 'bg-emerald-500 text-white shadow-md',
+  yellow: 'bg-yellow-500 text-white shadow-md',
+  violet: 'bg-violet-500 text-white shadow-md',
+  pink: 'bg-pink-500 text-white shadow-md',
+  teal: 'bg-teal-500 text-white shadow-md',
+  orange: 'bg-orange-500 text-white shadow-md',
+};
+
+// Also for the sidebar filters
+const sidebarColorClasses = {
+  cyan: 'bg-cyan-50 text-cyan-700 font-medium',
+  rose: 'bg-rose-50 text-rose-700 font-medium',
+  amber: 'bg-amber-50 text-amber-700 font-medium',
+  emerald: 'bg-emerald-50 text-emerald-700 font-medium',
+  yellow: 'bg-yellow-50 text-yellow-700 font-medium',
+  violet: 'bg-violet-50 text-violet-700 font-medium',
+  pink: 'bg-pink-50 text-pink-700 font-medium',
+  teal: 'bg-teal-50 text-teal-700 font-medium',
+  orange: 'bg-orange-50 text-orange-700 font-medium',
+};
 
   // Handle search
   const handleSearch = (e) => {
@@ -308,7 +351,7 @@ const ProductCatalog = () => {
                 }}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-1 ${
                   selectedCategory === key
-                    ? `bg-${category.color}-500 text-white shadow-md`
+                    ? colorClasses[category.color]
                     : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                 }`}
               >
@@ -443,7 +486,7 @@ const ProductCatalog = () => {
                           }}
                           className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm flex items-center gap-2 ${
                             selectedCategory === key
-                              ? `bg-${category.color}-50 text-${category.color}-700 font-medium`
+                              ? sidebarColorClasses[category.color]  // Using the mapping
                               : 'text-gray-600 hover:bg-gray-100'
                           }`}
                         >

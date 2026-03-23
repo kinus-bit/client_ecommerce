@@ -31,32 +31,62 @@ const Home = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const categories = [
-    { 
-      name: 'Electronics', 
-      image: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=600&auto=format',
-      count: 150,
-      color: 'from-blue-400 to-indigo-500'
-    },
-    { 
-      name: 'Fashion', 
-      image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format',
-      count: 320,
-      color: 'from-rose-400 to-pink-500'
-    },
-    { 
-      name: 'Home & Living', 
-      image: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600&auto=format',
-      count: 210,
-      color: 'from-amber-400 to-orange-500'
-    },
-    { 
-      name: 'Sports', 
-      image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600&auto=format',
-      count: 95,
-      color: 'from-emerald-400 to-teal-500'
-    },
-  ];
+const categories = [
+  { 
+    name: 'Electronics', 
+    image: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=600&auto=format',
+    count: 150,
+    color: 'from-blue-400 to-indigo-500'
+  },
+  { 
+    name: 'Women Fashion', 
+    image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format',
+    count: 320,
+    color: 'from-rose-400 to-pink-500'
+  },
+  {
+  name: 'Men Fashion', 
+  image: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=600&auto=format',
+  count: 210,
+  color: 'from-amber-400 to-orange-500'
+  },
+  { 
+    name: 'Drinks', 
+    image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format',
+    count: 95,
+    color: 'from-purple-400 to-fuchsia-500'
+  },
+  { 
+    name: 'Home Decor', 
+    image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format',
+    count: 85,
+    color: 'from-emerald-400 to-green-600'
+  },
+  { 
+    name: 'Cutlery', 
+    image: 'https://myleelondon.com/cdn/shop/files/personalised-stainless-steel-3-piece-cutlery-set-mylee-london-553771.jpg?v=1756200680&width=1946',
+    count: 65,
+    color: 'from-slate-400 to-gray-600'
+  },
+  { 
+    name: 'Curtains', 
+    image: 'https://img.joomcdn.net/531a9dc9915069b7331b30efe8578f05f1753114_1024_1024.jpeg',
+    count: 55,
+    color: 'from-indigo-400 to-blue-600'
+  },
+  { 
+    name: 'Carpets', 
+    image: 'https://isamado.co.ke/wp-content/uploads/2016/04/10059465_l-1626x1080.jpg',
+    count: 45,
+    color: 'from-orange-400 to-red-500'
+  },
+  { 
+    name: 'Furnitures', 
+    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&auto=format',
+    count: 110,
+    color: 'from-stone-400 to-amber-700'
+  }
+];
 
   const features = [
     { icon: Truck, title: 'Free Shipping', description: 'On orders over $50', color: 'text-blue-600', bg: 'bg-blue-50' },
