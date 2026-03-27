@@ -137,7 +137,7 @@ const ProductCatalog = () => {
     },
     furniture: {
       name: 'Furniture',
-      subCategories: ['Bed', 'chair', 'Table'],
+      subCategories: ['Beds', 'Kitchen tables', 'Study tables','Chairs','Closet'],
       icon: '🪑',
       color: 'rose'
     },
