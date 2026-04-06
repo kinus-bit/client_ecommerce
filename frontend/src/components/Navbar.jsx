@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Menu, X, Search, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
-
+import { Button } from './ui/button';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -115,6 +115,12 @@ const Navbar = () => {
                     </motion.span>
                   )}
                 </motion.div>
+              </Link>
+              <Link to="/login">
+              <Button>login</Button>
+              </Link>
+              <Link to="/signup">
+              <Button>Get started</Button>
               </Link>
             </div>
 

@@ -15,6 +15,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import WishlistProvider from './context/WishlistContext';
 import ScrollToTop from '@/components/ScrollToTop';
 import NextStagePage from './pages/NextStagePage';
+import Login from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
               <Route path="/product/:id" element={<ProductDescription />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/nextstage" element={<NextStagePage/>}/>
+              <Route path="/login" element={<Login/>} />
+              <Route path="/signup" element={<Signup/>} />
               {/* <Route path="/checkout" element={<Checkout />} /> */}
             </Routes>
           </AnimatePresence>
