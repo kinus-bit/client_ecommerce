@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { protect, authorize } = require('../middlewares/authMiddleware');
 const {
     uploadProductImage,
     uploadProductImages,
@@ -12,7 +12,7 @@ const {
     uploadProductImages: uploadMultipleProductImages,
     uploadProfilePicture: uploadUserProfilePicture,
     handleUploadError
-} = require('../middleware/uploadMiddleware');
+} = require('../middlewares/uploadMiddleware');
 
 // upload single product image (Admin only)
 router.post(

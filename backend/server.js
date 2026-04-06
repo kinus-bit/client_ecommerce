@@ -13,7 +13,7 @@ const uploadRoutes = require('./routes/uploadRoutes');
 dotenv.config();
 
 // Connect to database
-connectDB();
+
 
 //create express app
 const app = express();
@@ -50,16 +50,24 @@ app.get('/health', (req, res) => {
 // global error handler middleware (should be last)
 app.use(errorHandler);
 
+//start server(skip when imported by tests)
+if( require.main === module ){
+    connectDB();
+
 const PORT = process.env.PORT || 5000;
 
 //starting server.........
 const server = app.listen(PORT, () => {
-    console.log(`Server running in  http://localhost:${process.env.PORT}.......`);
+    console.log(`Server running in  http://localhost:${process.env.PORT}`);
 });
 
+
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
-    console.log(`Error: ${err.message}`);
-    // Close server & exit process
-    server.close(() => process.exit(1));
+process.on('unhandledRejection', (err) => {
+console.log(`Error: ${err.message}`);
+// Close server & exit process
+server.close(() => process.exit(1));
 });
+
+}
+module.exports = app;

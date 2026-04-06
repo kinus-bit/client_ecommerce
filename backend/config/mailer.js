@@ -1,13 +1,15 @@
 const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
+dotenv.config();
 
 //creating a reusable transporter object using SMTP transport
 const transporter = nodemailer.createTransport({
 
     //SMTP server host
-    host: process.env.EMAIL_HOST,
+    host:process.env.EMAIL_HOST,
 
     // Port (587 for TLS, 465 for SSL, 25 for unencrypted)
-    port: process.env.EMAIL_PORT,
+    port:process.env.EMAIL_PORT,
 
     // true for 465, false for other ports
     secure: false,
@@ -21,6 +23,7 @@ const transporter = nodemailer.createTransport({
         rejectUnauthorized: false
     }
 });
+
 
 // Verify connection configuration on startup
 transporter.verify((error, success) => {

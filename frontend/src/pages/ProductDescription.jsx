@@ -76,7 +76,7 @@ const ProductDescription = () => {
         { icon: <Zap />, text: 'A17 Pro Chip' },
         { icon: <Battery />, text: 'All-day Battery' }
       ],
-      reviews: []
+      review: []
     },
     {
       id: 2,
@@ -167,7 +167,7 @@ const ProductDescription = () => {
       warranty: '30 Days',
       deliveryEstimate: 'Dec 13 - Dec 15',
       pickupLocation: 'Thika Store',
-      reviews: []
+      review: []
     },
     {
       id: 4,
@@ -209,7 +209,7 @@ const ProductDescription = () => {
       brand: 'Samsung',
       warranty: '1 Year',
       deliveryEstimate: 'Dec 16 - Dec 19',
-      reviews: []
+      review: []
     },
     {
       id: 5,
@@ -251,7 +251,7 @@ const ProductDescription = () => {
       brand: 'Chic Style',
       warranty: '15 Days',
       deliveryEstimate: 'Dec 12 - Dec 14',
-      reviews: []
+      review: []
     },
     {
       id: 6,
@@ -293,7 +293,7 @@ const ProductDescription = () => {
       brand: 'Home Comfort',
       warranty: '2 Years',
       deliveryEstimate: 'Dec 20 - Dec 23',
-      reviews: []
+      review: []
     },
     {
       id: 7,
@@ -335,7 +335,7 @@ const ProductDescription = () => {
       brand: 'AudioTech',
       warranty: '1 Year',
       deliveryEstimate: 'Dec 13 - Dec 15',
-      reviews: []
+      review: []
     },
     {
       id: 8,
@@ -377,7 +377,7 @@ const ProductDescription = () => {
       brand: 'Wellness Pro',
       warranty: '6 Months',
       deliveryEstimate: 'Dec 11 - Dec 13',
-      reviews: []
+      review: []
     },
     {
       id: 9,
@@ -419,7 +419,7 @@ const ProductDescription = () => {
       brand: 'Modern Living',
       warranty: '1 Year',
       deliveryEstimate: 'Dec 18 - Dec 21',
-      reviews: []
+      review: []
     }
   ];
 
