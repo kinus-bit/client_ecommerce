@@ -53,7 +53,7 @@ const emailVerificationTemplate = (name, verificationUrl) => {
         <body>
             <div class="header">
                 <h1>Verify Your Email Address</h1>
-            </div>
+            </div>mongom
             <div class="content">
                 <p>Hello ${name},</p>
                 <p>Thank you for registering! Please verify your email address by clicking the button below:</p>
