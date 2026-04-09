@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { User, Mail, Lock, ArrowRight, Eye, EyeOff, Sparkles, CheckCircle } from 'lucide-react';
+import { register } from '@/services/api';
+import { useNavigate } from 'react-router-dom';
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({username:"", email:"", password:""})
   const [confirmPassword, setConfirmPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  const Navigate = useNavigate();
 
   useEffect(() => {
     // Hide navigation bar
@@ -35,45 +38,67 @@ export default function Signup() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!username) newErrors.username = 'Username is required';
-    else if (username.length < 3) newErrors.username = 'Username must be at least 3 characters';
+    if (!formData.username.trim) newErrors.username = 'Username is required';
+    else if (formData.username.length < 3) newErrors.username = 'name must be at least 3 characters';
     
-    if (!email) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
+    if (!formData.email) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
     
-    if (!password) newErrors.password = 'Password is required';
-    else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
-    else if (!/(?=.*[A-Z])/.test(password)) newErrors.password = 'Password must contain at least one uppercase letter';
-    else if (!/(?=.*[0-9])/.test(password)) newErrors.password = 'Password must contain at least one number';
+    if (!formData.password) newErrors.password = 'Password is required';
+    else if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    else if (!/(?=.*[A-Z])/.test(formData.password)) newErrors.password = 'Password must contain at least one uppercase letter';
+    else if (!/(?=.*[0-9])/.test(formData.password)) newErrors.password = 'Password must contain at least one number';
     
     if (!confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
-    else if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+    else if (formData.password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
     
     if (!acceptTerms) newErrors.acceptTerms = 'You must accept the terms and conditions';
     
-    return newErrors;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  //Handling  change in input
+  const handleChange = (e) =>{
+    setFormData({
+      ...formData,
+      [e.target.name]:e.target.value
+    })
+  }
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length === 0) {
-      // Handle signup logic here
-      console.log('Signup attempted with:', { username, email, password });
-    } else {
-      setErrors(newErrors);
-    }
+    if(!validateForm()) return;
+    
+    setLoading(true);
+      try{
+         // Handle signup logic here
+      const res = await register(formData);
+      console.log(res.data);
+        // Store the email for verification page
+      localStorage.setItem('pendingVerificationEmail', formData.email);
+      Navigate('/verifyemail/' ,  { 
+        state: { 
+          email: formData.email,
+          message: 'Please check your email to verify your account'
+        }
+      });
+      }
+       catch (error) {
+         console.log(error.response?.data || error.message);
+      }finally{
+        setLoading(false);
+      }
   };
 
   // Password strength indicator
   const getPasswordStrength = () => {
-    if (!password) return 0;
+    if (!formData.password) return 0;
     let strength = 0;
-    if (password.length >= 6) strength++;
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    if (formData.password.length >= 6) strength++;
+    if (formData.password.length >= 8) strength++;
+    if (/[A-Z]/.test(formData.password)) strength++;
+    if (/[0-9]/.test(formData.password)) strength++;
+    if (/[^A-Za-z0-9]/.test(formData.password)) strength++;
     return Math.min(strength, 4);
   };
 
@@ -139,17 +164,18 @@ export default function Signup() {
           <div className="p-6">
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
-                {/* Username Field */}
+                {/* name Field */}
                 <div>
                   <label className="block text-sm font-semibold text-white mb-1.5">
-                    Username
+                    username
                   </label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                     <input
                       type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
+                      name='username'
+                      value={formData.username}
+                      onChange={handleChange}
                       className={`w-full pl-9 pr-3 py-2 bg-white/10 backdrop-blur-sm border ${
                         errors.username ? 'border-red-400' : 'border-white/20'
                       } rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all text-sm text-white placeholder-white/50`}
@@ -176,8 +202,9 @@ export default function Signup() {
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                     <input
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
                       className={`w-full pl-9 pr-3 py-2 bg-white/10 backdrop-blur-sm border ${
                         errors.email ? 'border-red-400' : 'border-white/20'
                       } rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all text-sm text-white placeholder-white/50`}
@@ -204,8 +231,9 @@ export default function Signup() {
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
                       className={`w-full pl-9 pr-9 py-2 bg-white/10 backdrop-blur-sm border ${
                         errors.password ? 'border-red-400' : 'border-white/20'
                       } rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all text-sm text-white placeholder-white/50`}
@@ -221,7 +249,7 @@ export default function Signup() {
                   </div>
                   
                   {/* Password Strength Indicator */}
-                  {password && (
+                  {formData.password && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -322,10 +350,20 @@ export default function Signup() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-sm"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center  disabled:opacity-50 disabled:cursor-not-allowed justify-center gap-2 text-sm"
                 >
-                  Create Account
+                  {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                <>
+                  Create account
                   <ArrowRight className="w-4 h-4" />
+                </>
+              )}
                 </motion.button>
               </div>
             </form>
