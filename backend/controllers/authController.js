@@ -2,6 +2,7 @@ const User = require('../models/User');
 const PasswordReset = require('../models/PasswordReset');
 const EmailVerification = require('../models/EmailVerification');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs')
 const crypto = require('crypto');
 const { validationResult } = require('express-validator');
 const { sendEmail } = require('../config/mailer');
@@ -21,7 +22,7 @@ const generateVerificationToken = () => {
 
 // Send verification email
 const sendVerificationEmail = async (user, token) => {
-    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${token}`;
+    const verificationUrl = `${process.env.FRONTEND_URL}/verifyemail/${token}`;
     const emailHtml = emailVerificationTemplate(user.name, verificationUrl);
     
     await sendEmail({
@@ -37,16 +38,19 @@ const sendVerificationEmail = async (user, token) => {
 const register = async (req, res) => {
     try {
         // Check for validation errors from express-validator
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                success: false,
-                errors: errors.array()  // Return detailed validation errors
-            });
-        }
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         errors: errors.array()  // Return detailed validation errors
+        //     });
+        // }
 
         //extract user input(destructuring)
-        const { name, email, password } = req.body;
+        const { username, email, password } = req.body;
+        if(!username||!email||!password){
+            return res.status(400).json({message:"All fields are required!!"})
+        }
 
         // Check if user already exists
         const userExists = await User.findOne({ email });
@@ -57,11 +61,15 @@ const register = async (req, res) => {
             });
         }
 
+        const gensalt = await  bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password,gensalt);
+
+
         // Create new user in database
         const user = await User.create({
-            name,
+            name:username,
             email,
-            password,
+            password:hashedPassword,
             isEmailVerified: false
         });
 
@@ -92,7 +100,7 @@ const register = async (req, res) => {
             token,
             user: {
                 id: user._id,
-                name: user.name,
+                username: user.name,
                 email: user.email,
                 role: user.role,
                 profilePicture: user.profilePicture || null,
@@ -116,6 +124,11 @@ const register = async (req, res) => {
 const verifyEmail = async (req, res) => {
     try {
         const { token } = req.params;
+
+        console.log(token);
+        if(!token){
+            return res.status(400).json({message:"No token was passed!!!!"})
+        }
         
         // Hash the token from URL to compare with stored hash
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
@@ -186,7 +199,7 @@ const verifyEmail = async (req, res) => {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: 'Server Error',
+            message: 'Server Eror',
             error: error.message
         });
     }
@@ -274,9 +287,9 @@ const login = async (req, res) => {
         const user = await User.findOne({ email }).select('+password');
         
         if (!user) {
-            return res.status(401).json({
+            return res.status(400).json({
                 success: false,
-                message: 'Invalid credentials'
+                message: 'invalid credentials'
             });
         }
 
@@ -291,30 +304,24 @@ const login = async (req, res) => {
         }
 
         // verify password using bcrypt comparison
-        const isPasswordMatch = await user.matchPassword(password);
-        
-        if (!isPasswordMatch) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
-        }
+        const isMatched = await bcrypt.compare(password,user.password);
 
-        // Generate token for authenticated user
-        const token = generateToken(user._id);
-
-        res.status(200).json({
-            success: true,
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                profilePicture: user.profilePicture || null,
-                isEmailVerified: user.isEmailVerified
+        if(user && isMatched){
+            return  res.status(200).json({
+                success: true,
+                token: generateToken(user._id),
+                user: {
+                   id: user._id,
+                   name: user.name,
+                   email: user.email,
+                   role: user.role,
+                   profilePicture: user.profilePicture || null,
+                   isEmailVerified: user.isEmailVerified
             }
         });
+        }
+
+       
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -374,7 +381,7 @@ const forgotPassword = async (req, res) => {
         });
 
         // Create reset URL for frontend
-        const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+        const resetUrl = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`;
         
         // Send password reset email
         const emailHtml = passwordResetEmail(user.name, resetUrl);
@@ -449,7 +456,9 @@ const resetPassword = async (req, res) => {
         }
 
         // Update user's password(will be hashed by pre-save middleware)
-        user.password = password;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password,salt);
+        user.password = hashedPassword;
         await user.save();
 
         // Mark token as used to prevent reuse
