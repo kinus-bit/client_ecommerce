@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -43,22 +42,5 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// Encrypt password using bcrypt before saving
-userSchema.pre('save', async function(next) {
-
-    //if password not modified, skip hashing
-    if (!this.isModified('password')) { 
-        next();
-    }
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-});
-
-// Method to compare entered password with hashed password
-userSchema.methods.matchPassword = async function(enteredPassword) {
-
-    //Return true if match
-    return await bcrypt.compare(enteredPassword, this.password); 
-};
 
 module.exports = mongoose.model('User', userSchema);
