@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, Eye, EyeOff, Sparkles, CheckCircle } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Eye, EyeOff, Sparkles,LogIn, CheckCircle, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../../services/api';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({email:"",password:""})
+  const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
+  const [requiresVerification, setRequiresVerification] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // Add this state for error message
+
+  const Navigate = useNavigate();
 
   useEffect(() => {
     // Hide navigation bar
@@ -32,21 +39,50 @@ export default function Login() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!email) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
-    if (!password) newErrors.password = 'Password is required';
-    else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
-    return newErrors;
+    if (!formData.email) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
+    if (!formData.password) newErrors.password = 'Password is required';
+    else if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    setErrors({}); // Reset to empty object, not empty string
+    setErrorMessage(''); // Clear error message
+    setRequiresVerification(false);
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length === 0) {
-      // Handle login logic here
-      console.log('Login attempted with:', { email, password, rememberMe });
-    } else {
-      setErrors(newErrors);
+    if (!validateForm()) return;
+    setLoading(true);
+    setErrorMessage('');
+    setRequiresVerification(false);
+    setErrors({});
+
+    try {
+      // Handle signup logic here
+      const res = await login(formData);
+      console.log(res.data);
+      localStorage.setItem('token', res.data.token);
+      Navigate('/dashboard');
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+      if (error.response?.data?.requiresVerification) {
+        setRequiresVerification(true);
+        setUnverifiedEmail(error.response.data.email);
+        setErrorMessage('Please verify your email address before logging in.');
+      } else {
+        setErrorMessage(error.response?.data?.message || 'Login failed');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,6 +142,27 @@ export default function Login() {
           className="backdrop-blur-xl bg-white/10 rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
         >
           <div className="p-6">
+            {/* Error message display - Fixed */}
+            {errorMessage && (
+              <div className="mb-4 p-3 bg-red-50/90 backdrop-blur-sm border border-red-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-red-600 text-sm">{errorMessage}</p>
+                    {requiresVerification && (
+                      <Link 
+                        to="/verifyemail" 
+                        state={{ email: unverifiedEmail }}
+                        className="text-sm text-gray-900 font-medium hover:underline mt-1 inline-block"
+                      >
+                        Resend verification email →
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 {/* Email Field */}
@@ -117,8 +174,9 @@ export default function Login() {
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                     <input
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
                       className={`w-full pl-9 pr-3 py-2 bg-white/10 backdrop-blur-sm border ${
                         errors.email ? 'border-red-400' : 'border-white/20'
                       } rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all text-sm text-white placeholder-white/50`}
@@ -142,19 +200,18 @@ export default function Login() {
                     <label className="block text-sm font-semibold text-white">
                       Password
                     </label>
-                    <a
-                      href="#"
-                      className="text-xs text-amber-300 hover:text-amber-200 font-medium transition-colors"
-                    >
-                      Forgot password?
-                    </a>
+                    <Link to="/forgotpassword"  
+                      className="text-xs text-amber-300 hover:text-amber-200 font-medium transition-colors">
+                        Forgot password?
+                    </Link>
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
                       className={`w-full pl-9 pr-9 py-2 bg-white/10 backdrop-blur-sm border ${
                         errors.password ? 'border-red-400' : 'border-white/20'
                       } rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all text-sm text-white placeholder-white/50`}
@@ -198,10 +255,20 @@ export default function Login() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-sm"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
                 >
-                  Sign In
-                  <ArrowRight className="w-4 h-4" />
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="w-4 h-4" />
+                      Sign in
+                    </>
+                  )}
                 </motion.button>
               </div>
             </form>
