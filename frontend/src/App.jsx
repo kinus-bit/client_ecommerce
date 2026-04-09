@@ -17,6 +17,12 @@ import ScrollToTop from '@/components/ScrollToTop';
 import NextStagePage from './pages/NextStagePage';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
+import ProtectedRoute from './utils/ProtectedRoute';
+import Dashboard from './pages/Dashboard';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import VerifyEmail from './pages/auth/VerifyEmail';
+import EmailVerifiedSuccess from './pages/auth/EmailVerifiedSuccess';
+import ResetPassword from './pages/auth/ResetPassword';
 
 function App() {
   return (
@@ -38,6 +44,18 @@ function App() {
               <Route path="/nextstage" element={<NextStagePage/>}/>
               <Route path="/login" element={<Login/>} />
               <Route path="/signup" element={<Signup/>} />
+              <Route path="/forgotpassword" element={<ForgotPassword/>} />
+              
+              {/* adding token parameter */}
+              <Route path="/verifyemail/" element={<VerifyEmail/>} />
+              <Route path="/verifyemail/:token" element={<VerifyEmail/>} />
+              <Route path="/verifysuccess" element={<EmailVerifiedSuccess/>} />
+              <Route path="/resetpassword/:token" element={<ResetPassword/>} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard/>
+                </ProtectedRoute>
+              }/>
               {/* <Route path="/checkout" element={<Checkout />} /> */}
             </Routes>
           </AnimatePresence>
