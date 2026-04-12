@@ -7,8 +7,40 @@ const API = axios.create({
     },
 });
 
+// Add a request interceptor to include the token(ensure token is included for every request)
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor to handle token expiration
+API.interceptors.response.use(
+  (response) =>{
+    // Return the data directly so you don't need to use .data everywhere(******)
+    return response.data;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 // API methods
 export const getHealth = () => API.get('/health');
+
 // Auth API methods
 export const register = (userData) => API.post('/auth/register', userData);
 export const verifyEmail = (token) => API.get(`/auth/verify-email/${token}`);
@@ -20,4 +52,16 @@ export const changePassword = (passwords) => API.put('/auth/change-password', pa
 export const getMe = () => API.get('/auth/me');
 export const updateProfile = (profileData) => API.put('/auth/profile', profileData);
 export const logout = () => API.get('/auth/logout');
+
+//Upload API methods
+export const uploadProfilePicture = (file) => {
+    //file should already be FormData
+    return API.post('/upload/profile-picture',file,{
+        headers:{
+            'Content-Type':'multipart/form-data',
+        },
+    });
+};
+export const deleteProfilePicture = (type, filename) => API.delete(`/upload/${type}/${filename}`);
+
 
