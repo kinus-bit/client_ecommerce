@@ -69,8 +69,8 @@ export default function Login() {
     try {
       // Handle signup logic here
       const res = await login(formData);
-      console.log(res.data);
-      localStorage.setItem('token', res.data.token);
+      console.log('Backend response:',res);
+      localStorage.setItem('token', res.token);
       Navigate('/dashboard');
     } catch (error) {
       console.log(error.response?.data || error.message);
