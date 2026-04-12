@@ -1,7 +1,8 @@
 // pages/ProductDescription.jsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
+
 import { 
   Heart, ShoppingCart, Star, Truck, Shield, RefreshCw, 
   Check, ChevronRight, Package, Clock, Award, Share2, 
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+
 
 const ProductDescription = () => {
   const { id } = useParams();
@@ -28,404 +30,405 @@ const ProductDescription = () => {
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
-  const products = [
-    {
-      id: 1,
-      name: 'iPhone 15 Pro',
-      price: 999,
-      originalPrice: 1099,
-      description: 'Experience the power of the iPhone 15 Pro with its advanced camera system, A17 Pro chip, and stunning design. Built to last, designed to impress.',
-      images: [
-        'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600',
-        'https://istore.co.bw/cdn/shop/files/iPhone_15_Pro_Max_Blue_Titanium_PDP_Image_Position-2__WWEN_59655904-0c0a-49a0-91c0-e1d06b4536a5_2048x.jpg?v=1697794578',
-        'https://epicdeals.co.za/wp-content/uploads/2025/09/AB472339-84A9-4593-A261-92173EEC91D4.jpg',
-        'https://i.ytimg.com/vi/whGOeFAA5Q8/hqdefault.jpg',
-      ],
-      rating: 4.8,
-      reviews: 245,
-      inStock: true,
-      stockCount: 15,
-      colors: ['Space Black', 'Silver', 'Gold', 'Deep Purple'],
-      specifications: {
-        'Processor': 'A17 Pro',
-        'Display': '6.1" Super Retina XDR',
-        'Camera': '48MP Main | 12MP Ultra Wide',
-        'Battery': 'Up to 23 hours video playback',
-        'Weight': '187 grams',
-        'Water Resistance': 'IP68'
+  const productsdes = [
+      {
+        id: 1,
+        name: 'iPhone 15 Pro',
+        price: 999,
+        originalPrice: 1099,
+        description: 'Experience the power of the iPhone 15 Pro with its advanced camera system, A17 Pro chip, and stunning design. Built to last, designed to impress.',
+        images: [
+          'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600',
+          'https://istore.co.bw/cdn/shop/files/iPhone_15_Pro_Max_Blue_Titanium_PDP_Image_Position-2__WWEN_59655904-0c0a-49a0-91c0-e1d06b4536a5_2048x.jpg?v=1697794578',
+          'https://epicdeals.co.za/wp-content/uploads/2025/09/AB472339-84A9-4593-A261-92173EEC91D4.jpg',
+          'https://i.ytimg.com/vi/whGOeFAA5Q8/hqdefault.jpg',
+        ],
+        rating: 4.8,
+        reviews: 245,
+        inStock: true,
+        stockCount: 15,
+        colors: ['Space Black', 'Silver', 'Gold', 'Deep Purple'],
+        specifications: {
+          'Processor': 'A17 Pro',
+          'Display': '6.1" Super Retina XDR',
+          'Camera': '48MP Main | 12MP Ultra Wide',
+          'Battery': 'Up to 23 hours video playback',
+          'Weight': '187 grams',
+          'Water Resistance': 'IP68'
+        },
+        highlights: [
+          'Titanium design — strong, light, and durable',
+          'A17 Pro chip — next-level gaming and performance',
+          'Camera system — more detail, less noise',
+          'USB-C — faster transfers and charging'
+        ],
+        category: 'electronics',
+        subCategory: 'Smartphones',
+        image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400',
+        isNew: true,
+        discount: 9,
+        sku: 'IP15P-256-BLK',
+        brand: 'Apple',
+        warranty: '1 Year Limited',
+        deliveryEstimate: 'Dec 15 - Dec 18',
+        pickupLocation: 'Thika Store',
+        video: 'https://www.youtube.com/embed/8QWgLcYyN7c',
+        features: [
+          { icon: <Camera />, text: '48MP Main Camera' },
+          { icon: <Zap />, text: 'A17 Pro Chip' },
+          { icon: <Battery />, text: 'All-day Battery' }
+        ],
+        review: []
       },
-      highlights: [
-        'Titanium design — strong, light, and durable',
-        'A17 Pro chip — next-level gaming and performance',
-        'Camera system — more detail, less noise',
-        'USB-C — faster transfers and charging'
-      ],
-      category: 'electronics',
-      subCategory: 'Smartphones',
-      image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400',
-      isNew: true,
-      discount: 9,
-      sku: 'IP15P-256-BLK',
-      brand: 'Apple',
-      warranty: '1 Year Limited',
-      deliveryEstimate: 'Dec 15 - Dec 18',
-      pickupLocation: 'Thika Store',
-      video: 'https://www.youtube.com/embed/8QWgLcYyN7c',
-      features: [
-        { icon: <Camera />, text: '48MP Main Camera' },
-        { icon: <Zap />, text: 'A17 Pro Chip' },
-        { icon: <Battery />, text: 'All-day Battery' }
-      ],
-      review: []
-    },
-    {
-      id: 2,
-      name: 'MacBook Pro',
-      price: 1299,
-      originalPrice: 1499,
-      description: 'The ultimate pro laptop featuring the revolutionary M3 chip, Liquid Retina XDR display, and all-day battery life. Perfect for creators, developers, and power users.',
-      images: [
-        'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600',
-        'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=600',
-        'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=600',
-        'https://images.unsplash.com/photo-1537498425277-c283d32ef9db?w=600',
-      ],
-      rating: 4.9,
-      reviews: 189,
-      inStock: true,
-      stockCount: 8,
-      colors: ['Space Gray', 'Silver'],
-      specifications: {
-        'Processor': 'Apple M3 chip with 8-core CPU',
-        'Display': '14.2" Liquid Retina XDR',
-        'Memory': '16GB unified memory',
-        'Storage': '512GB SSD',
-        'Battery': 'Up to 18 hours',
-        'Weight': '3.5 pounds'
+      {
+        id: 2,
+        name: 'MacBook Pro',
+        price: 1299,
+        originalPrice: 1499,
+        description: 'The ultimate pro laptop featuring the revolutionary M3 chip, Liquid Retina XDR display, and all-day battery life. Perfect for creators, developers, and power users.',
+        images: [
+          'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600',
+          'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=600',
+          'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=600',
+          'https://images.unsplash.com/photo-1537498425277-c283d32ef9db?w=600',
+        ],
+        rating: 4.9,
+        reviews: 189,
+        inStock: true,
+        stockCount: 8,
+        colors: ['Space Gray', 'Silver'],
+        specifications: {
+          'Processor': 'Apple M3 chip with 8-core CPU',
+          'Display': '14.2" Liquid Retina XDR',
+          'Memory': '16GB unified memory',
+          'Storage': '512GB SSD',
+          'Battery': 'Up to 18 hours',
+          'Weight': '3.5 pounds'
+        },
+        highlights: [
+          'M3 chip — next-generation pro performance',
+          'Liquid Retina XDR display with ProMotion',
+          'Up to 22 hours of battery life',
+          'Studio-quality three-mic array'
+        ],
+        category: 'electronics',
+        subCategory: 'Laptops',
+        image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',
+        isNew: true,
+        discount: 13,
+        sku: 'MBP14-M3-512',
+        brand: 'Apple',
+        warranty: '1 Year Limited',
+        deliveryEstimate: 'Dec 14 - Dec 16',
+        pickupLocation: 'Thika Store',
+        video: 'https://www.youtube.com/embed/0a9iDp46gHc',
+        features: [
+          { icon: <Zap />, text: 'M3 Chip' },
+          { icon: <Battery />, text: '22 Hours Battery' },
+          { icon: <Award />, text: 'Pro Display' }
+        ]
+        
       },
-      highlights: [
-        'M3 chip — next-generation pro performance',
-        'Liquid Retina XDR display with ProMotion',
-        'Up to 22 hours of battery life',
-        'Studio-quality three-mic array'
-      ],
-      category: 'electronics',
-      subCategory: 'Laptops',
-      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',
-      isNew: true,
-      discount: 13,
-      sku: 'MBP14-M3-512',
-      brand: 'Apple',
-      warranty: '1 Year Limited',
-      deliveryEstimate: 'Dec 14 - Dec 16',
-      pickupLocation: 'Thika Store',
-      video: 'https://www.youtube.com/embed/0a9iDp46gHc',
-      features: [
-        { icon: <Zap />, text: 'M3 Chip' },
-        { icon: <Battery />, text: '22 Hours Battery' },
-        { icon: <Award />, text: 'Pro Display' }
-      ]
-      
-    },
-    {
-      id: 3,
-      name: 'Men\'s Leather Jacket',
-      price: 89,
-      originalPrice: 109,
-      description: 'Classic men\'s genuine leather jacket crafted from premium quality materials. Features a stylish design with comfortable fit, perfect for casual outings and formal events.',
-      images: [
-        'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600',
-        'https://images.unsplash.com/photo-1520975954732-35dd22299614?w=600',
-        'https://images.unsplash.com/photo-1520975661595-6453be3f7070?w=600',
-      ],
-      rating: 4.5,
-      reviews: 78,
-      inStock: true,
-      stockCount: 25,
-      colors: ['Black', 'Brown', 'Tan'],
-      specifications: {
-        'Material': '100% Genuine Leather',
-        'Lining': 'Polyester',
-        'Closure': 'Zipper with snap button',
-        'Pockets': '2 side pockets, 2 chest pockets',
-        'Care': 'Professional leather clean only',
-        'Fit': 'Regular fit'
+      {
+        id: 3,
+        name: 'Men\'s Leather Jacket',
+        price: 89,
+        originalPrice: 109,
+        description: 'Classic men\'s genuine leather jacket crafted from premium quality materials. Features a stylish design with comfortable fit, perfect for casual outings and formal events.',
+        images: [
+          'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600',
+          'https://images.unsplash.com/photo-1520975954732-35dd22299614?w=600',
+          'https://images.unsplash.com/photo-1520975661595-6453be3f7070?w=600',
+        ],
+        rating: 4.5,
+        reviews: 78,
+        inStock: true,
+        stockCount: 25,
+        colors: ['Black', 'Brown', 'Tan'],
+        specifications: {
+          'Material': '100% Genuine Leather',
+          'Lining': 'Polyester',
+          'Closure': 'Zipper with snap button',
+          'Pockets': '2 side pockets, 2 chest pockets',
+          'Care': 'Professional leather clean only',
+          'Fit': 'Regular fit'
+        },
+        highlights: [
+          'Premium genuine leather construction',
+          'Soft satin lining for comfort',
+          'Multiple pockets for storage',
+          'Classic biker style design'
+        ],
+        category: 'fashion',
+        subCategory: 'Men',
+        image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400',
+        isNew: false,
+        discount: 18,
+        sku: 'LJ-BLK-42',
+        brand: 'Urban Style',
+        warranty: '30 Days',
+        deliveryEstimate: 'Dec 13 - Dec 15',
+        pickupLocation: 'Thika Store',
+        review: []
       },
-      highlights: [
-        'Premium genuine leather construction',
-        'Soft satin lining for comfort',
-        'Multiple pockets for storage',
-        'Classic biker style design'
-      ],
-      category: 'fashion',
-      subCategory: 'Men',
-      image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400',
-      isNew: false,
-      discount: 18,
-      sku: 'LJ-BLK-42',
-      brand: 'Urban Style',
-      warranty: '30 Days',
-      deliveryEstimate: 'Dec 13 - Dec 15',
-      pickupLocation: 'Thika Store',
-      review: []
-    },
-    {
-      id: 4,
-      name: 'Samsung Galaxy S24',
-      price: 899,
-      originalPrice: 999,
-      description: 'Experience the future with Galaxy S24. Powered by advanced AI features, pro-grade camera system, and the most durable display on a smartphone.',
-      images: [
-        'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=600',
-        'https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=600',
-        'https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=600&angle=90',
-        'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=600&angle=180',
-      ],
-      rating: 4.7,
-      reviews: 156,
-      inStock: true,
-      stockCount: 20,
-      colors: ['Onyx Black', 'Marble Gray', 'Cobalt Violet', 'Amber Yellow'],
-      specifications: {
-        'Processor': 'Snapdragon 8 Gen 3',
-        'Display': '6.2" Dynamic AMOLED 2X',
-        'Camera': '50MP Main | 12MP Ultra Wide | 10MP Tele',
-        'Battery': '4000 mAh',
-        'Storage': '128GB/256GB',
-        'Water Resistance': 'IP68'
+      {
+        id: 4,
+        name: 'Samsung Galaxy S24',
+        price: 899,
+        originalPrice: 999,
+        description: 'Experience the future with Galaxy S24. Powered by advanced AI features, pro-grade camera system, and the most durable display on a smartphone.',
+        images: [
+          'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=600',
+          'https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=600',
+          'https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=600&angle=90',
+          'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=600&angle=180',
+        ],
+        rating: 4.7,
+        reviews: 156,
+        inStock: true,
+        stockCount: 20,
+        colors: ['Onyx Black', 'Marble Gray', 'Cobalt Violet', 'Amber Yellow'],
+        specifications: {
+          'Processor': 'Snapdragon 8 Gen 3',
+          'Display': '6.2" Dynamic AMOLED 2X',
+          'Camera': '50MP Main | 12MP Ultra Wide | 10MP Tele',
+          'Battery': '4000 mAh',
+          'Storage': '128GB/256GB',
+          'Water Resistance': 'IP68'
+        },
+        highlights: [
+          'Galaxy AI — intelligent features for everyday',
+          'Nightography — incredible low-light photos',
+          'Adaptive refresh rate from 1-120Hz',
+          'Corning Gorilla Glass Victus 2'
+        ],
+        category: 'electronics',
+        subCategory: 'Smartphones',
+        image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400',
+        isNew: true,
+        discount: 10,
+        sku: 'GS24-256-BLK',
+        brand: 'Samsung',
+        warranty: '1 Year',
+        deliveryEstimate: 'Dec 16 - Dec 19',
+        review: []
       },
-      highlights: [
-        'Galaxy AI — intelligent features for everyday',
-        'Nightography — incredible low-light photos',
-        'Adaptive refresh rate from 1-120Hz',
-        'Corning Gorilla Glass Victus 2'
-      ],
-      category: 'electronics',
-      subCategory: 'Smartphones',
-      image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400',
-      isNew: true,
-      discount: 10,
-      sku: 'GS24-256-BLK',
-      brand: 'Samsung',
-      warranty: '1 Year',
-      deliveryEstimate: 'Dec 16 - Dec 19',
-      review: []
-    },
-    {
-      id: 5,
-      name: 'Women\'s Summer Dress',
-      price: 59,
-      originalPrice: 69,
-      description: 'Light and breezy summer dress perfect for warm days. Features a flattering fit and beautiful floral pattern that transitions seamlessly from day to night.',
-      images: [
-        'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600',
-        'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=600',
-        'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600',
-        'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600',
-      ],
-      rating: 4.6,
-      reviews: 92,
-      inStock: true,
-      stockCount: 35,
-      colors: ['Floral Print', 'Solid Black', 'Navy Blue', 'Burgundy'],
-      specifications: {
-        'Material': '100% Rayon',
-        'Length': 'Midi',
-        'Neckline': 'V-Neck',
-        'Sleeve': 'Short Sleeve',
-        'Care': 'Machine wash cold',
-        'Fit': 'True to size'
+      {
+        id: 5,
+        name: 'Women\'s Summer Dress',
+        price: 59,
+        originalPrice: 69,
+        description: 'Light and breezy summer dress perfect for warm days. Features a flattering fit and beautiful floral pattern that transitions seamlessly from day to night.',
+        images: [
+          'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600',
+          'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=600',
+          'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600',
+          'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600',
+        ],
+        rating: 4.6,
+        reviews: 92,
+        inStock: true,
+        stockCount: 35,
+        colors: ['Floral Print', 'Solid Black', 'Navy Blue', 'Burgundy'],
+        specifications: {
+          'Material': '100% Rayon',
+          'Length': 'Midi',
+          'Neckline': 'V-Neck',
+          'Sleeve': 'Short Sleeve',
+          'Care': 'Machine wash cold',
+          'Fit': 'True to size'
+        },
+        highlights: [
+          'Breathable and lightweight fabric',
+          'Flattering A-line silhouette',
+          'Hidden side pockets',
+          'Adjustable straps'
+        ],
+        category: 'fashion',
+        subCategory: 'Women',
+        image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400',
+        isNew: false,
+        discount: 14,
+        sku: 'DR-FLR-SML',
+        brand: 'Chic Style',
+        warranty: '15 Days',
+        deliveryEstimate: 'Dec 12 - Dec 14',
+        review: []
       },
-      highlights: [
-        'Breathable and lightweight fabric',
-        'Flattering A-line silhouette',
-        'Hidden side pockets',
-        'Adjustable straps'
-      ],
-      category: 'fashion',
-      subCategory: 'Women',
-      image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400',
-      isNew: false,
-      discount: 14,
-      sku: 'DR-FLR-SML',
-      brand: 'Chic Style',
-      warranty: '15 Days',
-      deliveryEstimate: 'Dec 12 - Dec 14',
-      review: []
-    },
-    {
-      id: 6,
-      name: 'Modern Sofa Set',
-      price: 799,
-      originalPrice: 899,
-      description: 'Elevate your living space with this contemporary 3-seater sofa set. Features premium fabric upholstery, high-density foam cushions, and a sleek design.',
-      images: [
-        'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600',
-        'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600',
-        'https://images.unsplash.com/photo-1549187774-b4e9b0445b41?w=600',
-        'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&angle=90',
-      ],
-      rating: 4.4,
-      reviews: 67,
-      inStock: true,
-      stockCount: 5,
-      colors: ['Gray', 'Beige', 'Blue', 'Green'],
-      specifications: {
-        'Material': 'Premium Fabric',
-        'Frame': 'Solid Wood',
-        'Fill': 'High-density foam',
-        'Seating': '3-seater + 2-seater',
-        'Weight Capacity': '300 kg',
-        'Assembly': 'Required'
+      {
+        id: 6,
+        name: 'Modern Sofa Set',
+        price: 799,
+        originalPrice: 899,
+        description: 'Elevate your living space with this contemporary 3-seater sofa set. Features premium fabric upholstery, high-density foam cushions, and a sleek design.',
+        images: [
+          'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600',
+          'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600',
+          'https://images.unsplash.com/photo-1549187774-b4e9b0445b41?w=600',
+          'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&angle=90',
+        ],
+        rating: 4.4,
+        reviews: 67,
+        inStock: true,
+        stockCount: 5,
+        colors: ['Gray', 'Beige', 'Blue', 'Green'],
+        specifications: {
+          'Material': 'Premium Fabric',
+          'Frame': 'Solid Wood',
+          'Fill': 'High-density foam',
+          'Seating': '3-seater + 2-seater',
+          'Weight Capacity': '300 kg',
+          'Assembly': 'Required'
+        },
+        highlights: [
+          'Sturdy wooden frame construction',
+          'Removable and washable covers',
+          'Pocket spring seating for comfort',
+          'Modern Scandinavian design'
+        ],
+        category: 'home',
+        subCategory: 'Furniture',
+        image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
+        isNew: false,
+        discount: 11,
+        sku: 'SOFA-MDN-3S',
+        brand: 'Home Comfort',
+        warranty: '2 Years',
+        deliveryEstimate: 'Dec 20 - Dec 23',
+        review: []
       },
-      highlights: [
-        'Sturdy wooden frame construction',
-        'Removable and washable covers',
-        'Pocket spring seating for comfort',
-        'Modern Scandinavian design'
-      ],
-      category: 'home',
-      subCategory: 'Furniture',
-      image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
-      isNew: false,
-      discount: 11,
-      sku: 'SOFA-MDN-3S',
-      brand: 'Home Comfort',
-      warranty: '2 Years',
-      deliveryEstimate: 'Dec 20 - Dec 23',
-      review: []
-    },
-    {
-      id: 7,
-      name: 'Wireless Headphones',
-      price: 199,
-      originalPrice: 249,
-      description: 'Immerse yourself in premium sound with active noise cancellation, 30-hour battery life, and crystal-clear call quality. The perfect companion for music lovers.',
-      images: [
-        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600',
-        'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600',
-        'https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=600',
-        'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&angle=90',
-      ],
-      rating: 4.7,
-      reviews: 423,
-      inStock: true,
-      stockCount: 50,
-      colors: ['Black', 'White', 'Blue', 'Red'],
-      specifications: {
-        'Driver': '40mm dynamic',
-        'Frequency': '20Hz - 20kHz',
-        'Battery': '30 hours',
-        'Connectivity': 'Bluetooth 5.3',
-        'Charging': 'USB-C',
-        'Weight': '250 grams'
+      {
+        id: 7,
+        name: 'Wireless Headphones',
+        price: 199,
+        originalPrice: 249,
+        description: 'Immerse yourself in premium sound with active noise cancellation, 30-hour battery life, and crystal-clear call quality. The perfect companion for music lovers.',
+        images: [
+          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600',
+          'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600',
+          'https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=600',
+          'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&angle=90',
+        ],
+        rating: 4.7,
+        reviews: 423,
+        inStock: true,
+        stockCount: 50,
+        colors: ['Black', 'White', 'Blue', 'Red'],
+        specifications: {
+          'Driver': '40mm dynamic',
+          'Frequency': '20Hz - 20kHz',
+          'Battery': '30 hours',
+          'Connectivity': 'Bluetooth 5.3',
+          'Charging': 'USB-C',
+          'Weight': '250 grams'
+        },
+        highlights: [
+          'Industry-leading noise cancellation',
+          'Quick charge - 5 hours in 10 minutes',
+          'Multipoint connection',
+          'Foldable design for travel'
+        ],
+        category: 'electronics',
+        subCategory: 'Accessories',
+        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+        isNew: false,
+        discount: 20,
+        sku: 'HP-WL-ANC',
+        brand: 'AudioTech',
+        warranty: '1 Year',
+        deliveryEstimate: 'Dec 13 - Dec 15',
+        review: []
       },
-      highlights: [
-        'Industry-leading noise cancellation',
-        'Quick charge - 5 hours in 10 minutes',
-        'Multipoint connection',
-        'Foldable design for travel'
-      ],
-      category: 'electronics',
-      subCategory: 'Accessories',
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-      isNew: false,
-      discount: 20,
-      sku: 'HP-WL-ANC',
-      brand: 'AudioTech',
-      warranty: '1 Year',
-      deliveryEstimate: 'Dec 13 - Dec 15',
-      review: []
-    },
-    {
-      id: 8,
-      name: 'Yoga Mat',
-      price: 29,
-      originalPrice: 39,
-      description: 'Eco-friendly non-slip yoga mat made from natural materials. Provides excellent grip and cushioning for all types of yoga and fitness activities.',
-      images: [
-        'https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=600',
-        'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=600',
-        'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600',
-        'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=600&angle=90',
-      ],
-      rating: 4.5,
-      reviews: 234,
-      inStock: true,
-      stockCount: 100,
-      colors: ['Purple', 'Green', 'Blue', 'Black'],
-      specifications: {
-        'Material': 'Natural Rubber',
-        'Thickness': '6mm',
-        'Length': '72 inches',
-        'Width': '24 inches',
-        'Weight': '2.5 lbs',
-        'Care': 'Wipe clean with damp cloth'
+      {
+        id: 8,
+        name: 'Yoga Mat',
+        price: 29,
+        originalPrice: 39,
+        description: 'Eco-friendly non-slip yoga mat made from natural materials. Provides excellent grip and cushioning for all types of yoga and fitness activities.',
+        images: [
+          'https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=600',
+          'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=600',
+          'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600',
+          'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=600&angle=90',
+        ],
+        rating: 4.5,
+        reviews: 234,
+        inStock: true,
+        stockCount: 100,
+        colors: ['Purple', 'Green', 'Blue', 'Black'],
+        specifications: {
+          'Material': 'Natural Rubber',
+          'Thickness': '6mm',
+          'Length': '72 inches',
+          'Width': '24 inches',
+          'Weight': '2.5 lbs',
+          'Care': 'Wipe clean with damp cloth'
+        },
+        highlights: [
+          'Eco-friendly and biodegradable',
+          'Double-sided non-slip surface',
+          'Alignment lines for proper form',
+          'Free carry strap included'
+        ],
+        category: 'sports',
+        subCategory: 'Equipment',
+        image: 'https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=400',
+        isNew: true,
+        discount: 26,
+        sku: 'YM-ECO-6MM',
+        brand: 'Wellness Pro',
+        warranty: '6 Months',
+        deliveryEstimate: 'Dec 11 - Dec 13',
+        review: []
       },
-      highlights: [
-        'Eco-friendly and biodegradable',
-        'Double-sided non-slip surface',
-        'Alignment lines for proper form',
-        'Free carry strap included'
-      ],
-      category: 'sports',
-      subCategory: 'Equipment',
-      image: 'https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=400',
-      isNew: true,
-      discount: 26,
-      sku: 'YM-ECO-6MM',
-      brand: 'Wellness Pro',
-      warranty: '6 Months',
-      deliveryEstimate: 'Dec 11 - Dec 13',
-      review: []
-    },
-    {
-      id: 9,
-      name: 'Coffee Table',
-      price: 199,
-      originalPrice: 209,
-      description: 'Minimalist coffee table crafted from solid wood with a sleek modern design. Features a lower shelf for additional storage and magazines.',
-      images: [
-        'https://dignity.co.ke/wp-content/uploads/2025/04/COFFEE-TABLE-92350-CTGY-GD.webp',
-        'https://target.scene7.com/is/image/Target/GUEST_fc9fb958-4d17-47a2-a540-f5784a25846e?wid=300&hei=300&fmt=pjpeg',
-        'https://ak1.ostkcdn.com/images/products/is/images/direct/8be1ebabf298e1f2755cd0b4b6ad2bf1a7d1a011/High-Gloss-Multi-Storage-Coffee-Table-with-4-Drawers.jpg?impolicy=medium',
-        'https://img5.su-cdn.com/cdn-cgi/image/width=1000,height=1000/mall/file/2023/05/23/0d731e5baa3d95cf421a398d62c1345e.jpg',
-      ],
-      rating: 4.3,
-      reviews: 89,
-      inStock: true,
-      stockCount: 12,
-      colors: ['Walnut', 'Oak', 'White', 'Black'],
-      specifications: {
-        'Material': 'Solid Wood',
-        'Dimensions': '47" L x 24" W x 18" H',
-        'Finish': 'Matte lacquer',
-        'Assembly': 'Minimal required',
-        'Weight': '35 lbs',
-        'Weight Capacity': '50 lbs'
-      },
-      highlights: [
-        '100% solid wood construction',
-        'Scratch-resistant surface',
-        'Open shelf for storage',
-        'Non-marking floor protectors'
-      ],
-      category: 'home',
-      subCategory: 'Furniture',
-      image: 'https://images.unsplash.com/photo-1532372320978-9b4b38f2c8b4?w=400',
-      isNew: false,
-      discount: 5,
-      sku: 'TBL-CFF-WLT',
-      brand: 'Modern Living',
-      warranty: '1 Year',
-      deliveryEstimate: 'Dec 18 - Dec 21',
-      review: []
-    }
-  ];
+      {
+        id: 9,
+        name: 'Coffee Table',
+        price: 199,
+        originalPrice: 209,
+        description: 'Minimalist coffee table crafted from solid wood with a sleek modern design. Features a lower shelf for additional storage and magazines.',
+        images: [
+          'https://dignity.co.ke/wp-content/uploads/2025/04/COFFEE-TABLE-92350-CTGY-GD.webp',
+          'https://target.scene7.com/is/image/Target/GUEST_fc9fb958-4d17-47a2-a540-f5784a25846e?wid=300&hei=300&fmt=pjpeg',
+          'https://ak1.ostkcdn.com/images/products/is/images/direct/8be1ebabf298e1f2755cd0b4b6ad2bf1a7d1a011/High-Gloss-Multi-Storage-Coffee-Table-with-4-Drawers.jpg?impolicy=medium',
+          'https://img5.su-cdn.com/cdn-cgi/image/width=1000,height=1000/mall/file/2023/05/23/0d731e5baa3d95cf421a398d62c1345e.jpg',
+        ],
+        rating: 4.3,
+        reviews: 89,
+        inStock: true,
+        stockCount: 12,
+        colors: ['Walnut', 'Oak', 'White', 'Black'],
+        specifications: {
+          'Material': 'Solid Wood',
+          'Dimensions': '47" L x 24" W x 18" H',
+          'Finish': 'Matte lacquer',
+          'Assembly': 'Minimal required',
+          'Weight': '35 lbs',
+          'Weight Capacity': '50 lbs'
+        },
+        highlights: [
+          '100% solid wood construction',
+          'Scratch-resistant surface',
+          'Open shelf for storage',
+          'Non-marking floor protectors'
+        ],
+        category: 'home',
+        subCategory: 'Furniture',
+        image: 'https://images.unsplash.com/photo-1532372320978-9b4b38f2c8b4?w=400',
+        isNew: false,
+        discount: 5,
+        sku: 'TBL-CFF-WLT',
+        brand: 'Modern Living',
+        warranty: '1 Year',
+        deliveryEstimate: 'Dec 18 - Dec 21',
+        review: []
+      }
+    ];
 
+  
   // Memoize the product to prevent unnecessary recalculations
   const product = useMemo(() => {
-    return products.find(p => p.id === parseInt(id)) || products[0];
+    return productsdes.find(p => p.id === parseInt(id)) || productsdes[0];
   }, [id]);
 
   // Use useCallback for functions that might be used in dependencies
@@ -478,14 +481,15 @@ const ProductDescription = () => {
     
   }, [product, checkWishlistStatus, selectedColor]); // Added selectedColor to dependencies
 
-  const handleAddToCart = useCallback(() => {
-    if (!product.inStock) return;
+
+  // const handleAddToCart = useCallback(() => {
+  //   if (!product.inStock) return;
     
-    addToCart({ ...product, quantity, selectedColor });
-    setIsAdded(true);
-    setCurrentStock(prev => Math.max(0, prev - quantity));
-    setTimeout(() => setIsAdded(false), 2000);
-  }, [addToCart, product, quantity, selectedColor]);
+  //   addToCart({ ...product, quantity, selectedColor });
+  //   setIsAdded(true);
+  //   setCurrentStock(prev => Math.max(0, prev - quantity));
+  //   setTimeout(() => setIsAdded(false), 2000);
+  // }, [addToCart, product, quantity, selectedColor]);
 
   const handleWishlist = useCallback(() => {
     if (isInWishlistState) {
@@ -530,7 +534,7 @@ const ProductDescription = () => {
 
   const getRelatedProducts = useCallback(() => {
     if (!product) return [];
-    return products
+    return productsdes
       .filter(p => p.category === product.category && p.id !== product.id)
       .slice(0, 4);
   }, [product]);
@@ -854,7 +858,7 @@ const ProductDescription = () => {
               <motion.button
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
-                onClick={handleAddToCart}
+                // onClick={handleAddToCart}
                 disabled={!product.inStock}
                 className={`flex-1 px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all ${
                   !product.inStock 
@@ -864,9 +868,13 @@ const ProductDescription = () => {
                       : 'bg-gray-900 hover:bg-gray-800 text-white'
                 }`}
               >
-                {isAdded ? (
+                <Link to="/signup">
+                    <ShoppingCart className="w-5 h-5" />
+                    Add to Cart
+                  </Link>
+                {/* {isAdded ? (
                   <>
-                    <Check className="w-5 h-5" />
+                    <Check className="w-5 h-5" disabled />
                     Added to Cart!
                   </>
                 ) : (
@@ -874,7 +882,7 @@ const ProductDescription = () => {
                     <ShoppingCart className="w-5 h-5" />
                     Add to Cart
                   </>
-                )}
+                )} */}
               </motion.button>
               
               <motion.button
