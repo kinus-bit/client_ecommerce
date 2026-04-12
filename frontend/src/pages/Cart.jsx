@@ -51,7 +51,7 @@ const Cart = () => {
               <p className="text-gray-600 mb-6">
                 Looks like you haven't added anything yet. Let's change that!
               </p>
-              <Link to="/products">
+              <Link to="/dashboard?tab=products">
                 <button className="bg-gray-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors inline-flex items-center gap-2">
                   Browse Products
                   <ArrowRight className="w-4 h-4" />
@@ -169,7 +169,7 @@ const Cart = () => {
 
               {/* Continue Shopping Link */}
               <Link 
-                to="/products" 
+                to="/dashboard?tab=products" 
                 className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mt-6"
               >
                 <span>←</span>
@@ -214,7 +214,7 @@ const Cart = () => {
                 </div>
 
                 {/* Checkout Button and to="/checkout" to be implemented later*/}
-                <Link to="/nextstage">
+                <Link to="/dashboard?tab=checkout">
                   <button className="w-full bg-gray-900 text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 mb-4">
                     Proceed to Checkout
                     <ArrowRight className="w-4 h-4" />
