@@ -287,9 +287,9 @@ const login = async (req, res) => {
         const user = await User.findOne({ email }).select('+password');
         
         if (!user) {
-            return res.status(400).json({
+            return res.status(404).json({
                 success: false,
-                message: 'invalid credentials'
+                message: 'Account not found!'
             });
         }
 
@@ -305,6 +305,13 @@ const login = async (req, res) => {
 
         // verify password using bcrypt comparison
         const isMatched = await bcrypt.compare(password,user.password);
+
+        if (!isMatched) {
+            return res.status(400).json({
+                success: false,
+                message: 'incorrect password!'
+            });
+        }
 
         if(user && isMatched){
             return  res.status(200).json({
@@ -512,7 +519,7 @@ const changePassword = async (req, res) => {
         const user = await User.findById(req.user.id).select('+password');
         
         // verify current password
-        const isMatch = await user.matchPassword(currentPassword);
+        const isMatch = await bcrypt.compare(currentPassword,user.password);
         
         if (!isMatch) {
             return res.status(401).json({
@@ -520,9 +527,12 @@ const changePassword = async (req, res) => {
                 message: 'Current password is incorrect'
             });
         }
+        
+        const salt = await bcrypt.genSalt(10);
+        const hashedNewPassword = await bcrypt.hash(newPassword, salt);
 
         // Update password to new one
-        user.password = newPassword;
+        user.password = hashedNewPassword;
         await user.save();
 
         res.status(200).json({
@@ -553,6 +563,13 @@ const getMe = async (req, res) => {
             user: {
                 id: user._id,
                 name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                phoneNumber: user.phoneNumber,
+                address: user.address,
+                city: user.city,
+                country: user.country,
+                zipCode: user.zipCode,
                 email: user.email,
                 role: user.role,
                 profilePicture: user.profilePicture || null,
@@ -575,13 +592,22 @@ const getMe = async (req, res) => {
 // @access  Private
 const updateProfile = async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const {firstName, lastName , phoneNumber , address, city, country, zipCode, profilePicture, role} = req.body;
         
         const updateData = {};
 
-        if (name) updateData.name = name;
-
-         // If email is being changed, require re-verification
+        if (firstName) updateData.firstName = firstName;
+        if (lastName) updateData.lastName = lastName;
+        if (phoneNumber) updateData.phoneNumber = phoneNumber;
+        if (address) updateData.address = address;
+        if (city) updateData.city = city;
+        if (country) updateData.country = country;
+        if (zipCode) updateData.zipCode = zipCode;
+        if (profilePicture) updateData.profilePicture = profilePicture;
+        if (role) updateData.role = role;
+/*
+        //WE WILL NOT UPDATE EMAIL FOR NOW,ITS RESTRICTED
+        //  If email is being changed, require re-verification
         if (email && email !== req.user.email) {
             updateData.email = email;
             updateData.isEmailVerified = false;
@@ -600,7 +626,7 @@ const updateProfile = async (req, res) => {
             // Send verification email
             await sendVerificationEmail({ name: req.user.name, email }, verificationToken);
         }
-        
+*/
         const user = await User.findByIdAndUpdate(
             req.user.id,
             updateData,
@@ -612,12 +638,21 @@ const updateProfile = async (req, res) => {
             user: {
                 id: user._id,
                 name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                phoneNumber: user.phoneNumber,
+                address: user.address,
+                city: user.city,
+                country: user.country,
+                zipCode: user.zipCode,
                 email: user.email,
                 role: user.role,
                 profilePicture: user.profilePicture || null,
                 isEmailVerified: user.isEmailVerified
             },
-            message: email && email !== req.user.email ? 'Profile updated. Please verify your new email address.' : 'Profile updated successfully'
+            message: 
+                // email && email !== req.user.email ? 'Profile updated. Please verify your new email address.' : 
+                'Profile updated successfully'
         });
     } catch (error) {
         console.error(error);

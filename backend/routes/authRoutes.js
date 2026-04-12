@@ -67,14 +67,14 @@ const changePasswordValidation = [
         .isLength({ min: 6 }).withMessage('New password must be at least 6 characters')
 ];
 
-const updateProfileValidation = [
-    body('name')
-        .optional()
-        .isLength({ min: 2, max: 50 }).withMessage('Name must be between 2 and 50 characters'),
-    body('email')
-        .optional()
-        .isEmail().withMessage('Please provide a valid email')
-];
+// const updateProfileValidation = [
+//     body('name')
+//         .optional()
+//         .isLength({ min: 2, max: 50 }).withMessage('Name must be between 2 and 50 characters'),
+//     body('email')
+//         .optional()
+//         .isEmail().withMessage('Please provide a valid email')
+// ];
 
 const resendVerificationValidation = [
     body('email')
@@ -93,7 +93,10 @@ router.post('/reset-password/:token', resetPasswordValidation, resetPassword);
 
 // Private routes
 router.get('/me', protect, getMe);
-router.put('/profile', protect, updateProfileValidation, updateProfile);
+router.put('/profile',
+     protect, 
+    //  updateProfileValidation, 
+     updateProfile);
 router.put('/change-password', protect, changePasswordValidation, changePassword);
 router.get('/logout', protect, logout);
 

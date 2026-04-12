@@ -7,6 +7,34 @@ const userSchema = new mongoose.Schema({
         trim: true, // removes whitespace from both ends
         maxlength: [50, 'Name cannot be more than 50 characters']
     },
+    firstName: {
+        type: String,
+        default: null
+    },
+    lastName: {
+        type: String,
+        default: null
+    },
+    phoneNumber: {
+        type: String,
+        default: null
+    },
+    address: {
+        type: String,
+        default: null
+    },
+    city: {
+        type: String,
+        default: null
+    },
+    country: {
+        type: String,
+        default: null
+    },
+    zipCode: {
+        type: String,
+        default: null
+    },
     email: {
         type: String,
         required: [true, 'Please add an email'],
@@ -32,7 +60,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-     isEmailVerified: {
+    isEmailVerified: {
         type: Boolean,
         default: false
     },
@@ -41,6 +69,5 @@ const userSchema = new mongoose.Schema({
         default: Date.now // automatically sets current date
     }
 });
-
 
 module.exports = mongoose.model('User', userSchema);
