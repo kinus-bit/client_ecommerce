@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate, useLocation ,useParams} from 'react-router-dom';
-import { Mail, RefreshCw, AlertCircle, CheckCircle, ArrowRight, Inbox } from 'lucide-react';
+import { Mail, RefreshCw, AlertCircle, CheckCircle, ArrowRight, Inbox, Loader } from 'lucide-react';
 import { resendVerificationEmail, verifyEmail } from '../../services/api';
 
 const VerifyEmail = () => {
