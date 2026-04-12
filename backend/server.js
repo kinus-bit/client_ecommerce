@@ -25,7 +25,8 @@ app.use(express.urlencoded({ extended: true }));
 // Enable CORS
 app.use(cors({
     //allow specific origin in production,all in development
-    origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : '*',
+    origin: '*',
+    // process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : '*',
     credentials: true
 }));
 
