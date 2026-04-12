@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import { ThemeProvider } from './context/ThemeContext';
 import Footer from '@/components/Footer';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -23,47 +24,74 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import EmailVerifiedSuccess from './pages/auth/EmailVerifiedSuccess';
 import ResetPassword from './pages/auth/ResetPassword';
+import { AuthProvider } from './context/AuthContext';
+import { ProfileForm } from './components/user';
+import ProductCatalogtest from './pages/ProductCatalogtest';
+import ProductDescriptiontest from './pages/ProductDescriptiontest';
+import Layout from './components/Layout';
 
 function App() {
   return (
-    <CartProvider>
-      <WishlistProvider>
-      <Router>
-        
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-          <ScrollToTop/>
-          <Navbar />
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/products" element={<ProductCatalog />} />
-              <Route path="/product/:id" element={<ProductDescription />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/nextstage" element={<NextStagePage/>}/>
-              <Route path="/login" element={<Login/>} />
-              <Route path="/signup" element={<Signup/>} />
-              <Route path="/forgotpassword" element={<ForgotPassword/>} />
-              
-              {/* adding token parameter */}
-              <Route path="/verifyemail/" element={<VerifyEmail/>} />
-              <Route path="/verifyemail/:token" element={<VerifyEmail/>} />
-              <Route path="/verifysuccess" element={<EmailVerifiedSuccess/>} />
-              <Route path="/resetpassword/:token" element={<ResetPassword/>} />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard/>
-                </ProtectedRoute>
-              }/>
-              {/* <Route path="/checkout" element={<Checkout />} /> */}
-            </Routes>
-          </AnimatePresence>
-          <Footer/>
-        </div>
-      </Router>
-      </WishlistProvider>
-    </CartProvider>
+    <ThemeProvider>
+    <AuthProvider>
+      <CartProvider>
+        <WishlistProvider>
+          <Router>
+            <Layout>
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+              <ScrollToTop/>
+              <Navbar />
+              <AnimatePresence mode="wait">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/products" element={<ProductCatalog />} />
+                  <Route path="/producttest" element={
+                    <ProtectedRoute>
+                      <ProductCatalogtest />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/product/:id" element={<ProductDescription />} />
+                  <Route path="/producttest/:id" element={
+                    <ProtectedRoute>
+                      <ProductDescriptiontest />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/cart" element={
+                    <ProtectedRoute>
+                      <Cart/>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/checkout" element={
+                    <ProtectedRoute>
+                      <Checkout/>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/nextstage" element={<NextStagePage/>}/>
+                  <Route path="/login" element={<Login/>} />
+                  <Route path="/signup" element={<Signup/>} />
+                  <Route path="/forgotpassword" element={<ForgotPassword/>} />
+                  
+                  <Route path="/verifyemail/" element={<VerifyEmail/>} />
+                  <Route path="/verifyemail/:token" element={<VerifyEmail/>} />
+                  <Route path="/verifysuccess" element={<EmailVerifiedSuccess/>} />
+                  <Route path="/resetpassword/:token" element={<ResetPassword/>} />
+                  <Route path="/dashboard" element={
+                    <ProtectedRoute>
+                      <Dashboard/>
+                    </ProtectedRoute>
+                  }/>
+                </Routes>
+              </AnimatePresence>
+              <Footer/>
+            </div>
+            </Layout>
+          </Router>
+        </WishlistProvider>
+      </CartProvider>
+    </AuthProvider>
+    </ThemeProvider>
   );
 }
 
