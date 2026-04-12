@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 // Enable CORS
 app.use(cors({
     //allow specific origin in production,all in development
-    origin: process.env.NODE_ENV === 'production' ? 'your-production-url.com' : '*',
+    origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : '*',
     credentials: true
 }));
 
@@ -39,10 +39,10 @@ app.use('/api/products', productRoutes);
 app.use('/api/upload', uploadRoutes);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/', (req, res) => {
     res.status(200).json({
         success: true,
-        message: 'Server is running',
+        message: 'Server is up and running perfectly🎉🎉',
         timestamp: new Date().toISOString()
     });
 });
@@ -50,24 +50,12 @@ app.get('/health', (req, res) => {
 // global error handler middleware (should be last)
 app.use(errorHandler);
 
-//start server(skip when imported by tests)
-if( require.main === module ){
-    connectDB();
-
-const PORT = process.env.PORT || 5000;
-
-//starting server.........
-const server = app.listen(PORT, () => {
-    console.log(`Server running in  http://localhost:${process.env.PORT}`);
-});
-
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-console.log(`Error: ${err.message}`);
-// Close server & exit process
-server.close(() => process.exit(1));
-});
-
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const port = process.env.PORT || 5000;
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
 }
+
 module.exports = app;
