@@ -32,12 +32,12 @@ import Layout from './components/Layout';
 
 function App() {
   return (
-    <ThemeProvider>
+    
     <AuthProvider>
       <CartProvider>
         <WishlistProvider>
           <Router>
-            <Layout>
+           
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
               <ScrollToTop/>
               <Navbar />
@@ -86,12 +86,12 @@ function App() {
               </AnimatePresence>
               <Footer/>
             </div>
-            </Layout>
+            
           </Router>
         </WishlistProvider>
       </CartProvider>
     </AuthProvider>
-    </ThemeProvider>
+  
   );
 }
 
