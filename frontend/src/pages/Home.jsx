@@ -2,12 +2,12 @@
 import React, { useEffect, useState,useCallback,useMemo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
+
 import { ArrowRight, Star, Truck, Shield, Headphones, TrendingUp, Clock, Award, ChevronRight } from 'lucide-react';
 
 
 const Home = () => {
-  const { isDarkMode } = useTheme();
+ 
   const { scrollY } = useScroll();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
@@ -116,7 +116,7 @@ const categories = [
       className="min-h-screen bg-white"
     >
       {/* Hero Section with Parallax */}
-      <section className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} relative h-screen overflow-hidden `}>
+      <section className="bg-white relative h-screen overflow-hidden">
         <motion.div 
           style={{ scale: heroScale }}
           className="absolute inset-0"
