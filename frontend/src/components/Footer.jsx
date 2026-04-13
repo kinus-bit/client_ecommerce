@@ -2,7 +2,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useTheme } from '../context/ThemeContext';
 import { 
   Facebook, 
   Twitter, 
@@ -20,7 +19,7 @@ import {
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const { isDarkMode } = useTheme();
+
 
   const footerLinks = {
     shop: [
@@ -62,7 +61,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className={`${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-gray-900'} text-white mt-auto`}>
+    <footer className="bg-gray-900 text-white mt-auto">
       {/* Features Bar */}
       <div className="border-b border-gray-800 bg-gray-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
