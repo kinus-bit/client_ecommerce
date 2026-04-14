@@ -31,7 +31,10 @@ app.use(cors({
 }));
 
 // Serve static files from uploads directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+if(process.env.NODE_ENV !== 'production'){
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+}
+
 
 // Mount routes
 app.use('/api/auth', authRoutes);
