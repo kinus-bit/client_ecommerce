@@ -3,6 +3,9 @@ const fs = require('fs-extra');
 const Product = require('../models/Product');
 const User = require('../models/User');
 
+//Cloudinary
+const cloudinary = require('../config/cloudinary');
+
 // @desc    Upload single product image
 // @route   POST /api/upload/product-image
 // @access  Private/Admin
@@ -93,17 +96,22 @@ const uploadProfilePicture = async (req, res) => {
             });
         }
 
-        // Delete old profile picture if exists to save disk space
+        
         const user = await User.findById(req.user.id);
+
+        // Delete old profile picture from Cloudinary if exists
         if (user.profilePicture) {
-            const oldFilePath = path.join(__dirname, '..', user.profilePicture);
-            if (fs.existsSync(oldFilePath)) {
-                await fs.remove(oldFilePath); // Remove old file from disk
+            // Extract public_id from Cloudinary URL
+            // Format: https://res.cloudinary.com/cloud_name/image/upload/v123456/profiles/filename
+            const oldPublicId = user.profilePicture.split('/').slice(-2).join('/').split('.')[0];
+            if(oldPublicId){
+                await cloudinary.uploader.destroy(oldPublicId);
             }
+
         }
 
-        // Update user document with new profile picture URL
-        const profilePictureUrl = `/uploads/profiles/${req.file.filename}`;
+        // Update user document with cloudinary URL
+        const profilePictureUrl = req.file.path; //Cloudinary returns the URL in 'path'
         await User.findByIdAndUpdate(req.user.id, { profilePicture: profilePictureUrl });
 
         res.status(200).json({
@@ -113,7 +121,8 @@ const uploadProfilePicture = async (req, res) => {
                 url: profilePictureUrl,
                 originalName: req.file.originalname,
                 size: req.file.size,
-                mimetype: req.file.mimetype
+                mimetype: req.file.mimetype,
+                cloudinaryUrl: profilePictureUrl // Full Cloudinary URL
             },
             message: 'Profile picture updated successfully'
         });
@@ -142,28 +151,31 @@ const deleteFile = async (req, res) => {
             });
         }
 
-        //construct full file path
-        const filePath = path.join(__dirname, '../uploads', type, filename);
-        
-        // check if file exists
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).json({
-                success: false,
-                message: 'File not found'
-            });
-        }
 
-        // If it's a profile picture, remove reference from user
+
+        //Handle profile picture deletion from Cloudinary
         if (type === 'profiles') {
+
+            //get user to find the Cloudinary public_id
+            const user = await User.findById(req.user.id);
+
+            if(user.profilePicture){
+                //Extract public_id from Cloudinary URl
+                const publicId = user.profilePicture.split('/').slice(-2).join('/').split('.')[0];
+                if (publicId){
+
+                    //delete from Cloudinary
+                    await cloudinary.uploader.destroy(publicId);
+                }
+            }
+
+            // Remove reference from user
             await User.findByIdAndUpdate(req.user.id, { profilePicture: null });
         }
-
-        // delete the file from disk
-        await fs.remove(filePath);
         
         res.status(200).json({
             success: true,
-            message: 'File deleted successfully'
+            message: 'File deleted successfully from Cloudinary'
         });
     } catch (error) {
         console.error(error);
