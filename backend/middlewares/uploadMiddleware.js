@@ -2,6 +2,10 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs-extra');
 
+//cloudinary
+const cloudinary = require('../config/cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
 // Ensure upload directories exist
 const ensureDirectoryExists = (dir) => {
 
@@ -37,30 +41,28 @@ const productStorage = multer.diskStorage({
     }
 });
 
-// Configure storage for profile pictures
-const profileStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
+//configure Cloudinary storage for profile pictures
+const profileStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'profiles',
+        format: async (req, file) => {
 
-        //define upload path: /uploads/profiles
-        const dir = path.join(__dirname, '../uploads/profiles');
+            //get file extension without dot
+            const ext = file.originalname.split('.').pop();
+            return ext === 'jpg' ? 'jpg' : ext === 'png' ? 'png' : 'jpeg';
+        },
+        public_id: (req, file) => {
 
-        //create direstory if doesn't exist
-        ensureDirectoryExists(dir);
-
-        //pass to multer
-        cb(null, dir);
-    },
-    filename: (req, file, cb) => {
-
-        //Generate unique filename to prevent collisions
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-
-        //preserve original file extension
-        const ext = path.extname(file.originalname);
-
-        //format: profile-userid-timestamp-random.jpg
-        cb(null, `profile-${req.user.id}-${uniqueSuffix}${ext}`);
-    }
+            //generate unique filename: profile-userId-timestamp
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            return `profile-${req.user.id}-${uniqueSuffix}`;
+        },
+        transformation:[
+            { width: 500, height: 500, crop: 'limit'}, //resize to  max 500x
+            { quality: 'auto'} //Automatic quality optimization
+        ]
+    } 
 });
 
 // File filter to restrict allowed file types
