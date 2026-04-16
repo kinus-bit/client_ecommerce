@@ -18,20 +18,43 @@ const productSchema = new mongoose.Schema({
         required: [true, 'Please add a price'],
         min: [0, 'Price cannot be negative'] //prevents negative prices
     },
+    originalPrice: {
+        type: Number,
+        required: [true, 'Please add a price'],
+        min: [0, 'Price cannot be negative'] //prevents negative prices
+    },
     category: {
         type: String,
         required: [true, 'Please add a category'],
-        enum: ['electronics', 'clothing', 'books', 'home', 'beauty', 'sports', 'other']
+        enum: ['electronics', 'furniture', 'drinks', 'decor', 'cutlery',
+             'menfashion', 'womenfashion', 'curtains', 'carpets']
     },
+    subCategory: {
+        type: String,
+        required: [true, 'Please add a subcategory'],
+        enum: ['Smartphones', 'Laptops', 'Tablets', 'Accessories', 'Beds',
+            'Kitchen tables', 'Study tables','Chairs','Closet', 'Jeans',
+            'T-shirts', 'Sweaters', 'Jackets', 'shoes', 'Tops', 'jeans',
+            'Trousers', 'skirts', 'jackets', 'bags', 'dress']
+    },
+    color: [{
+        type: String,
+        required: [true, 'Please add a subcategory']
+    }],
     stock: {
         type: Number,
         required: [true, 'Please add stock quantity'],
         min: [0, 'Stock cannot be negative'],
         default: 0 //Default value if not provided
     },
+    discount: {
+        type: Number,
+        min: [0, 'Discount cannot be negative'],
+        default: 0
+    },
     images: [{
         type: String, // Array of image URLs
-        url: String
+        trim:true
     }],
     ratings: {
         type: Number,
@@ -42,6 +65,22 @@ const productSchema = new mongoose.Schema({
     numReviews: {
         type: Number,
         default: 0  //track how many users have rated
+    },
+    specifications: [{
+        type: String,
+        required: [true, 'Provide a specification']
+    }],
+    highlights: [{
+        type: String,
+        required: [true, 'Provide a highlights']
+    }],
+    comments: {
+        type: String,
+        default: ''
+    },
+    IsNew: {
+        type: Boolean,
+        default:false
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId, //References User collection

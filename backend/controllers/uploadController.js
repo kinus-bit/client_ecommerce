@@ -1,5 +1,3 @@
-const path = require('path');
-const fs = require('fs-extra');
 const Product = require('../models/Product');
 const User = require('../models/User');
 
@@ -20,8 +18,8 @@ const uploadProductImage = async (req, res) => {
             });
         }
 
-        // construct URl for accessing the uploaded file
-        const fileUrl = `/uploads/products/${req.file.filename}`;
+        // Cloudinary automatically stores the file and provides the URl
+        const fileUrl = req.file.path; //Cloudinary Url
         
         res.status(200).json({
             success: true,
@@ -32,7 +30,7 @@ const uploadProductImage = async (req, res) => {
                 size: req.file.size,
                 mimetype: req.file.mimetype //file MIME type
             },
-            message: 'File uploaded successfully'
+            message: 'File uploaded successfully to Cloudinary'
         });
     } catch (error) {
         console.error(error);
@@ -60,8 +58,8 @@ const uploadProductImages = async (req, res) => {
 
         // Map each uploaded file to a structured data object
         const files = req.files.map(file => ({
-            filename: file.filename,
-            url: `/uploads/products/${file.filename}`,
+            public_id: file.filename,
+            url: file.path, // Cloudinary URL
             originalName: file.originalname,
             size: file.size,
             mimetype: file.mimetype
@@ -171,6 +169,14 @@ const deleteFile = async (req, res) => {
 
             // Remove reference from user
             await User.findByIdAndUpdate(req.user.id, { profilePicture: null });
+        }
+
+        //Handle product image deletion
+        if(type === 'products'){
+
+            //Construct the full public_id(includes folder)
+            const publicId = `products/${filename.split('.')[0]}`;
+            await cloudinary.uploader.destroy(publicId);
         }
         
         res.status(200).json({

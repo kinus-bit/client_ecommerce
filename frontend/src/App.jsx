@@ -2,7 +2,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Navbar from '@/components/Navbar';
-import { ThemeProvider } from './context/ThemeContext';
 import Footer from '@/components/Footer';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -28,7 +27,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProfileForm } from './components/user';
 import ProductCatalogtest from './pages/ProductCatalogtest';
 import ProductDescriptiontest from './pages/ProductDescriptiontest';
-import Layout from './components/Layout';
+import AdminRoutes from './routes/AdminRoutes';
 
 function App() {
   return (
@@ -82,6 +81,8 @@ function App() {
                       <Dashboard/>
                     </ProtectedRoute>
                   }/>
+                   {/* Admin Routes */}
+                  <Route path="/admin/*" element={<AdminRoutes />} />
                 </Routes>
               </AnimatePresence>
               <Footer/>

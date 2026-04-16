@@ -3,15 +3,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Settings, ShoppingBag, Heart, LogOut, ChevronDown, Shield } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
+import {getUserFromToken} from '../utils/auth';
 
 const UserDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const { user, logout } = useAuth();
-  const { isDarkMode } = useTheme();
   const navigate = useNavigate();
+  const user = getUserFromToken();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -24,7 +22,7 @@ const UserDropdown = () => {
   }, []);
 
   const handleLogout = () => {
-    logout();
+    localStorage
     navigate('/');
     setIsOpen(false);
   };
@@ -54,9 +52,8 @@ const UserDropdown = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-          isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
-        }`}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors 
+          hover:bg-gray-100"
       >
         <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
           {user?.avatar ? (
@@ -65,12 +62,11 @@ const UserDropdown = () => {
             getInitials()
           )}
         </div>
-        <span className={`text-sm font-medium hidden lg:inline ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+        <span className="text-sm font-medium hidden lg:inline text-gray-700">
           {user?.firstName || 'User'}
         </span>
-        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''} ${
-          isDarkMode ? 'text-gray-400' : 'text-gray-500'
-        }`} />
+        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}
+          text-gray-500`} />
       </button>
 
       <AnimatePresence>
@@ -79,15 +75,13 @@ const UserDropdown = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className={`absolute right-0 mt-2 w-64 rounded-xl shadow-lg border overflow-hidden z-50 ${
-              isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-            }`}
+            className="absolute right-0 mt-2 w-64 rounded-xl shadow-lg border overflow-hidden z-50 'bg-white border-gray-200"
           >
-            <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-gray-50'}`}>
-              <p className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+              <p className="text-sm font-medium text-gray-900">
                 {user?.firstName} {user?.lastName}
               </p>
-              <p className={`text-xs truncate ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className="text-xs truncate text-gray-500">
                 {user?.email}
               </p>
             </div>
@@ -99,26 +93,21 @@ const UserDropdown = () => {
                   <button
                     key={index}
                     onClick={() => handleNavigation(item.tab)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-left ${
-                      isDarkMode 
-                        ? 'text-gray-300 hover:bg-gray-700' 
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-left
+                        text-gray-700 hover:bg-gray-50"
                   >
-                    <Icon className={`w-4 h-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                    <Icon className="w-4 h-4 text-gray-400" />
                     <span>{item.label}</span>
                   </button>
                 );
               })}
             </div>
 
-            <div className={`border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}></div>
+            <div className="border-t border-gray-200"></div>
 
             <button
               onClick={handleLogout}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                isDarkMode ? 'text-red-400 hover:bg-gray-700' : 'text-red-600 hover:bg-red-50'
-              }`}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-red-600 hover:bg-red-50"
             >
               <LogOut className="w-4 h-4" />
               <span>Logout</span>
