@@ -24,22 +24,21 @@ const productSchema = new mongoose.Schema({
         min: [0, 'Price cannot be negative'] //prevents negative prices
     },
     category: {
-        type: String,
-        required: [true, 'Please add a category'],
-        enum: ['electronics', 'furniture', 'drinks', 'decor', 'cutlery',
-             'menfashion', 'womenfashion', 'curtains', 'carpets']
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Category",
+        required: [true, 'Please add a category'],   
     },
     subCategory: {
-        type: String,
-        required: [true, 'Please add a subcategory'],
-        enum: ['Smartphones', 'Laptops', 'Tablets', 'Accessories', 'Beds',
-            'Kitchen tables', 'Study tables','Chairs','Closet', 'Jeans',
-            'T-shirts', 'Sweaters', 'Jackets', 'shoes', 'Tops', 'jeans',
-            'Trousers', 'skirts', 'jackets', 'bags', 'dress']
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Subcategory"
     },
     color: [{
         type: String,
         required: [true, 'Please add a subcategory']
+    }],
+    size:[{
+        type: String,
+        default: null
     }],
     stock: {
         type: Number,
@@ -60,7 +59,7 @@ const productSchema = new mongoose.Schema({
         type: Number,
         min: [1, 'Rating must be at least 1'],
         max: [5, 'Rating cannot be more than 5'],
-        default: 0
+        default: null
     },
     numReviews: {
         type: Number,
@@ -97,12 +96,5 @@ const productSchema = new mongoose.Schema({
     }
 });
 
-// Middleware that runs before saving a document
-productSchema.pre('save', function(next) {
-
-    //Automatically update the timestamp on any save
-    this.updatedAt = Date.now();
-    next();
-});
 
 module.exports = mongoose.model('Product', productSchema);
