@@ -53,6 +53,19 @@ export const getMe = () => API.get('/auth/me');
 export const updateProfile = (profileData) => API.put('/auth/profile', profileData);
 export const logout = () => API.get('/auth/logout');
 
+//user routes
+
+//category
+export const createcategory = (name) => API.post('/products/category', name);
+export const getallcategories = () => API.get('/products/category');
+
+//subcategory
+export const createsubcategory = (subcategoryData) => API.post('products/subcategory', subcategoryData);
+export const getallsubcategories = () => API.get('/products/subcategory');
+
+//admin routes
+export const getallusers = () => API.get('/admin/users');
+
 //Upload API methods
 export const uploadProfilePicture = (file) => {
     //file should already be FormData
@@ -62,6 +75,42 @@ export const uploadProfilePicture = (file) => {
         },
     });
 };
+
 export const deleteProfilePicture = (type, filename) => API.delete(`/upload/${type}/${filename}`);
 
 
+// Product APIs
+export const getAllProducts = (params) => API.get('/products', { params });
+export const getProductById = (id) => API.get(`/products/${id}`);
+export const createProduct = (data) => API.post('/products', data);
+export const createProductWithImages = (formData) => {
+  return API.post('/products/with-images', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+};
+
+export const updateProduct = (id, data) => API.put(`/products/${id}`, data);
+export const deleteProduct = (id) => API.delete(`/products/${id}`);
+export const updateProductStock = (id, stock) => API.patch(`/products/${id}/stock`, { stock });
+
+// Upload APIs
+export const uploadSingleImage = (formData) => API.post('/upload/product-image', formData, {
+  headers: { 'Content-Type': 'multipart/form-data' }
+});
+export const uploadMultipleImages = (formData) => API.post('/upload/product-images', formData, {
+  headers: { 'Content-Type': 'multipart/form-data' }
+});
+
+//cart APis
+export const addtocart = (productData) => API.post('/cart/add', productData);// product details
+export const getmycart = () => API.get('/cart/');
+export const removefromcart = (id) => API.delete(`/cart/remove/${id}`);
+
+//order APIs
+export const createorder = (orderdata) => API.post('/order/', orderdata);//shipment,contact
+export const getmyorders = () => API.get('/order/my-orders');
+export const getallorders = () => API.get('/order/');
+export const getallorderbyuserId = (id) => API.get(`/order/user/${id}`);
+
+
+export default API;
