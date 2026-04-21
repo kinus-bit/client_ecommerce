@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middlewares/authMiddleware');
-const { userValidation, validate } = require('../middlewares/validationMiddleware');
 const {
     getAllUsers,
     getUserById,
@@ -26,9 +25,9 @@ router.get('/users/stats', getUserStats);
 router.get('/users/:id', getUserById);
 
 //update user role
-router.put('/users/:id/role', userValidation.updateRole, validate, updateUserRole);
+router.put('/users/:id/role', updateUserRole);
 
 //Delete user
-router.delete('/users/:id', userValidation.deleteUser, validate, deleteUser);
+router.delete('/users/:id', deleteUser);
 
 module.exports = router;
