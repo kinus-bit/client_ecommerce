@@ -7,6 +7,7 @@ import AdminProducts from '../pages/admin/AdminProducts';
 import AdminOrders from '../pages/admin/AdminOrders';
 import AdminUsers from '../pages/admin/AdminUsers';
 import AdminCategories from '../pages/admin/AdminCategories';
+import AdminSubcategories from '../pages/admin/AdminSubcategoryies';
 import AdminSettings from '../pages/admin/AdminSettings';
 import ProtectedRoute from '../utils/ProtectedRoute';
 import AdminNotifications from '../pages/admin/AdminNotifications';
@@ -25,6 +26,7 @@ const AdminRoutes = () => {
         <Route path="orders" element={<AdminOrders />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="categories" element={<AdminCategories />} />
+        <Route path="subcategories" element={<AdminSubcategories/>}/>
         <Route path="notifications" element={<AdminNotifications />} />
         <Route path="settings" element={<AdminSettings />} />
       </Route>

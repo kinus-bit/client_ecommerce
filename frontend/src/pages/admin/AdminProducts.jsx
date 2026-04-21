@@ -1,42 +1,171 @@
 // pages/admin/AdminProducts.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit, Trash2, Eye, Search, Filter } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Search, X, AlertCircle } from 'lucide-react';
 import AdminTable from '../../components/admin/AdminTable';
 import AdminModal from '../../components/admin/AdminModal';
+import { 
+  createProductWithImages, 
+  getAllProducts, 
+  deleteProduct,
+  updateProduct 
+} from '@/services/api';
 
 const AdminProducts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
-  const products = [
-    { id: 1, name: 'iPhone 15 Pro', price: 999, stock: 15, status: 'Active', category: 'Electronics' },
-    { id: 2, name: 'MacBook Pro', price: 1299, stock: 8, status: 'Active', category: 'Electronics' },
-    { id: 3, name: "Men's Leather Jacket", price: 89, stock: 25, status: 'Active', category: 'Fashion' },
-    { id: 4, name: 'Samsung Galaxy S24', price: 899, stock: 20, status: 'Active', category: 'Electronics' },
-    { id: 5, name: 'Women\'s Summer Dress', price: 59, stock: 35, status: 'Inactive', category: 'Fashion' },
-  ];
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    originalPrice: '',
+    category: '',
+    subCategory: '',
+    color: '',
+    stock: '',
+    discount: '',
+    specifications: '',
+    highlights: '',
+    comments: '',
+    IsNew: false,
+  });
+
+  // Helper function to parse array values that might be double-stringified
+  const parseArrayField = (value) => {
+    if (!value) return [];
+    
+    // If it's already an array
+    if (Array.isArray(value)) {
+      return value;
+    }
+    
+    // If it's a string
+    if (typeof value === 'string') {
+      try {
+        // Try to parse JSON
+        const parsed = JSON.parse(value);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+        return [value];
+      } catch (e) {
+        // If it's a comma-separated string
+        if (value.includes(',')) {
+          return value.split(',').map(item => item.trim()).filter(item => item);
+        }
+        return [value];
+      }
+    }
+    
+    return [];
+  };
+  // Fetch products on component mount
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // Auto clear messages after 5 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => setSuccessMessage(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await getAllProducts();
+      console.log('API Response:', response);
+      
+      // Get products array from response
+      let productsData = response.data?.data || response.data || [];
+      
+      // Clean up products data - parse any stringified arrays
+      const cleanedProducts = productsData.map(product => ({
+        ...product,
+        color: product.color,
+        specifications: product.specifications,
+        highlights: product.highlights
+      }));
+      
+      setProducts(cleanedProducts);
+      console.log('Cleaned products:', cleanedProducts);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to fetch products';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const columns = [
-    { header: 'ID', accessor: 'id' },
+    { 
+      header: 'Category', 
+      accessor: 'category',
+      render: (value) => value?.name || 'N/A'
+    },
     { header: 'Product Name', accessor: 'name' },
-    { header: 'Price', accessor: 'price', render: (value) => `$${value}` },
+    { 
+      header: 'Price', 
+      accessor: 'price', 
+      render: (value) => `$${value}` 
+    },
     { header: 'Stock', accessor: 'stock' },
     { 
       header: 'Status', 
-      accessor: 'status',
+      accessor: 'stock',
       render: (value) => (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          value === 'Active' 
+          value > 0 
             ? 'bg-green-100 text-green-700'
             : 'bg-red-100 text-red-700'
         }`}>
-          {value}
+          {value > 0 ? 'In Stock' : 'Out of Stock'}
         </span>
       )
     },
-    { header: 'Category', accessor: 'category' },
+    { 
+      header: 'Subcategory',
+      accessor: 'subCategory',
+      render:(value) => value?.name || 'N/A'
+    },
+    {
+      header: 'Images',
+      accessor: 'images',
+      render: (value) => (
+        <div className="flex gap-1">
+          {value && value.slice(0, 2).map((img, idx) => (
+            <img 
+              key={idx} 
+              src={img} 
+              alt="product" 
+              className="w-8 h-8 object-cover rounded"
+            />
+          ))}
+          {value && value.length > 2 && (
+            <span className="text-xs text-gray-500">+{value.length - 2}</span>
+          )}
+        </div>
+      )
+    },
     {
       header: 'Actions',
       accessor: 'actions',
@@ -51,10 +180,16 @@ const AdminProducts = () => {
           >
             <Eye className="w-4 h-4 text-blue-500" />
           </button>
-          <button className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
+          <button 
+            onClick={() => handleEdit(row)}
+            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+          >
             <Edit className="w-4 h-4 text-amber-500" />
           </button>
-          <button className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
+          <button 
+            onClick={() => handleDelete(row._id)}
+            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+          >
             <Trash2 className="w-4 h-4 text-red-500" />
           </button>
         </div>
@@ -63,8 +198,217 @@ const AdminProducts = () => {
   ];
 
   const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    product.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
+    // Clear error when user starts typing
+    if (error) setError(null);
+  };
+
+  const handleImageSelect = (e) => {
+    const files = Array.from(e.target.files);
+    
+    // Check file size (5MB limit)
+    const invalidFiles = files.filter(file => file.size > 5 * 1024 * 1024);
+    if (invalidFiles.length > 0) {
+      setError('Some files exceed 5MB limit');
+      return;
+    }
+    
+    setImageFiles(files);
+    
+    // Create preview URLs
+    const previews = files.map(file => URL.createObjectURL(file));
+    setImagePreviews(previews);
+  };
+
+  const removeImage = (index) => {
+    setImageFiles(imageFiles.filter((_, i) => i !== index));
+    setImagePreviews(imagePreviews.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    
+    try {
+      const formDataToSend = new FormData();
+      
+      // Add all text fields (trim values)
+      formDataToSend.append('name', formData.name.trim());
+      formDataToSend.append('description', formData.description.trim());
+      formDataToSend.append('price', formData.price);
+      formDataToSend.append('originalPrice', formData.originalPrice);
+      formDataToSend.append('category', formData.category.trim());
+      formDataToSend.append('subCategory', formData.subCategory.trim());
+      formDataToSend.append('stock', formData.stock);
+      formDataToSend.append('discount', formData.discount || '0');
+      formDataToSend.append('comments', formData.comments?.trim() || '');
+      formDataToSend.append('IsNew', formData.IsNew);
+      
+      // Handle colors - split comma-separated string into array
+      let colors = [];
+      if (formData.color) {
+        if (typeof formData.color === 'string') {
+          colors = formData.color.split(',').map(c => c.trim()).filter(c => c);
+        } else if (Array.isArray(formData.color)) {
+          colors = formData.color;
+        }
+      }
+      formDataToSend.append('color', JSON.stringify(colors));
+      
+      // Handle specifications
+      let specifications = [];
+      if (formData.specifications) {
+        if (typeof formData.specifications === 'string') {
+          specifications = formData.specifications.split(',').map(s => s.trim()).filter(s => s);
+        } else if (Array.isArray(formData.specifications)) {
+          specifications = formData.specifications;
+        }
+      }
+      formDataToSend.append('specifications', JSON.stringify(specifications));
+      
+      // Handle highlights
+      let highlights = [];
+      if (formData.highlights) {
+        if (typeof formData.highlights === 'string') {
+          highlights = formData.highlights.split(',').map(h => h.trim()).filter(h => h);
+        } else if (Array.isArray(formData.highlights)) {
+          highlights = formData.highlights;
+        }
+      }
+      formDataToSend.append('highlights', JSON.stringify(highlights));
+      
+      // Add images
+      imageFiles.forEach(file => {
+        formDataToSend.append('images', file);
+      });
+      
+      let response;
+      if (selectedProduct) {
+        // Update existing product
+        response = await updateProduct(selectedProduct._id, formDataToSend);
+        setSuccessMessage('Product updated successfully');
+      } else {
+        // Create new product
+        response = await createProductWithImages(formDataToSend);
+        setSuccessMessage('Product created successfully');
+        console.log(response);
+      }
+      
+      // Reset form and refresh products
+      resetForm();
+      await fetchProducts();
+      setIsModalOpen(false);
+      
+    } catch (error) {
+      console.error('Error:', error?.response?.data || error.message);
+      
+      // Extract error message from backend
+      let errorMessage = 'Failed to save product';
+      
+      if (error?.response?.data) {
+        const backendError = error.response.data;
+        
+        if (backendError.message) {
+          errorMessage = backendError.message;
+        }
+        
+        // Handle validation errors from mongoose
+        if (backendError.error?.includes('validation failed')) {
+          errorMessage = 'Please check all required fields and try again';
+        }
+        
+        // Handle specific field errors
+        if (backendError.errors) {
+          const fieldErrors = Object.values(backendError.errors).map(err => err.message).join(', ');
+          errorMessage = fieldErrors;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
+    }
+  };
+
+  const handleEdit = (product) => {
+    setSelectedProduct(product);
+    
+    // Convert arrays to comma-separated strings for form display
+    setFormData({
+      name: product.name || '',
+      description: product.description || '',
+      price: product.price || '',
+      originalPrice: product.originalPrice || '',
+      category: product.category || '',
+      subCategory: product.subCategory || '',
+      color: product.color || '',
+      stock: product.stock || '',
+      discount: product.discount || '',
+      specifications: product.specifications || '',
+      highlights: product.highlights || '',
+      comments: product.comments || '',
+      IsNew: product.IsNew || false,
+    });
+    
+    setImageFiles([]);
+    setImagePreviews([]);
+    setError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        setError(null);
+        const response = await deleteProduct(id);
+        console.log(response);
+        setSuccessMessage('Product deleted successfully');
+        await fetchProducts();
+      } catch (error) {
+        console.error('Error deleting product:', error.response?.data);
+        const errorMessage = error?.response?.data?.message || 'Failed to delete product';
+        setError(errorMessage);
+      }
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      description: '',
+      price: '',
+      originalPrice: '',
+      category: '',
+      subCategory: '',
+      color: '',
+      stock: '',
+      discount: '',
+      specifications: '',
+      highlights: '',
+      comments: '',
+      IsNew: false,
+    });
+    setImageFiles([]);
+    setImagePreviews([]);
+    setSelectedProduct(null);
+    setError(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">Loading products...</div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -84,13 +428,31 @@ const AdminProducts = () => {
           </p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            resetForm();
+            setIsModalOpen(true);
+          }}
           className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Product
         </button>
       </div>
+
+      {/* Success Message */}
+      {successMessage && (
+        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+          {successMessage}
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-start gap-2">
+          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+          <span>{error}</span>
+        </div>
+      )}
 
       {/* Search and Filter */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -104,10 +466,6 @@ const AdminProducts = () => {
             className="w-full pl-10 pr-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors">
-          <Filter className="w-4 h-4" />
-          Filter
-        </button>
       </div>
 
       {/* Products Table */}
@@ -122,62 +480,293 @@ const AdminProducts = () => {
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-          setSelectedProduct(null);
+          resetForm();
         }}
         title={selectedProduct ? 'Edit Product' : 'Add New Product'}
       >
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto px-2">
+          {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Product Name
+              Product Name *
             </label>
             <input
               type="text"
-              className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-              defaultValue={selectedProduct?.name}
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
             />
           </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description *
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              rows="3"
+              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Price + Original Price */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Price
+                Price * ($)
               </label>
               <input
                 type="number"
-                className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                defaultValue={selectedProduct?.price}
+                step="0.01"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
               />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Stock
+                Original Price * ($)
               </label>
               <input
                 type="number"
-                className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                defaultValue={selectedProduct?.stock}
+                step="0.01"
+                name="originalPrice"
+                value={formData.originalPrice}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
               />
             </div>
           </div>
+
+          {/* Stock + Discount */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Stock *
+              </label>
+              <input
+                type="number"
+                name="stock"
+                value={formData.stock}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Discount (%)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                name="discount"
+                value={formData.discount}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+          </div>
+
+          {/* Category */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Category
+              Category *
             </label>
             <select
-              className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-              defaultValue={selectedProduct?.category}
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
             >
-              <option>Electronics</option>
-              <option>Fashion</option>
-              <option>Home & Living</option>
-              <option>Sports</option>
+              <option value="">Select Category</option>
+              <option value="electronics">Electronics</option>
+              <option value="furniture">Furniture</option>
+              <option value="drinks">Drinks</option>
+              <option value="decor">Decor</option>
+              <option value="cutlery">Cutlery</option>
+              <option value="menfashion">menfashion</option>
+              <option value="womenfashion">womenfashion</option>
+              <option value="curtains">Curtains</option>
+              <option value="carpets">Carpets</option>
             </select>
           </div>
+
+          {/* SubCategory */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Sub Category *
+            </label>
+            <select
+              name="subCategory"
+              value={formData.subCategory}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+            >
+              <option value="">Select Sub Category</option>
+              <option value="Smartphones">Smartphones</option>
+              <option value="Laptops">Laptops</option>
+              <option value="Tablets">Tablets</option>
+              <option value="Accessories">Accessories</option>
+              <option value="Beds">Beds</option>
+              <option value="Kitchen tables">Kitchen tables</option>
+              <option value="Study tables">Study tables</option>
+              <option value="Chairs">Chairs</option>
+              <option value="Closet">Closet</option>
+              <option value="Jeans">Jeans</option>
+              <option value="T-shirts">T-shirts</option>
+              <option value="Sweaters">Sweaters</option>
+              <option value="Jackets">Jackets</option>
+              <option value="shoes">shoes</option>
+              <option value="Tops">Tops</option>
+              <option value="Trousers">Trousers</option>
+              <option value="skirts">skirts</option>
+              <option value="jackets">jackets</option>
+              <option value="bags">bags</option>
+              <option value="dress">dress</option>
+            </select>
+          </div>
+
+          {/* Colors */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Colors (comma separated) *
+            </label>
+            <input
+              type="text"
+              name="color"
+              value={formData.color}
+              onChange={handleChange}
+              placeholder="Black, White, Red"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+
+          {/* Specifications */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Specifications (comma separated) *
+            </label>
+            <input
+              type="text"
+              name="specifications"
+              value={formData.specifications}
+              onChange={handleChange}
+              placeholder="4GB RAM, 64GB Storage, 6.5 inch Display"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+
+          {/* Highlights */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Highlights (comma separated) *
+            </label>
+            <input
+              type="text"
+              name="highlights"
+              value={formData.highlights}
+              onChange={handleChange}
+              placeholder="Fast Charging, Water Resistant, 5G Ready"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+
+          {/* Comments */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Comments
+            </label>
+            <textarea
+              name="comments"
+              value={formData.comments}
+              onChange={handleChange}
+              rows="2"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+
+          {/* Product Images */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Product Images
+            </label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageSelect}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Max 5 images, up to 5MB each. Supported formats: JPG, PNG, GIF
+            </p>
+          </div>
+
+          {/* Image Previews */}
+          {imagePreviews.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Image Previews
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} className="relative group">
+                    <img 
+                      src={preview} 
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Is New */}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="IsNew"
+              checked={formData.IsNew}
+              onChange={handleChange}
+              className="w-4 h-4 rounded focus:ring-amber-500"
+            />
+            <label className="text-sm text-gray-700">Mark as New Product</label>
+          </div>
+
+          {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                setIsModalOpen(false);
+                resetForm();
+              }}
+              className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>

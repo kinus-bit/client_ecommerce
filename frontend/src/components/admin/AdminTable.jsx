@@ -14,6 +14,8 @@ const AdminTable = ({
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
+
+  console.log('current data',data);
   const currentData = data.slice(startIndex, endIndex);
 
   return (

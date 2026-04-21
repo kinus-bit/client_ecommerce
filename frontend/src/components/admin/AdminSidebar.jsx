@@ -28,6 +28,7 @@ const AdminSidebar = ({ isCollapsed, toggleSidebar }) => {
     { path: '/admin/orders', label: 'Orders', icon: ShoppingCart },
     { path: '/admin/users', label: 'Users', icon: Users },
     { path: '/admin/categories', label: 'Categories', icon: Tags },
+    { path: '/admin/subcategories', label: 'Subcategories', icon: Tags },
     { path: '/admin/notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
     { path: '/admin/settings', label: 'Settings', icon: Settings },
   ];

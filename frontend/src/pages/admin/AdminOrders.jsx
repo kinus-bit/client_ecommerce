@@ -65,7 +65,7 @@ const AdminOrders = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-6"
+      className="p-6 hidden"
     >
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">

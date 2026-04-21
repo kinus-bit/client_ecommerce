@@ -55,7 +55,7 @@ const AdminDashboard = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-6"
+      className="p-6 hidden"
     >
       {/* Page Header */}
       <div className="mb-8">

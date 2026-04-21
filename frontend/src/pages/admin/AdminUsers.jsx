@@ -1,19 +1,27 @@
 // pages/admin/AdminUsers.jsx
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Edit, Trash2, Shield, UserX, UserCheck } from 'lucide-react';
 import AdminTable from '../../components/admin/AdminTable';
+import { getallusers } from '@/services/api';
 
 const AdminUsers = () => {
-  const users = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', orders: 12, joined: '2024-01-01' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Active', orders: 8, joined: '2024-01-05' },
-    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', role: 'User', status: 'Inactive', orders: 3, joined: '2024-01-10' },
-    { id: 4, name: 'Sarah Wilson', email: 'sarah@example.com', role: 'Moderator', status: 'Active', orders: 15, joined: '2024-01-15' },
-  ];
+ 
+  const [users, setUsers] = useState([]);
 
+  const fetchUsers = async () => {
+    const res = await getallusers();
+    console.log(res.data);
+    setUsers(res.data);
+  }
+
+  useEffect( () => { 
+    fetchUsers();
+  },[]);
+
+ 
   const columns = [
-    { header: 'ID', accessor: 'id' },
+    // { header: 'ID', accessor: 'id' },
     { header: 'Name', accessor: 'name' },
     { header: 'Email', accessor: 'email' },
     { 
@@ -31,21 +39,8 @@ const AdminUsers = () => {
         </span>
       )
     },
-    { 
-      header: 'Status', 
-      accessor: 'status',
-      render: (value) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          value === 'Active' 
-            ? 'bg-green-100 text-green-700'
-            : 'bg-red-100 text-red-700'
-        }`}>
-          {value}
-        </span>
-      )
-    },
-    { header: 'Orders', accessor: 'orders' },
-    { header: 'Joined', accessor: 'joined' },
+    // { header: 'Orders', accessor: 'orders' },
+    { header: 'Joined', accessor: 'createdAt' },
     {
       header: 'Actions',
       accessor: 'actions',
