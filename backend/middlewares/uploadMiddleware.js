@@ -19,7 +19,8 @@ const productStorage = new CloudinaryStorage({
             
             //generate unique filename: profile-userId-timestamp
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            return `profile-${req.user.id}-${uniqueSuffix}`;
+            const originalName = file.originalname.split('.')[0];
+            return `product-${originalName}-${uniqueSuffix}`;
         },
         transformation: [
             { width: 500, height: 500, crop: 'limit'},

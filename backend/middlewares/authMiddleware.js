@@ -25,16 +25,6 @@ const protect = async (req, res, next) => {
                 });
             }
 
-             // Optional: Check if email is verified (can be bypassed for certain routes)
-            // Add this check if you want to enforce email verification for all protected routes
-            // if (!req.user.isEmailVerified && req.originalUrl !== '/api/auth/verify-email') {
-            //     return res.status(403).json({
-            //         success: false,
-            //         message: 'Please verify your email address first',
-            //         requiresVerification: true
-            //     });
-            // }
-
             //Goes to next middleware/ route handler
             next();
         } catch (error) {
@@ -56,7 +46,6 @@ const protect = async (req, res, next) => {
 };
 
 // Middleware for role-based access control
-// Takes multiple roles as arguments (e.g., authorize('admin', 'user'))
 const authorize = (...roles) => { 
     return (req, res, next) => {
         
@@ -68,7 +57,6 @@ const authorize = (...roles) => {
             });
         }
 
-        //User has required role, proceed
         next();
     };
 };
