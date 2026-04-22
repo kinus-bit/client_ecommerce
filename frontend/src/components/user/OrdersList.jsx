@@ -23,7 +23,7 @@ const OrdersList = ({ orders, getStatusColor }) => {
   return (
     <div className="divide-y divide-gray-200">
       {orders.map((order) => (
-        <OrderCard key={order.id} order={order} getStatusColor={getStatusColor} />
+        <OrderCard key={order._id} order={order} getStatusColor={getStatusColor} />
       ))}
     </div>
   );

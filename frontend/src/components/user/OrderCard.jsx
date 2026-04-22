@@ -8,12 +8,12 @@ const OrderCard = ({ order, getStatusColor }) => {
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-3 mb-3">
-            <span className="font-semibold text-gray-900">#{order.id}</span>
+            <span className="font-semibold text-gray-900">#{order._id}</span>
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
               {order.status}
             </span>
             <span className="text-sm text-gray-500">
-              {new Date(order.date).toLocaleDateString('en-US', { 
+              {new Date(order.createdAt).toLocaleDateString('en-US', { 
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric' 
@@ -37,7 +37,7 @@ const OrderCard = ({ order, getStatusColor }) => {
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="flex justify-between">
               <span className="font-semibold text-gray-900">Total</span>
-              <span className="font-bold text-gray-900">${order.total.toFixed(2)}</span>
+              <span className="font-bold text-gray-900">${order.totalAmount}</span>
             </div>
           </div>
         </div>
