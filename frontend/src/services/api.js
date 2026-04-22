@@ -80,7 +80,7 @@ export const deleteProfilePicture = (type, filename) => API.delete(`/upload/${ty
 
 
 // Product APIs
-export const getAllProducts = (params) => API.get('/products', { params });
+export const getAllProducts = () => API.get('/products');
 export const getProductById = (id) => API.get(`/products/${id}`);
 export const createProduct = (data) => API.post('/products', data);
 export const createProductWithImages = (formData) => {

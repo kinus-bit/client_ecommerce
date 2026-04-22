@@ -1,20 +1,30 @@
 // pages/admin/AdminOrders.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, Truck, CheckCircle, XCircle, Clock } from 'lucide-react';
 import AdminTable from '../../components/admin/AdminTable';
 import AdminModal from '../../components/admin/AdminModal';
+import { getallorders } from '@/services/api';
 
 const AdminOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [orderItems , setOrderItems] = useState([]);
+  
+    const fetchOrders = async () => {
+      const res = await getallorders();
+      console.log(res.orders);
+      // setOrders(res.items);
+      setOrderItems(res.orders);
+    }
+  
+    useEffect( () => {
+      fetchOrders();
+    }, []);
 
   const orders = [
     { id: '#ORD-001', customer: 'John Doe', amount: 299, status: 'Delivered', date: '2024-01-15', items: 2 },
     { id: '#ORD-002', customer: 'Jane Smith', amount: 159, status: 'Processing', date: '2024-01-14', items: 1 },
-    { id: '#ORD-003', customer: 'Mike Johnson', amount: 499, status: 'Shipped', date: '2024-01-13', items: 3 },
-    { id: '#ORD-004', customer: 'Sarah Wilson', amount: 89, status: 'Pending', date: '2024-01-12', items: 1 },
-    { id: '#ORD-005', customer: 'David Brown', amount: 1299, status: 'Delivered', date: '2024-01-11', items: 2 },
   ];
 
   const getStatusIcon = (status) => {
@@ -28,10 +38,19 @@ const AdminOrders = () => {
   };
 
   const columns = [
-    { header: 'Order ID', accessor: 'id' },
-    { header: 'Customer', accessor: 'customer' },
-    { header: 'Items', accessor: 'items' },
-    { header: 'Amount', accessor: 'amount', render: (value) => `$${value}` },
+    { header: 'Order ID', accessor: '_id' },
+    { 
+      header: 'Customer', 
+      accessor: 'user',
+      render: (value) => value?.name || 'N/A'
+    },
+    { header: 'Contact', accessor: 'contact' },
+    { 
+      header: 'Items', 
+      accessor: 'items',
+      render:(value) => value?.length
+    },
+    { header: 'Amount', accessor: 'totalAmount', render: (value) => `$${value}` },
     { 
       header: 'Status', 
       accessor: 'status',
@@ -42,7 +61,7 @@ const AdminOrders = () => {
         </div>
       )
     },
-    { header: 'Date', accessor: 'date' },
+    { header: 'Date', accessor: 'createdAt' },
     {
       header: 'Actions',
       accessor: 'actions',
@@ -65,7 +84,7 @@ const AdminOrders = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-6 hidden"
+      className="p-6 "
     >
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">
@@ -78,7 +97,7 @@ const AdminOrders = () => {
 
       <AdminTable 
         columns={columns}
-        data={orders}
+        data={orderItems}
         itemsPerPage={10}
       />
 

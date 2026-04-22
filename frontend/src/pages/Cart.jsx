@@ -4,14 +4,34 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, Tag, Truck, Shield, Gift } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { getmycart } from '@/services/api';
+import { useEffect } from 'react';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
-  const shippingCost = cartItems.length > 0 ? 5 : 0;
-  const subtotal = getCartTotal();
+  const [ cartItems , setCartItems] = useState([]);
+  const [ products , setProducts] = useState([]);
+  const { removeFromCart, updateQuantity, getCartTotal } = useCart();
+
+
+ 
+  const fetchCartItems = async() => {
+    try {
+      const res = await getmycart();
+      console.log(res.items);
+      setCartItems(res); 
+      setProducts(res.items);
+    } catch (error) {
+      console.log("Backend error:", error.response?.data || error.message);  
+    }
+  }
+
+  const shippingCost = products.length > 0 ? 5 : 0;
+  const subtotal = cartItems.totalPrice;
   const total = subtotal + shippingCost;
 
-
+  useEffect( () => {
+    fetchCartItems();
+  }, []);
   const getItemTotal = (item) => {
     return (item.price * item.quantity).toFixed(2);
   };
@@ -30,7 +50,7 @@ const Cart = () => {
           <p className="text-gray-600 mt-1">
             {cartItems.length === 0 
               ? 'Your cart is feeling lonely' 
-              : `You have ${cartItems.length} item${cartItems.length > 1 ? 's' : ''} in your cart`
+              : `You have ${products.length} item${cartItems.length > 1 ? 's' : ''} in your cart`
             }
           </p>
         </div>
@@ -81,14 +101,14 @@ const Cart = () => {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
-                  <h2 className="font-semibold text-gray-900">Cart Items ({cartItems.length})</h2>
+                  <h2 className="font-semibold text-gray-900">Cart Items ({products.length})</h2>
                 </div>
                 
                 <div className="divide-y divide-gray-200">
                   <AnimatePresence initial={false}>
-                    {cartItems.map((item, index) => (
+                    {cartItems.items.map((item, index) => (
                       <motion.div
-                        key={item.id}
+                        key={item._id}
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
@@ -99,8 +119,8 @@ const Cart = () => {
                           {/* Product Image */}
                           <div className="sm:w-24 sm:h-24 flex-shrink-0">
                             <img
-                              src={item.image}
-                              alt={item.name}
+                              src={item.product.images}
+                              alt={item.product.name}
                               className="w-full h-full object-cover rounded-lg"
                             />
                           </div>
@@ -110,14 +130,14 @@ const Cart = () => {
                             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                               <div>
                                 <h3 className="font-semibold text-gray-900 mb-1">
-                                  {item.name}
+                                  {item.product.name}
                                 </h3>
                                 <p className="text-sm text-gray-600 mb-2">
                                   ${item.price} each
                                 </p>
-                                {item.discount > 0 && (
+                                {item.product.discount > 0 && (
                                   <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                                    {item.discount}% off
+                                    {item.product.discount}% off
                                   </span>
                                 )}
                               </div>
@@ -186,7 +206,7 @@ const Cart = () => {
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium text-gray-900">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium text-gray-900">${cartItems.totalPrice}</span>
                   </div>
                   
                   <div className="flex justify-between text-sm">
