@@ -61,7 +61,10 @@ exports.getAllOrders = async (req, res) => {
     // fetch all orders with user info
     const orders = await Order.find().populate("user", "name email");
 
-    res.json({ success: true, orders });
+    res.json({ 
+      success: true,
+      orders
+     });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
