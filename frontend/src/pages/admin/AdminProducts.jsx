@@ -8,7 +8,9 @@ import {
   createProductWithImages, 
   getAllProducts, 
   deleteProduct,
-  updateProduct 
+  updateProduct,
+  getallcategories,
+  getallsubcategories
 } from '@/services/api';
 
 const AdminProducts = () => {
@@ -21,6 +23,12 @@ const AdminProducts = () => {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  
+  // State for categories and subcategories
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [filteredSubcategories, setFilteredSubcategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -67,6 +75,27 @@ const AdminProducts = () => {
     
     return [];
   };
+
+  // Fetch categories and subcategories on component mount
+  useEffect(() => {
+    fetchCategories();
+    fetchSubcategories();
+  }, []);
+
+  // Filter subcategories when category changes
+  useEffect(() => {
+    if (formData.category) {
+      const filtered = subcategories.filter(
+        sub => sub.category && sub.category._id === formData.category
+      );
+      setFilteredSubcategories(filtered);
+      // Reset subcategory when category changes
+      setFormData(prev => ({ ...prev, subCategory: '' }));
+    } else {
+      setFilteredSubcategories([]);
+    }
+  }, [formData.category, subcategories]);
+
   // Fetch products on component mount
   useEffect(() => {
     fetchProducts();
@@ -86,6 +115,31 @@ const AdminProducts = () => {
       return () => clearTimeout(timer);
     }
   }, [error]);
+
+  const fetchCategories = async () => {
+    try {
+      setLoadingCategories(true);
+      const response = await getallcategories();
+      console.log('Categories fetched:', response.data);
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setError('Failed to fetch categories');
+    } finally {
+      setLoadingCategories(false);
+    }
+  };
+
+  const fetchSubcategories = async () => {
+    try {
+      const response = await getallsubcategories();
+      console.log('Subcategories fetched:', response);
+      setSubcategories(response);
+    } catch (error) {
+      console.error('Error fetching subcategories:', error);
+      setError('Failed to fetch subcategories');
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -245,8 +299,8 @@ const AdminProducts = () => {
       formDataToSend.append('description', formData.description.trim());
       formDataToSend.append('price', formData.price);
       formDataToSend.append('originalPrice', formData.originalPrice);
-      formDataToSend.append('category', formData.category.trim());
-      formDataToSend.append('subCategory', formData.subCategory.trim());
+      formDataToSend.append('category', formData.category); // Send category ID
+      formDataToSend.append('subCategory', formData.subCategory); // Send subcategory ID
       formDataToSend.append('stock', formData.stock);
       formDataToSend.append('discount', formData.discount || '0');
       formDataToSend.append('comments', formData.comments?.trim() || '');
@@ -347,13 +401,13 @@ const AdminProducts = () => {
       description: product.description || '',
       price: product.price || '',
       originalPrice: product.originalPrice || '',
-      category: product.category || '',
-      subCategory: product.subCategory || '',
-      color: product.color || '',
+      category: product.category?._id || product.category || '',
+      subCategory: product.subCategory?._id || product.subCategory || '',
+      color: Array.isArray(product.color) ? product.color.join(', ') : product.color || '',
       stock: product.stock || '',
       discount: product.discount || '',
-      specifications: product.specifications || '',
-      highlights: product.highlights || '',
+      specifications: Array.isArray(product.specifications) ? product.specifications.join(', ') : product.specifications || '',
+      highlights: Array.isArray(product.highlights) ? product.highlights.join(', ') : product.highlights || '',
       comments: product.comments || '',
       IsNew: product.IsNew || false,
     });
@@ -579,7 +633,7 @@ const AdminProducts = () => {
             </div>
           </div>
 
-          {/* Category */}
+          {/* Category Dropdown - Fetched from Backend */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Category *
@@ -590,21 +644,21 @@ const AdminProducts = () => {
               onChange={handleChange}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              disabled={loadingCategories}
             >
               <option value="">Select Category</option>
-              <option value="electronics">Electronics</option>
-              <option value="furniture">Furniture</option>
-              <option value="drinks">Drinks</option>
-              <option value="decor">Decor</option>
-              <option value="cutlery">Cutlery</option>
-              <option value="menfashion">menfashion</option>
-              <option value="womenfashion">womenfashion</option>
-              <option value="curtains">Curtains</option>
-              <option value="carpets">Carpets</option>
+              {categories.map(category => (
+                <option key={category._id} value={category._id}>
+                  {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
+                </option>
+              ))}
             </select>
+            {loadingCategories && (
+              <p className="text-xs text-gray-500 mt-1">Loading categories...</p>
+            )}
           </div>
 
-          {/* SubCategory */}
+          {/* SubCategory Dropdown - Dynamically filtered based on selected category */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Sub Category *
@@ -614,30 +668,24 @@ const AdminProducts = () => {
               value={formData.subCategory}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              disabled={!formData.category || filteredSubcategories.length === 0}
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 ${
+                !formData.category || filteredSubcategories.length === 0 ? 'bg-gray-100 cursor-not-allowed' : ''
+              }`}
             >
               <option value="">Select Sub Category</option>
-              <option value="Smartphones">Smartphones</option>
-              <option value="Laptops">Laptops</option>
-              <option value="Tablets">Tablets</option>
-              <option value="Accessories">Accessories</option>
-              <option value="Beds">Beds</option>
-              <option value="Kitchen tables">Kitchen tables</option>
-              <option value="Study tables">Study tables</option>
-              <option value="Chairs">Chairs</option>
-              <option value="Closet">Closet</option>
-              <option value="Jeans">Jeans</option>
-              <option value="T-shirts">T-shirts</option>
-              <option value="Sweaters">Sweaters</option>
-              <option value="Jackets">Jackets</option>
-              <option value="shoes">shoes</option>
-              <option value="Tops">Tops</option>
-              <option value="Trousers">Trousers</option>
-              <option value="skirts">skirts</option>
-              <option value="jackets">jackets</option>
-              <option value="bags">bags</option>
-              <option value="dress">dress</option>
+              {filteredSubcategories.map(sub => (
+                <option key={sub._id} value={sub._id}>
+                  {sub.name}
+                </option>
+              ))}
             </select>
+            {!formData.category && (
+              <p className="text-xs text-amber-600 mt-1">Please select a category first</p>
+            )}
+            {formData.category && filteredSubcategories.length === 0 && (
+              <p className="text-xs text-amber-600 mt-1">No subcategories available for this category</p>
+            )}
           </div>
 
           {/* Colors */}
