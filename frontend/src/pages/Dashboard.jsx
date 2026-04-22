@@ -17,7 +17,7 @@ import {
 import ProductCatalogtest from '../pages/ProductCatalogtest';
 import Cart from '../pages/Cart';
 import Checkout from '../pages/Checkout';
-import { getMe, updateProfile, uploadProfilePicture, deleteProfilePicture } from '@/services/api';
+import { getMe, updateProfile, uploadProfilePicture, deleteProfilePicture, getmyorders } from '@/services/api';
 import { getImageUrl } from '@/utils/imageUtils';
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -151,7 +151,19 @@ const Dashboard = () => {
 
   const [formData, setFormData] = useState({ ...user });
   const [profileErrors, setProfileErrors] = useState({});
+  const [orderItems , setOrderItems] = useState([]);
+  // const [orders, setOrders] = useState([])
 
+  const fetchOrders = async () => {
+    const res = await getmyorders();
+    console.log(res);
+    // setOrders(res.items);
+    setOrderItems(res);
+  }
+
+  useEffect( () => {
+    fetchOrders();
+  }, []);
   const [orders] = useState([
     {
       id: 'ORD-001',
@@ -164,26 +176,7 @@ const Dashboard = () => {
       ],
       tracking: '1Z999AA10123456784'
     },
-    {
-      id: 'ORD-002',
-      date: '2024-11-10',
-      total: 89,
-      status: 'Delivered',
-      items: [
-        { name: "Men's Leather Jacket", quantity: 1, price: 89 }
-      ],
-      tracking: '1Z999AA10123456785'
-    },
-    {
-      id: 'ORD-003',
-      date: '2024-12-01',
-      total: 1299,
-      status: 'Processing',
-      items: [
-        { name: 'MacBook Pro', quantity: 1, price: 1299 }
-      ],
-      tracking: null
-    }
+
   ]);
 
   const getStatusColor = (status) => {
@@ -191,7 +184,7 @@ const Dashboard = () => {
       case 'Delivered': return 'bg-green-100 text-green-700';
       case 'Processing': return 'bg-blue-100 text-blue-700';
       case 'Shipped': return 'bg-amber-100 text-amber-700';
-      default: return 'bg-gray-100 text-gray-700';
+      default: return 'bg-red-500 text-gray-700';
     }
   };
 
@@ -378,12 +371,12 @@ const Dashboard = () => {
         );
       case 'orders':
         return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hidden">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-6 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">All Orders</h2>
               <p className="text-sm text-gray-500 mt-1">Track and manage your orders</p>
             </div>
-            <OrdersList orders={orders} getStatusColor={getStatusColor} />
+            <OrdersList orders={orderItems} getStatusColor={getStatusColor} />
           </div>
         );
       case 'profile':

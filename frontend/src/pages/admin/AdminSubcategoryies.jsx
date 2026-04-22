@@ -25,6 +25,7 @@ const AdminSubcategories = () => {
   const [name, setName] = useState('');
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchSubcategories = async () => {
     const res = await getallsubcategories();
@@ -128,6 +129,8 @@ const AdminSubcategories = () => {
         columns={columns}
         data={subcategories}
         itemsPerPage={10}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
       />
 
       {/* Add/Edit Category Modal */}

@@ -13,8 +13,8 @@ const cartItemSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: true, // snapshot price
-  },
+    required: true // snapshot price
+  }
 });
 
 const cartSchema = new mongoose.Schema(

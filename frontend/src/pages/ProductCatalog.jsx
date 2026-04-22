@@ -10,7 +10,55 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { products, categories, colorClasses, sidebarColorClasses } from '@/data/Product';
+import { getAllProducts, getallcategories, getallsubcategories } from '@/services/api';
+import { useEffect } from 'react';
+
+// Icon mapping for categories
+const getCategoryIcon = (categoryName) => {
+  const icons = {
+    'menfashion': '👔',
+    'womenfashion': '👗',
+    'furniture': '🪑',
+    'drinks': '🍺',
+    'Electronics': '📱',
+    'curtains': '🧣',
+    'carpets': '🧵',
+    'Home Decor': '🏠',
+    'Cutlery': '🍴'
+  };
+  return icons[categoryName] || '📦';
+};
+
+// Color mapping for categories
+const getCategoryColor = (categoryName) => {
+  const colors = {
+    'menfashion': 'bg-blue-500 text-white',
+    'womenfashion': 'bg-pink-500 text-white',
+    'furniture': 'bg-amber-600 text-white',
+    'drinks': 'bg-emerald-600 text-white',
+    'Electronics': 'bg-purple-600 text-white',
+    'curtains': 'bg-indigo-600 text-white',
+    'carpets': 'bg-orange-600 text-white',
+    'Home Decor': 'bg-teal-600 text-white',
+    'Cutlery': 'bg-rose-600 text-white'
+  };
+  return colors[categoryName] || 'bg-gray-600 text-white';
+};
+
+const getSidebarColor = (categoryName) => {
+  const colors = {
+    'menfashion': 'bg-blue-50 text-blue-700 font-medium',
+    'womenfashion': 'bg-pink-50 text-pink-700 font-medium',
+    'furniture': 'bg-amber-50 text-amber-700 font-medium',
+    'drinks': 'bg-emerald-50 text-emerald-700 font-medium',
+    'Electronics': 'bg-purple-50 text-purple-700 font-medium',
+    'curtains': 'bg-indigo-50 text-indigo-700 font-medium',
+    'carpets': 'bg-orange-50 text-orange-700 font-medium',
+    'Home Decor': 'bg-teal-50 text-teal-700 font-medium',
+    'Cutlery': 'bg-rose-50 text-rose-700 font-medium'
+  };
+  return colors[categoryName] || 'bg-gray-50 text-gray-700 font-medium';
+};
 
 const ProductCatalog = () => {
   const [view, setView] = useState('grid');
@@ -20,7 +68,13 @@ const ProductCatalog = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [visibleCount, setVisibleCount] = useState(5);
+  const [products, setProducts] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubCategories] = useState([]);
   
+  // Transform categories into the format expected by the component
+  const [transformedCategories, setTransformedCategories] = useState({});
   
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
@@ -28,15 +82,74 @@ const ProductCatalog = () => {
     setVisibleCount(5);
   };
 
+  const fetchProducts = async () => {
+    const res = await getAllProducts();
+    console.log(res.data);
+    setProducts(res.data);
+    setTotalProducts(res.count);
+  } 
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchCategories = async () => {
+    const res = await getallcategories();
+    console.log("Categories response:", res.data);
+    setCategories(res.data);
+  }
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchSubcategories = async () => {
+    const res = await getallsubcategories();
+    console.log("Subcategories response:", res);
+    setSubCategories(res);
+  }
+
+  useEffect(() => {
+    fetchSubcategories();
+  }, []);
+
+  // Transform categories and subcategories when data loads
+  useEffect(() => {
+    if (categories.length > 0 && subcategories.length > 0) {
+      const transformed = {};
+      
+      categories.forEach(category => {
+        // Find subcategories that belong to this category
+        const categorySubs = subcategories
+          .filter(sub => sub.category && sub.category._id === category._id)
+          .map(sub => sub.name);
+        
+        transformed[category.name] = {
+          name: category.name.charAt(0).toUpperCase() + category.name.slice(1),
+          icon: getCategoryIcon(category.name),
+          color: getCategoryColor(category.name),
+          subCategories: categorySubs
+        };
+      });
+      
+      setTransformedCategories(transformed);
+      console.log("Transformed categories:", transformed);
+    }
+  }, [categories, subcategories]);
+
   const filteredProducts = products.filter(product => {
-    if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
-    if (selectedSubCategory !== 'all' && product.subCategory !== selectedSubCategory) return false;
+    // Get category name from the category object
+    const productCategory = product.category?.name || product.category;
+    const productSubCategory = product.subCategory?.name || product.subCategory;
+    
+    if (selectedCategory !== 'all' && productCategory !== selectedCategory) return false;
+    if (selectedSubCategory !== 'all' && productSubCategory !== selectedSubCategory) return false;
     if (searchTerm) {
       const matchesSearch = 
         product.name.toLowerCase().includes(searchTerm) ||
         product.description.toLowerCase().includes(searchTerm) ||
-        product.category.toLowerCase().includes(searchTerm) ||
-        product.subCategory.toLowerCase().includes(searchTerm);
+        (product.category?.name || product.category || '').toLowerCase().includes(searchTerm) ||
+        (product.subCategory?.name || product.subCategory || '').toLowerCase().includes(searchTerm);
       if (!matchesSearch) return false;
     }
     return true;
@@ -49,9 +162,9 @@ const ProductCatalog = () => {
       case 'price-high':
         return b.price - a.price;
       case 'rating':
-        return b.rating - a.rating;
+        return (b.ratings || 0) - (a.ratings || 0);
       case 'newest':
-        return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
+        return (b.IsNew ? 1 : 0) - (a.IsNew ? 1 : 0);
       default:
         return 0;
     }
@@ -93,7 +206,7 @@ const ProductCatalog = () => {
                 Product Catalog
               </h1>
               <p className="text-gray-600">
-                Discover {products.length}+ amazing products tailored just for you
+                Discover {totalProducts}+ amazing products tailored just for you
               </p>
             </div>
             
@@ -147,7 +260,7 @@ const ProductCatalog = () => {
               All Products
             </motion.button>
             
-           {Object.entries(categories).map(([key, category]) => {
+           {Object.entries(transformedCategories).map(([key, category]) => {
             // Check if category has subcategories
             const hasSubCategories = category.subCategories.length > 0;
             
@@ -161,7 +274,7 @@ const ProductCatalog = () => {
                       whileTap={{ scale: 0.98 }}
                       className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-1 ${
                         selectedCategory === key
-                          ? colorClasses[category.color]
+                          ? category.color
                           : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                       }`}
                     >
@@ -213,7 +326,7 @@ const ProductCatalog = () => {
                 }}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-1 ${
                   selectedCategory === key
-                    ? colorClasses[category.color]
+                    ? category.color
                     : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                 }`}
               >
@@ -339,7 +452,7 @@ const ProductCatalog = () => {
                       >
                         All Categories
                       </button>
-                      {Object.entries(categories).map(([key, category]) => (
+                      {Object.entries(transformedCategories).map(([key, category]) => (
                         <button
                           key={key}
                           onClick={() => {
@@ -349,7 +462,7 @@ const ProductCatalog = () => {
                           }}
                           className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm flex items-center gap-2 ${
                             selectedCategory === key
-                              ? sidebarColorClasses[category.color]
+                              ? getSidebarColor(key)
                               : 'text-gray-600 hover:bg-gray-100'
                           }`}
                         >
@@ -361,7 +474,7 @@ const ProductCatalog = () => {
                   </div>
 
                   {/* Sub Categories */}
-                  {selectedCategory !== 'all' && categories[selectedCategory]?.subCategories.length > 0 && (
+                  {selectedCategory !== 'all' && transformedCategories[selectedCategory]?.subCategories.length > 0 && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -380,9 +493,9 @@ const ProductCatalog = () => {
                               : 'text-gray-600 hover:bg-gray-100'
                           }`}
                         >
-                          All {categories[selectedCategory]?.name}
+                          All {transformedCategories[selectedCategory]?.name}
                         </button>
-                        {categories[selectedCategory]?.subCategories.map(sub => (
+                        {transformedCategories[selectedCategory]?.subCategories.map(sub => (
                           <button
                             key={sub}
                             onClick={() => {
@@ -441,7 +554,7 @@ const ProductCatalog = () => {
                   )}
                   {selectedCategory !== 'all' && (
                     <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                      {categories[selectedCategory]?.icon} {categories[selectedCategory]?.name}
+                      {transformedCategories[selectedCategory]?.icon} {transformedCategories[selectedCategory]?.name}
                       <button
                         onClick={() => {
                           setSelectedCategory('all');
@@ -500,7 +613,7 @@ const ProductCatalog = () => {
                 <div className={`grid ${view === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6`}>
                   {visibleProducts.map((product, index) => (
                     <motion.div
-                      key={product.id}
+                      key={product._id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
@@ -509,17 +622,17 @@ const ProductCatalog = () => {
                         view === 'list' ? 'flex' : ''
                       }`}
                     >
-                      <Link to={`/product/${product.id}`} className={view === 'list' ? 'flex w-full' : ''}>
+                      <Link to={`/product/${product._id}`} className={view === 'list' ? 'flex w-full' : ''}>
                         <div className={`relative overflow-hidden ${view === 'list' ? 'w-48 shrink-0' : ''}`}>
                           <img
-                            src={product.image}
+                            src={product.images && product.images[0] ? product.images[0] : '/api/placeholder/400/400'}
                             alt={product.name}
                             className={`w-full ${view === 'list' ? 'h-48' : 'h-64'} object-cover group-hover:scale-105 transition-transform duration-700`}
                           />
                           
                           {/* Badges */}
                           <div className="absolute top-3 left-3 flex flex-col gap-2">
-                            {product.isNew && (
+                            {product.IsNew && (
                               <span className="bg-emerald-500 text-white px-2 py-1 rounded-lg text-xs font-semibold shadow-lg">
                                 NEW
                               </span>
@@ -554,7 +667,7 @@ const ProductCatalog = () => {
                                 <Star
                                   key={i}
                                   className={`w-4 h-4 ${
-                                    i < Math.floor(product.rating)
+                                    i < Math.floor(product.ratings || 0)
                                       ? 'text-amber-400 fill-current'
                                       : 'text-gray-300'
                                   }`}
@@ -562,13 +675,13 @@ const ProductCatalog = () => {
                               ))}
                             </div>
                             <span className="text-sm text-gray-500">
-                              ({product.reviews})
+                              ({product.numReviews || 0})
                             </span>
                           </div>
                           
                           <div className="flex items-center justify-between">
                             <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                              {product.subCategory}
+                              {product.subCategory?.name || product.subCategory || 'General'}
                             </span>
                             
                             <motion.button
