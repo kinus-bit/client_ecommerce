@@ -11,7 +11,7 @@ import {
   OrderComplete,
   SecurityBadge
 } from '../components/checkout';
-import { createorder, getmycart } from '@/services/api';
+import { createorder, getmycart, getmyorders } from '@/services/api';
 import { useEffect } from 'react';
 
 const Checkout = () => {
@@ -21,8 +21,9 @@ const Checkout = () => {
   const [orderData, setOrderData] = useState(null);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
-  const [ cartItems , setCartItems] = useState([]);
-  const [ products , setProducts] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [subtotal, setSubtotal] = useState(0);
   
   const [formData, setFormData] = useState({
     address: '',
@@ -30,23 +31,22 @@ const Checkout = () => {
   });
 
   const fetchCartItems = async() => {
-      try {
-        const res = await getmycart();
-        console.log(res.items);
-        setCartItems(res); 
-        setProducts(res.items);
-      } catch (error) {
-        console.log("Backend error:", error.response?.data || error.message);  
-      }
+    try {
+      const res = await getmycart();
+      console.log('Cart response:', res);
+      setCartItems(res); 
+      setProducts(res.items || []);
+      setSubtotal(res.totalPrice || 0);
+    } catch (error) {
+      console.log("Backend error:", error.response?.data || error.message);  
+    }
   }
 
-  useEffect( () => {
+  useEffect(() => {
     fetchCartItems();
   }, []);
 
   const shippingCost = 5; // Default standard shipping
-  
-  const subtotal = cartItems.totalPrice;
   const total = subtotal + shippingCost;
 
   const handleInputChange = (e) => {
@@ -77,6 +77,24 @@ const Checkout = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const fetchOrders = async () => {
+    try {
+      const response = await getmyorders();
+      console.log('Orders fetched after order creation:', response);
+      
+      // Store orders in localStorage or context to be accessed by dashboard
+      localStorage.setItem('recentOrders', JSON.stringify(response));
+      
+      // Dispatch a custom event that Dashboard can listen to
+      window.dispatchEvent(new CustomEvent('ordersUpdated', { detail: response }));
+      
+      return response;
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -104,9 +122,14 @@ const Checkout = () => {
       // Store order data
       setOrderData(response.order || response.data);
       
+      // Fetch updated orders immediately after order creation
+      await fetchOrders();
       
       // Show order complete screen
       setOrderComplete(true);
+      
+      // Clear cart after successful order
+      await fetchCartItems(); // This will refresh cart items (should be empty now)
       
       // Redirect after 3 seconds
       setTimeout(() => {
@@ -164,6 +187,10 @@ const Checkout = () => {
             <OrderSummary 
               cartItems={products}
               subtotal={subtotal}
+              shippingCost={shippingCost}
+              tax={0}
+              total={total}
+              shippingMethod="standard"
             />
           </div>
         </div>
