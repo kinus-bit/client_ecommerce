@@ -30,7 +30,8 @@ const productSchema = new mongoose.Schema({
     },
     subCategory: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"Subcategory"
+        ref:"Subcategory",
+        default: null
     },
     color: [{
         type: String,

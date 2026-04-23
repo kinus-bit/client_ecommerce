@@ -29,6 +29,7 @@ const AdminProducts = () => {
   const [subcategories, setSubcategories] = useState([]);
   const [filteredSubcategories, setFilteredSubcategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
+  const [isSubcategoryRequired, setIsSubcategoryRequired] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -89,10 +90,16 @@ const AdminProducts = () => {
         sub => sub.category && sub.category._id === formData.category
       );
       setFilteredSubcategories(filtered);
+      
+      // Check if the selected category has subcategories
+      const hasSubcategories = filtered.length > 0;
+      setIsSubcategoryRequired(hasSubcategories);
+      
       // Reset subcategory when category changes
       setFormData(prev => ({ ...prev, subCategory: '' }));
     } else {
       setFilteredSubcategories([]);
+      setIsSubcategoryRequired(false);
     }
   }, [formData.category, subcategories]);
 
@@ -291,6 +298,12 @@ const AdminProducts = () => {
     e.preventDefault();
     setError(null);
     
+    // Validate subcategory only if the category has subcategories
+    if (isSubcategoryRequired && !formData.subCategory) {
+      setError('Please select a subcategory for this category');
+      return;
+    }
+    
     try {
       const formDataToSend = new FormData();
       
@@ -300,7 +313,13 @@ const AdminProducts = () => {
       formDataToSend.append('price', formData.price);
       formDataToSend.append('originalPrice', formData.originalPrice);
       formDataToSend.append('category', formData.category); // Send category ID
-      formDataToSend.append('subCategory', formData.subCategory); // Send subcategory ID
+      
+      // Only send subCategory if it has a value, otherwise send empty or null
+      // Don't send it at all when empty
+      if (formData.subCategory && formData.subCategory !== '') {
+        formDataToSend.append('subCategory', formData.subCategory);
+      }
+      
       formDataToSend.append('stock', formData.stock);
       formDataToSend.append('discount', formData.discount || '0');
       formDataToSend.append('comments', formData.comments?.trim() || '');
@@ -454,6 +473,7 @@ const AdminProducts = () => {
     setImagePreviews([]);
     setSelectedProduct(null);
     setError(null);
+    setIsSubcategoryRequired(false);
   };
 
   if (loading) {
@@ -658,35 +678,37 @@ const AdminProducts = () => {
             )}
           </div>
 
-          {/* SubCategory Dropdown - Dynamically filtered based on selected category */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Sub Category *
-            </label>
-            <select
-              name="subCategory"
-              value={formData.subCategory}
-              onChange={handleChange}
-              required
-              disabled={!formData.category || filteredSubcategories.length === 0}
-              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 ${
-                !formData.category || filteredSubcategories.length === 0 ? 'bg-gray-100 cursor-not-allowed' : ''
-              }`}
-            >
-              <option value="">Select Sub Category</option>
-              {filteredSubcategories.map(sub => (
-                <option key={sub._id} value={sub._id}>
-                  {sub.name}
-                </option>
-              ))}
-            </select>
-            {!formData.category && (
-              <p className="text-xs text-amber-600 mt-1">Please select a category first</p>
-            )}
-            {formData.category && filteredSubcategories.length === 0 && (
-              <p className="text-xs text-amber-600 mt-1">No subcategories available for this category</p>
-            )}
-          </div>
+          {/* SubCategory Dropdown - Only show if category has subcategories */}
+          {formData.category && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Sub Category {isSubcategoryRequired && '*'}
+              </label>
+              <select
+                name="subCategory"
+                value={formData.subCategory}
+                onChange={handleChange}
+                required={isSubcategoryRequired}
+                disabled={filteredSubcategories.length === 0}
+                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 ${
+                  filteredSubcategories.length === 0 ? 'bg-gray-100 cursor-not-allowed' : ''
+                }`}
+              >
+                <option value="">{filteredSubcategories.length === 0 ? 'No subcategories available' : 'Select Sub Category (Optional)'}</option>
+                {filteredSubcategories.map(sub => (
+                  <option key={sub._id} value={sub._id}>
+                    {sub.name}
+                  </option>
+                ))}
+              </select>
+              {!isSubcategoryRequired && filteredSubcategories.length === 0 && (
+                <p className="text-xs text-green-600 mt-1">✓ This category doesn't require a subcategory</p>
+              )}
+              {isSubcategoryRequired && (
+                <p className="text-xs text-amber-600 mt-1">Please select a subcategory for this category</p>
+              )}
+            </div>
+          )}
 
           {/* Colors */}
           <div>
