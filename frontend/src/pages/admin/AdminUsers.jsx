@@ -1,5 +1,5 @@
 // pages/admin/AdminUsers.jsx
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Edit, Trash2, Shield, UserX, UserCheck } from 'lucide-react';
 import AdminTable from '../../components/admin/AdminTable';
@@ -19,16 +19,14 @@ const AdminUsers = () => {
     fetchUsers();
   },[]);
 
- 
   const columns = [
-    // { header: 'ID', accessor: 'id' },
     { header: 'Name', accessor: 'name' },
     { header: 'Email', accessor: 'email' },
     { 
       header: 'Role', 
       accessor: 'role',
       render: (value) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+        <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium ${
           value === 'Admin' 
             ? 'bg-purple-100 text-purple-700'
             : value === 'Moderator'
@@ -39,24 +37,23 @@ const AdminUsers = () => {
         </span>
       )
     },
-    // { header: 'Orders', accessor: 'orders' },
     { header: 'Joined', accessor: 'createdAt' },
     {
       header: 'Actions',
       accessor: 'actions',
       render: (_, row) => (
-        <div className="flex items-center gap-2">
-          <button className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
-            <Shield className="w-4 h-4 text-purple-500" />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <button className="p-1.5 sm:p-1 rounded-lg hover:bg-gray-100 transition-colors">
+            <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-500" />
           </button>
-          <button className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
-            <Edit className="w-4 h-4 text-amber-500" />
+          <button className="p-1.5 sm:p-1 rounded-lg hover:bg-gray-100 transition-colors">
+            <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
           </button>
-          <button className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
+          <button className="p-1.5 sm:p-1 rounded-lg hover:bg-gray-100 transition-colors">
             {row.status === 'Active' ? (
-              <UserX className="w-4 h-4 text-red-500" />
+              <UserX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" />
             ) : (
-              <UserCheck className="w-4 h-4 text-green-500" />
+              <UserCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
             )}
           </button>
         </div>
@@ -69,13 +66,13 @@ const AdminUsers = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-6"
+      className="p-4 sm:p-6"
     >
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
           Users
         </h1>
-        <p className="mt-1 text-gray-600">
+        <p className="text-sm sm:text-base mt-1 text-gray-600">
           Manage your customer base
         </p>
       </div>

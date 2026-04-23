@@ -23,6 +23,7 @@ const AdminProducts = () => {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   
   // State for categories and subcategories
   const [categories, setCategories] = useState([]);
@@ -194,7 +195,7 @@ const AdminProducts = () => {
       header: 'Status', 
       accessor: 'stock',
       render: (value) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+        <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium ${
           value > 0 
             ? 'bg-green-100 text-green-700'
             : 'bg-red-100 text-red-700'
@@ -218,7 +219,7 @@ const AdminProducts = () => {
               key={idx} 
               src={img} 
               alt="product" 
-              className="w-8 h-8 object-cover rounded"
+              className="w-6 h-6 sm:w-8 sm:h-8 object-cover rounded"
             />
           ))}
           {value && value.length > 2 && (
@@ -231,27 +232,27 @@ const AdminProducts = () => {
       header: 'Actions',
       accessor: 'actions',
       render: (_, row) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <button
             onClick={() => {
               setSelectedProduct(row);
               setIsModalOpen(true);
             }}
-            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-1.5 sm:p-1 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <Eye className="w-4 h-4 text-blue-500" />
+            <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500" />
           </button>
           <button 
             onClick={() => handleEdit(row)}
-            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-1.5 sm:p-1 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <Edit className="w-4 h-4 text-amber-500" />
+            <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
           </button>
           <button 
             onClick={() => handleDelete(row._id)}
-            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-1.5 sm:p-1 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <Trash2 className="w-4 h-4 text-red-500" />
+            <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" />
           </button>
         </div>
       )
@@ -489,15 +490,15 @@ const AdminProducts = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-6"
+      className="p-4 sm:p-6"
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
             Products
           </h1>
-          <p className="mt-1 text-gray-600">
+          <p className="text-sm sm:text-base mt-1 text-gray-600">
             Manage your product inventory
           </p>
         </div>
@@ -506,7 +507,7 @@ const AdminProducts = () => {
             resetForm();
             setIsModalOpen(true);
           }}
-          className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+          className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm sm:text-base"
         >
           <Plus className="w-4 h-4" />
           Add Product
@@ -515,15 +516,15 @@ const AdminProducts = () => {
 
       {/* Success Message */}
       {successMessage && (
-        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+        <div className="mb-4 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm sm:text-base">
           {successMessage}
         </div>
       )}
 
       {/* Error Message */}
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-start gap-2">
-          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+        <div className="mb-4 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-start gap-2 text-sm sm:text-base">
+          <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" />
           <span>{error}</span>
         </div>
       )}
@@ -537,7 +538,7 @@ const AdminProducts = () => {
             placeholder="Search products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full pl-10 pr-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
           />
         </div>
       </div>
@@ -547,6 +548,8 @@ const AdminProducts = () => {
         columns={columns}
         data={filteredProducts}
         itemsPerPage={10}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
       />
 
       {/* Add/Edit Product Modal */}
@@ -557,6 +560,7 @@ const AdminProducts = () => {
           resetForm();
         }}
         title={selectedProduct ? 'Edit Product' : 'Add New Product'}
+        size="lg"
       >
         <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto px-2">
           {/* Name */}
@@ -570,7 +574,7 @@ const AdminProducts = () => {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              className="w-full px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm sm:text-base"
             />
           </div>
 
@@ -585,12 +589,12 @@ const AdminProducts = () => {
               onChange={handleChange}
               required
               rows="3"
-              className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              className="w-full px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm sm:text-base"
             />
           </div>
 
           {/* Price + Original Price */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Price * ($)
@@ -602,13 +606,13 @@ const AdminProducts = () => {
                 value={formData.price}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Original Price * ($)
+                Original Price ($)
               </label>
               <input
                 type="number"
@@ -616,14 +620,13 @@ const AdminProducts = () => {
                 name="originalPrice"
                 value={formData.originalPrice}
                 onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
               />
             </div>
           </div>
 
           {/* Stock + Discount */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Stock *
@@ -634,7 +637,7 @@ const AdminProducts = () => {
                 value={formData.stock}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
               />
             </div>
 
@@ -648,7 +651,7 @@ const AdminProducts = () => {
                 name="discount"
                 value={formData.discount}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
               />
             </div>
           </div>
@@ -663,7 +666,7 @@ const AdminProducts = () => {
               value={formData.category}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
               disabled={loadingCategories}
             >
               <option value="">Select Category</option>
@@ -690,7 +693,7 @@ const AdminProducts = () => {
                 onChange={handleChange}
                 required={isSubcategoryRequired}
                 disabled={filteredSubcategories.length === 0}
-                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 ${
+                className={`w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base ${
                   filteredSubcategories.length === 0 ? 'bg-gray-100 cursor-not-allowed' : ''
                 }`}
               >
@@ -722,7 +725,7 @@ const AdminProducts = () => {
               onChange={handleChange}
               placeholder="Black, White, Red"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
             />
           </div>
 
@@ -738,7 +741,7 @@ const AdminProducts = () => {
               onChange={handleChange}
               placeholder="4GB RAM, 64GB Storage, 6.5 inch Display"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
             />
           </div>
 
@@ -754,7 +757,7 @@ const AdminProducts = () => {
               onChange={handleChange}
               placeholder="Fast Charging, Water Resistant, 5G Ready"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
             />
           </div>
 
@@ -768,7 +771,7 @@ const AdminProducts = () => {
               value={formData.comments}
               onChange={handleChange}
               rows="2"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
             />
           </div>
 
@@ -782,7 +785,7 @@ const AdminProducts = () => {
               multiple
               accept="image/*"
               onChange={handleImageSelect}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
             />
             <p className="text-xs text-gray-500 mt-1">
               Max 5 images, up to 5MB each. Supported formats: JPG, PNG, GIF
@@ -795,13 +798,13 @@ const AdminProducts = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Image Previews
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                 {imagePreviews.map((preview, index) => (
                   <div key={index} className="relative group">
                     <img 
                       src={preview} 
                       alt={`Preview ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg border"
+                      className="w-full h-20 sm:h-24 object-cover rounded-lg border"
                     />
                     <button
                       type="button"
@@ -829,20 +832,20 @@ const AdminProducts = () => {
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4">
             <button
               type="button"
               onClick={() => {
                 setIsModalOpen(false);
                 resetForm();
               }}
-              className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+              className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm sm:text-base"
             >
               {selectedProduct ? 'Update' : 'Add'} Product
             </button>

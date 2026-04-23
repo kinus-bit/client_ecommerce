@@ -13,8 +13,6 @@ const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState('');
 
-
-
   const fetchCategories = async () => {
     const res = await getallcategories();
     console.log(res.data);
@@ -38,6 +36,7 @@ const AdminCategories = () => {
         // reset form
         setName('');
         setIsModalOpen(false);
+        setSelectedCategory(null);
 
       } catch (error) {
         console.log(error.response?.data || error.message);
@@ -54,13 +53,14 @@ const AdminCategories = () => {
           <button
             onClick={() => {
               setSelectedCategory(row);
+              setName(row.name); // Populate name for editing
               setIsModalOpen(true);
             }}
-            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-1.5 sm:p-1 rounded-lg hover:bg-gray-100 transition-colors"
           >
             <Edit className="w-4 h-4 text-amber-500" />
           </button>
-          <button className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
+          <button className="p-1.5 sm:p-1 rounded-lg hover:bg-gray-100 transition-colors">
             <Trash2 className="w-4 h-4 text-red-500" />
           </button>
         </div>
@@ -73,24 +73,28 @@ const AdminCategories = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-6"
+      className="p-4 sm:p-6"
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
             Categories
           </h1>
-          <p className="mt-1 text-gray-600">
+          <p className="text-sm sm:text-base mt-1 text-gray-600">
             Manage your product categories
           </p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+          onClick={() => {
+            setIsModalOpen(true);
+            setSelectedCategory(null);
+            setName('');
+          }}
+          className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm sm:text-base"
         >
           <Plus className="w-4 h-4" />
-          Add Category
+          <span>Add Category</span>
         </button>
       </div>
 
@@ -106,8 +110,10 @@ const AdminCategories = () => {
         onClose={() => {
           setIsModalOpen(false);
           setSelectedCategory(null);
+          setName('');
         }}
         title={selectedCategory ? 'Edit Category' : 'Add New Category'}
+        size="sm"
       >
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
@@ -117,22 +123,27 @@ const AdminCategories = () => {
             <input
               type="text"
               value={name}
-              onChange={(e) =>setName(e.target.value)}
-              className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 sm:px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
               placeholder="Enter category name"
+              required
             />
           </div>
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4">
             <button
               type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                setIsModalOpen(false);
+                setSelectedCategory(null);
+                setName('');
+              }}
+              className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors text-sm sm:text-base"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+              className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm sm:text-base"
             >
               {selectedCategory ? 'Update' : 'Add'} Category
             </button>

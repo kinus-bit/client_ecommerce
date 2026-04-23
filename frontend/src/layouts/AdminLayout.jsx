@@ -5,14 +5,18 @@ import AdminSidebar from '../components/admin/AdminSidebar';
 
 const AdminLayout = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  // Load saved preference from localStorage
   useEffect(() => {
-    // Set CSS variable for sidebar width
-    document.documentElement.style.setProperty(
-      '--sidebar-width',
-      isSidebarCollapsed ? '80px' : '280px'
-    );
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    if (savedState !== null) {
+      setIsSidebarCollapsed(JSON.parse(savedState));
+    }
+  }, []);
+
+  // Save preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(isSidebarCollapsed));
   }, [isSidebarCollapsed]);
 
   return (
@@ -22,19 +26,13 @@ const AdminLayout = () => {
         toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
       
-      {/* Mobile Sidebar Overlay */}
-      {isMobileSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setIsMobileSidebarOpen(false)}
-        />
-      )}
-      
+      {/* Main Content - adjusts based on sidebar state */}
       <div 
-        className="transition-all duration-300"
-        style={{ marginLeft: 'var(--sidebar-width, 280px)' }}
+        className={`transition-all duration-300 ease-in-out ${
+          isSidebarCollapsed ? 'md:ml-20' : 'md:ml-72'
+        } ml-0`}
       >
-        <main className="pt-16">
+        <main className="pt-0 md:pt-0">
           <Outlet />
         </main>
       </div>
