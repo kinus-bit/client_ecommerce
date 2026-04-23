@@ -1,111 +1,146 @@
 // pages/Home.jsx
-import React, { useEffect, useState,useCallback,useMemo } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Link } from "react-router-dom";
 
-import { ArrowRight, Star, Truck, Shield, Headphones, TrendingUp, Clock, Award, ChevronRight } from 'lucide-react';
-
+import {
+  ArrowRight,
+  Star,
+  Truck,
+  Shield,
+  Headphones,
+  ChevronRight,
+} from "lucide-react";
+import { getAllProducts } from "@/services/api";
 
 const Home = () => {
- 
   const { scrollY } = useScroll();
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0.8]);
   const heroScale = useTransform(scrollY, [0, 300], [1, 1.1]);
+  const [products, setProducts] = useState([]);
 
-   const products = [
-    { id: 1, name: 'Wireless Headphones', price: 79.99, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&auto=format', rating: 4.8, sales: 1234 },
-    { id: 2, name: 'Smart Watch Series 5', price: 299.99, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format', rating: 4.9, sales: 2341 },
-    { id: 3, name: 'Minimalist Backpack', price: 49.99, image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&auto=format', rating: 4.7, sales: 3456 },
-  ];
-
-  
+  const fetchProducts = async () => {
+    const res = await getAllProducts();
+    setProducts(res.data);
+    console.log(res.data);
+  };
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20
-      });
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    fetchProducts();
   }, []);
 
-const categories = [
-  { 
-    name: 'Electronics', 
-    image: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=600&auto=format',
-    count: 150,
-    color: 'from-blue-400 to-indigo-500'
-  },
-  { 
-    name: 'Women Fashion', 
-    image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format',
-    count: 320,
-    color: 'from-rose-400 to-pink-500'
-  },
-  {
-  name: 'Men Fashion', 
-  image: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=600&auto=format',
-  count: 210,
-  color: 'from-amber-400 to-orange-500'
-  },
-  { 
-    name: 'Drinks', 
-    image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format',
-    count: 95,
-    color: 'from-purple-400 to-fuchsia-500'
-  },
-  { 
-    name: 'Home Decor', 
-    image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format',
-    count: 85,
-    color: 'from-emerald-400 to-green-600'
-  },
-  { 
-    name: 'Cutlery', 
-    image: 'https://myleelondon.com/cdn/shop/files/personalised-stainless-steel-3-piece-cutlery-set-mylee-london-553771.jpg?v=1756200680&width=1946',
-    count: 65,
-    color: 'from-slate-400 to-gray-600'
-  },
-  { 
-    name: 'Curtains', 
-    image: 'https://img.joomcdn.net/531a9dc9915069b7331b30efe8578f05f1753114_1024_1024.jpeg',
-    count: 55,
-    color: 'from-indigo-400 to-blue-600'
-  },
-  { 
-    name: 'Carpets', 
-    image: 'https://isamado.co.ke/wp-content/uploads/2016/04/10059465_l-1626x1080.jpg',
-    count: 45,
-    color: 'from-orange-400 to-red-500'
-  },
-  { 
-    name: 'Furnitures', 
-    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&auto=format',
-    count: 110,
-    color: 'from-stone-400 to-amber-700'
-  }
-];
-
-  const features = [
-    { icon: Truck, title: 'Free Shipping', description: 'On orders over $50', color: 'text-blue-600', bg: 'bg-blue-50' },
-    { icon: Shield, title: 'Secure Payment', description: '100% secure transactions', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { icon: Headphones, title: '24/7 Support', description: 'Dedicated customer support', color: 'text-amber-600', bg: 'bg-amber-50' },
-    { icon: Star, title: 'Top Quality', description: 'Premium products only', color: 'text-purple-600', bg: 'bg-purple-50' },
+  const categories = [
+    {
+      name: "Electronics",
+      image:
+        "https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=600&auto=format",
+      count: 150,
+      color: "from-blue-400 to-indigo-500",
+    },
+    {
+      name: "Women Fashion",
+      image:
+        "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format",
+      count: 320,
+      color: "from-rose-400 to-pink-500",
+    },
+    {
+      name: "Men Fashion",
+      image:
+        "https://images.unsplash.com/photo-1488161628813-04466f872be2?w=600&auto=format",
+      count: 210,
+      color: "from-amber-400 to-orange-500",
+    },
+    {
+      name: "Drinks",
+      image:
+        "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format",
+      count: 95,
+      color: "from-purple-400 to-fuchsia-500",
+    },
+    {
+      name: "Home Decor",
+      image:
+        "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format",
+      count: 85,
+      color: "from-emerald-400 to-green-600",
+    },
+    {
+      name: "Cutlery",
+      image:
+        "https://myleelondon.com/cdn/shop/files/personalised-stainless-steel-3-piece-cutlery-set-mylee-london-553771.jpg?v=1756200680&width=1946",
+      count: 65,
+      color: "from-slate-400 to-gray-600",
+    },
+    {
+      name: "Curtains",
+      image:
+        "https://img.joomcdn.net/531a9dc9915069b7331b30efe8578f05f1753114_1024_1024.jpeg",
+      count: 55,
+      color: "from-indigo-400 to-blue-600",
+    },
+    {
+      name: "Carpets",
+      image:
+        "https://isamado.co.ke/wp-content/uploads/2016/04/10059465_l-1626x1080.jpg",
+      count: 45,
+      color: "from-orange-400 to-red-500",
+    },
+    {
+      name: "Furnitures",
+      image:
+        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&auto=format",
+      count: 110,
+      color: "from-stone-400 to-amber-700",
+    },
   ];
 
-  const trendingProducts = [
-    { id: 1, name: 'Wireless Headphones', price: 79.99, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&auto=format', rating: 4.8, sales: 1234 },
-    { id: 2, name: 'Smart Watch Series 5', price: 299.99, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format', rating: 4.9, sales: 2341 },
-    { id: 3, name: 'Minimalist Backpack', price: 49.99, image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&auto=format', rating: 4.7, sales: 3456 },
+  const features = [
+    {
+      icon: Truck,
+      title: "Free Shipping",
+      description: "On orders over $50",
+      color: "text-blue-600",
+      bg: "bg-blue-50",
+    },
+    {
+      icon: Shield,
+      title: "Secure Payment",
+      description: "100% secure transactions",
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
+    },
+    {
+      icon: Headphones,
+      title: "24/7 Support",
+      description: "Dedicated customer support",
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+    },
+    {
+      icon: Star,
+      title: "Top Quality",
+      description: "Premium products only",
+      color: "text-purple-600",
+      bg: "bg-purple-50",
+    },
   ];
 
   const testimonials = [
-    { name: ' H.E. Uhuru Muigai Kenyatta', text: 'Best shopping experience ever! The quality is amazing and delivery was super fast.', rating: 5, role: 'Fashion Enthusiast', image: 'https://swalanyeti.co.ke/storage/uploads/2022/11/IMG-20221102005620.jpeg' },
-    { name: 'Elon Musk', text: 'Found exactly what I needed at the best price. Customer service is top-notch!', rating: 5, role: 'Tech Reviewer', image: 'https://www.indyturk.com/sites/default/files/styles/1368x911/public/article/main_image/2023/05/21/1144956-229631373.jpeg?itok=-YL3bX2E' },
+    {
+      name: " H.E. Uhuru Muigai Kenyatta",
+      text: "Best shopping experience ever! The quality is amazing and delivery was super fast.",
+      rating: 5,
+      role: "Fashion Enthusiast",
+      image:
+        "https://swalanyeti.co.ke/storage/uploads/2022/11/IMG-20221102005620.jpeg",
+    },
+    {
+      name: "Elon Musk",
+      text: "Found exactly what I needed at the best price. Customer service is top-notch!",
+      rating: 5,
+      role: "Tech Reviewer",
+      image:
+        "https://www.indyturk.com/sites/default/files/styles/1368x911/public/article/main_image/2023/05/21/1144956-229631373.jpeg?itok=-YL3bX2E",
+    },
   ];
 
   return (
@@ -117,10 +152,7 @@ const categories = [
     >
       {/* Hero Section with Parallax */}
       <section className="bg-white relative h-screen overflow-hidden">
-        <motion.div 
-          style={{ scale: heroScale }}
-          className="absolute inset-0"
-        >
+        <motion.div style={{ scale: heroScale }} className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1600&auto=format"
             alt="Hero"
@@ -128,7 +160,7 @@ const categories = [
           />
           <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/50 to-transparent" />
         </motion.div>
-        
+
         <div className="relative z-10 h-full flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-2xl">
@@ -140,27 +172,29 @@ const categories = [
               >
                 ✨ Welcome to the future of shopping
               </motion.span>
-              
+
               <motion.h1
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
                 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
               >
-                Discover <span className="text-amber-400">Amazing</span><br />
+                Discover <span className="text-amber-400">Amazing</span>
+                <br />
                 Products at Your Fingertips
               </motion.h1>
-              
+
               <motion.p
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
                 className="text-xl text-gray-200 mb-8 leading-relaxed"
               >
-                Join millions of happy customers and experience shopping like never before.
-                Quality products, amazing prices, delivered to your doorstep.
+                Join millions of happy customers and experience shopping like
+                never before. Quality products, amazing prices, delivered to
+                your doorstep.
               </motion.p>
-              
+
               <motion.div
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -177,7 +211,7 @@ const categories = [
                     <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </motion.button>
                 </Link>
-                
+
                 <Link to="/about">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -214,14 +248,14 @@ const categories = [
         </div>
 
         {/* Scroll Indicator */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
         >
           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <motion.div 
+            <motion.div
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 1.7, repeat: Infinity }}
               className="w-1 h-2 bg-white rounded-full mt-2"
@@ -239,9 +273,16 @@ const categories = [
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-amber-600 font-semibold text-sm tracking-wider uppercase">Why Choose Us</span>
-            <h2 className="text-4xl font-bold text-gray-900 mt-2">The ShopEase Advantage</h2>
-            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">We go above and beyond to ensure your shopping experience is nothing short of amazing</p>
+            <span className="text-amber-600 font-semibold text-sm tracking-wider uppercase">
+              Why Choose Us
+            </span>
+            <h2 className="text-4xl font-bold text-gray-900 mt-2">
+              The ShopEase Advantage
+            </h2>
+            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+              We go above and beyond to ensure your shopping experience is
+              nothing short of amazing
+            </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -258,7 +299,9 @@ const categories = [
                 <div className={`${feature.color} mb-4`}>
                   <feature.icon className="w-12 h-12 mx-auto group-hover:scale-110 transition-transform" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  {feature.title}
+                </h3>
                 <p className="text-gray-600">{feature.description}</p>
               </motion.div>
             ))}
@@ -276,10 +319,17 @@ const categories = [
             className="flex justify-between items-end mb-12"
           >
             <div>
-              <span className="text-amber-600 font-semibold text-sm tracking-wider uppercase">Categories</span>
-              <h2 className="text-4xl font-bold text-gray-900 mt-2">Shop by Category</h2>
+              <span className="text-amber-600 font-semibold text-sm tracking-wider uppercase">
+                Categories
+              </span>
+              <h2 className="text-4xl font-bold text-gray-900 mt-2">
+                Shop by Category
+              </h2>
             </div>
-            <Link to="/products" className="text-gray-600 hover:text-amber-600 font-semibold flex items-center gap-2 group">
+            <Link
+              to="/products"
+              className="text-gray-600 hover:text-amber-600 font-semibold flex items-center gap-2 group"
+            >
               View All
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -301,17 +351,23 @@ const categories = [
                   alt={category.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-75 group-hover:opacity-90 transition-opacity`} />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-75 group-hover:opacity-90 transition-opacity`}
+                />
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform">
                   <h3 className="text-2xl font-bold mb-1">{category.name}</h3>
-                  <p className="text-white/90 mb-3">{category.count} Products</p>
+                  <p className="text-white/90 mb-3">
+                    {category.count} Products
+                  </p>
                   <Link to="/products">
-  <button className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold inline-flex items-center gap-2 
-    block lg:block lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-    Explore Now
-    <ArrowRight className="w-4 h-4" />
-  </button>
-</Link>
+                    <button
+                      className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold inline-flex items-center gap-2 
+    block lg:block lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
+                    >
+                      Explore Now
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </Link>
                 </div>
               </motion.div>
             ))}
@@ -329,19 +385,26 @@ const categories = [
             className="flex justify-between items-end mb-12"
           >
             <div>
-              <span className="text-amber-600 font-semibold text-sm tracking-wider uppercase">Hot Right Now</span>
-              <h2 className="text-4xl font-bold text-gray-900 mt-2">Trending Products</h2>
+              <span className="text-amber-600 font-semibold text-sm tracking-wider uppercase">
+                Hot Right Now
+              </span>
+              <h2 className="text-4xl font-bold text-gray-900 mt-2">
+                Trending Products
+              </h2>
             </div>
-            <Link to="/products" className="text-gray-600 hover:text-amber-600 font-semibold flex items-center gap-2 group">
+            <Link
+              to="/products"
+              className="text-gray-600 hover:text-amber-600 font-semibold flex items-center gap-2 group"
+            >
               View All
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {trendingProducts.map((product, index) => (
+            {products.slice(0, 3).map((product, index) => (
               <motion.div
-                key={product.id}
+                key={product._id}
                 initial={{ y: 50, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
@@ -351,34 +414,38 @@ const categories = [
               >
                 <div className="relative h-64 overflow-hidden">
                   <img
-                    src={product.image}
+                    src={product.images}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute top-4 right-4 bg-amber-400 text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
                     ${product.price}
                   </div>
-                  {product.sales > 1000 && (
+                  {/* {product.sales > 1000 && (
                     <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
                       🔥 Hot
                     </div>
-                  )}
+                  )} */}
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {product.name}
+                  </h3>
                   <div className="flex items-center gap-2 mb-3">
                     <div className="flex text-amber-400">
-                      {'★'.repeat(Math.floor(product.rating))}
+                      {"★".repeat(Math.floor(product.ratings))}
                     </div>
-                    <span className="text-sm text-gray-600">({product.sales} sold)</span>
+                    <span className="text-sm text-gray-600">
+                      ({product.sales} sold)
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-gray-900">${product.price}</span>
+                    <span className="text-2xl font-bold text-gray-900">
+                      ${product.price}
+                    </span>
                     {/* -------  -------------------------FUNCTIONALITY OF ADD TO CART TO BE IMPLEMENTED LATER -------------------------------------------- */}
                     <button className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-amber-400 hover:text-gray-900 transition-colors">
-                      <Link to='/products'>
-                      view
-                      </Link>
+                      <Link to="/products">view</Link>
                     </button>
                   </div>
                 </div>
@@ -397,8 +464,12 @@ const categories = [
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-amber-600 font-semibold text-sm tracking-wider uppercase">Testimonials</span>
-            <h2 className="text-4xl font-bold text-gray-900 mt-2">What Our Customers Say</h2>
+            <span className="text-amber-600 font-semibold text-sm tracking-wider uppercase">
+              Testimonials
+            </span>
+            <h2 className="text-4xl font-bold text-gray-900 mt-2">
+              What Our Customers Say
+            </h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -416,15 +487,23 @@ const categories = [
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mb-6 mt-4">
-                  <img src={testimonial.image} alt={testimonial.name} className="w-16 h-16 rounded-full object-cover" />
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
                   <div>
-                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
+                    <h4 className="font-semibold text-gray-900">
+                      {testimonial.name}
+                    </h4>
                     <p className="text-gray-600 text-sm">{testimonial.role}</p>
                   </div>
                 </div>
-                <p className="text-gray-700 mb-4 text-lg italic">"{testimonial.text}"</p>
+                <p className="text-gray-700 mb-4 text-lg italic">
+                  "{testimonial.text}"
+                </p>
                 <div className="flex text-amber-400">
-                  {'★'.repeat(testimonial.rating)}
+                  {"★".repeat(testimonial.rating)}
                 </div>
               </motion.div>
             ))}
@@ -444,7 +523,8 @@ const categories = [
               Ready to Start Shopping?
             </h2>
             <p className="text-xl text-gray-800 mb-8">
-              Join thousands of satisfied customers and discover amazing products today!
+              Join thousands of satisfied customers and discover amazing
+              products today!
             </p>
             <Link to="/products">
               <motion.button
