@@ -1,12 +1,13 @@
 // components/product/ProductActions.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, ShoppingCart, Check } from 'lucide-react';
+import { Heart, ShoppingCart, Check, Loader } from 'lucide-react';
 
 const ProductActions = ({ 
   product, 
   isAdded, 
   isInWishlistState, 
+  isAddingToCart = false,
   onAddToCart, 
   onWishlist 
 }) => {
@@ -16,16 +17,23 @@ const ProductActions = ({
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
         onClick={onAddToCart}
-        disabled={!product.inStock}
+        disabled={!product.inStock || isAddingToCart}
         className={`flex-1 px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all ${
           !product.inStock 
             ? 'bg-gray-300 cursor-not-allowed text-gray-500'
             : isAdded
               ? 'bg-green-600 hover:bg-green-700 text-white'
-              : 'bg-gray-900 hover:bg-gray-800 text-white'
+              : isAddingToCart
+                ? 'bg-amber-500 cursor-wait text-white'
+                : 'bg-gray-900 hover:bg-gray-800 text-white'
         }`}
       >
-        {isAdded ? (
+        {isAddingToCart ? (
+          <>
+            <Loader className="w-5 h-5 animate-spin" />
+            Adding...
+          </>
+        ) : isAdded ? (
           <>
             <Check className="w-5 h-5" />
             Added to Cart!

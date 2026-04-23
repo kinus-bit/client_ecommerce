@@ -4,8 +4,12 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 
-const OrderComplete = () => {
-  const orderNumber = `SHOP-${Math.floor(Math.random() * 10000)}`;
+const OrderComplete = ({ orderData }) => {
+  const orderNumber = orderData?.order?._id 
+    ? orderData.order._id.slice(-8).toUpperCase() 
+    : `SHOP-${Math.floor(Math.random() * 10000)}`;
+  
+  const totalAmount = orderData?.order?.totalPrice || orderData?.totalPrice;
   
   return (
     <motion.div
@@ -29,6 +33,9 @@ const OrderComplete = () => {
           </p>
           <div className="bg-gray-50 rounded-lg p-4 mb-6 text-sm text-gray-600">
             <p className="font-medium text-gray-900 mb-2">Order #: {orderNumber}</p>
+            {totalAmount && (
+              <p className="text-sm mb-1">Total Amount: ${totalAmount.toFixed(2)}</p>
+            )}
             <p>You'll receive shipping updates via email.</p>
           </div>
           <Link to="/dashboard?tab=overview">

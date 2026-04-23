@@ -11,33 +11,43 @@ import {
   OrderComplete,
   SecurityBadge
 } from '../components/checkout';
+import { createorder, getmycart } from '@/services/api';
+import { useEffect } from 'react';
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { cartItems, getCartTotal, clearCart } = useCart();
-  const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
-  const [shippingMethod, setShippingMethod] = useState('standard');
+  const [orderData, setOrderData] = useState(null);
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState('');
+  const [ cartItems , setCartItems] = useState([]);
+  const [ products , setProducts] = useState([]);
   
   const [formData, setFormData] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
     address: '',
-    apartment: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    M_pesaNumber: '',
-    MpesaName: '',
+    contact: '',
   });
 
-  const shippingCost = shippingMethod === 'standard' ? 5 : 15;
-  const subtotal = getCartTotal();
-  const tax = subtotal * 0.1;
-  const total = subtotal + shippingCost + tax;
+  const fetchCartItems = async() => {
+      try {
+        const res = await getmycart();
+        console.log(res.items);
+        setCartItems(res); 
+        setProducts(res.items);
+      } catch (error) {
+        console.log("Backend error:", error.response?.data || error.message);  
+      }
+  }
+
+  useEffect( () => {
+    fetchCartItems();
+  }, []);
+
+  const shippingCost = 5; // Default standard shipping
+  
+  const subtotal = cartItems.totalPrice;
+  const total = subtotal + shippingCost;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,71 +55,77 @@ const Checkout = () => {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+    if (apiError) setApiError('');
   };
 
-  const handleShippingMethodChange = (e) => {
-    setShippingMethod(e.target.value);
-  };
-
-  const validateStep = () => {
+  const validateForm = () => {
     const newErrors = {};
     
-    if (step === 1) {
-      if (!formData.email) newErrors.email = 'Email is required';
-      else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-      if (!formData.firstName) newErrors.firstName = 'First name is required';
-      if (!formData.lastName) newErrors.lastName = 'Last name is required';
+    if (!formData.address) {
+      newErrors.address = 'Shipping address is required';
     }
     
-    if (step === 2) {
-      if (!formData.address) newErrors.address = 'Address is required';
-      if (!formData.city) newErrors.city = 'City is required';
-      if (!formData.state) newErrors.state = 'State is required';
-      if (!formData.zipCode) newErrors.zipCode = 'ZIP code is required';
-    }
-    
-    if (step === 3) {
-      if (!formData.M_pesaNumber) newErrors.M_pesaNumber = 'M-pesa number is required';
-      else if (formData.M_pesaNumber.length < 10) {
-        newErrors.M_pesaNumber = 'M-pesa number must be 10 digits';
-      }
-      if (!formData.MpesaName) newErrors.MpesaName = 'M-pesa name is required';
+    if (!formData.contact) {
+      newErrors.contact = 'Contact number is required';
+    } else if (formData.contact.length < 10) {
+      newErrors.contact = 'Contact number must be at least 10 digits';
+    } else if (!/^[0-9]+$/.test(formData.contact)) {
+      newErrors.contact = 'Contact number must contain only numbers';
     }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleBack = () => {
-    setStep(prev => prev - 1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateStep()) return;
+    if (!validateForm()) return;
     
-    if (step < 3) {
-      setStep(prev => prev + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      setIsProcessing(true);
+    setIsProcessing(true);
+    setApiError('');
+    
+    try {
+      // Prepare order data for backend
+      const shippingAddress = formData.address;
+      const contact = formData.contact;
       
+      const orderPayload = {
+        shippingAddress,
+        contact,
+      };
+      
+      console.log('Sending order payload:', orderPayload);
+      
+      // Call backend API to create order
+      const response = await createorder(orderPayload);
+      console.log('Order creation response:', response);
+      
+      // Store order data
+      setOrderData(response.order || response.data);
+      
+      
+      // Show order complete screen
+      setOrderComplete(true);
+      
+      // Redirect after 3 seconds
       setTimeout(() => {
-        setIsProcessing(false);
-        setOrderComplete(true);
-        clearCart();
-        
-        setTimeout(() => {
-          navigate('/dashboard?tab=overview');
-        }, 3000);
-      }, 2000);
+        navigate('/dashboard?tab=orders');
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error creating order:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to create order. Please try again.';
+      setApiError(errorMessage);
+      setIsProcessing(false);
+      
+      // Scroll to top to show error
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   if (orderComplete) {
-    return <OrderComplete />;
+    return <OrderComplete orderData={orderData} />;
   }
 
   return (
@@ -122,19 +138,23 @@ const Checkout = () => {
       <CheckoutHeader />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <CheckoutProgress step={step} />
+        <CheckoutProgress />
+
+        {/* API Error Display */}
+        {apiError && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            <p className="text-sm">{apiError}</p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <CheckoutForm 
-              step={step}
               formData={formData}
               errors={errors}
-              shippingMethod={shippingMethod}
               isProcessing={isProcessing}
+              apiError={apiError}
               onInputChange={handleInputChange}
-              onShippingMethodChange={handleShippingMethodChange}
-              onBack={handleBack}
               onSubmit={handleSubmit}
             />
             <SecurityBadge />
@@ -142,12 +162,8 @@ const Checkout = () => {
 
           <div className="lg:col-span-1">
             <OrderSummary 
-              cartItems={cartItems}
+              cartItems={products}
               subtotal={subtotal}
-              shippingCost={shippingCost}
-              tax={tax}
-              total={total}
-              shippingMethod={shippingMethod}
             />
           </div>
         </div>

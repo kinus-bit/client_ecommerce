@@ -2,7 +2,20 @@
 import React from 'react';
 import { Star, Check, Gift, Truck, Shield, RefreshCw, Package, Clock } from 'lucide-react';
 
-const ProductInfo = ({ product, selectedColor, onColorSelect, calculateDeliveryDate }) => {
+const ProductInfo = ({ 
+  product, 
+  selectedColor, 
+  onColorSelect, 
+  calculateDeliveryDate,
+  quantity = 1,
+  onQuantityChange 
+}) => {
+  const handleQuantityChange = (newQuantity) => {
+    if (newQuantity >= 1 && newQuantity <= product.stockCount) {
+      onQuantityChange(newQuantity);
+    }
+  };
+
   return (
     <div>
       {/* Title & Rating */}
@@ -117,6 +130,42 @@ const ProductInfo = ({ product, selectedColor, onColorSelect, calculateDeliveryD
                 {color}
               </button>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Quantity Selection */}
+      {onQuantityChange && product.inStock && (
+        <div className="mb-6">
+          <h3 className="font-medium text-gray-900 mb-3">Quantity</h3>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center border border-gray-300 rounded-lg">
+              <button
+                onClick={() => handleQuantityChange(quantity - 1)}
+                className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 transition-colors rounded-l-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={quantity <= 1}
+                aria-label="Decrease quantity"
+              >
+                -
+              </button>
+              <span className="w-12 text-center font-medium">{quantity}</span>
+              <button
+                onClick={() => handleQuantityChange(quantity + 1)}
+                className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 transition-colors rounded-r-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={quantity >= product.stockCount}
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+            <span className="text-sm text-gray-500">
+              {product.stockCount} available
+            </span>
+            {product.stockCount <= 5 && (
+              <span className="text-sm text-orange-600 bg-orange-50 px-2 py-1 rounded">
+                Only {product.stockCount} left!
+              </span>
+            )}
           </div>
         </div>
       )}

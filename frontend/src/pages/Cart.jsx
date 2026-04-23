@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 const Cart = () => {
   const [ cartItems , setCartItems] = useState([]);
   const [ products , setProducts] = useState([]);
-  const { removeFromCart, updateQuantity, getCartTotal } = useCart();
+  const { removeFromCart, updateQuantity } = useCart();
 
 
  
@@ -25,9 +25,9 @@ const Cart = () => {
     }
   }
 
-  const shippingCost = products.length > 0 ? 5 : 0;
+  const shippingCost = "free";
   const subtotal = cartItems.totalPrice;
-  const total = subtotal + shippingCost;
+  const total = subtotal ;
 
   useEffect( () => {
     fetchCartItems();
@@ -212,7 +212,7 @@ const Cart = () => {
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping</span>
                     <span className="font-medium text-gray-900">
-                      {shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}
+                      {shippingCost}
                     </span>
                   </div>
                   

@@ -14,11 +14,11 @@ import {
   RecentlyViewed,
   ImageModal
 } from '../components/productdescription';
-import { getProductById, getAllProducts } from '@/services/api';
+import { getProductById, getAllProducts, addtocart } from '@/services/api';
 
 const ProductDescriptiontest = () => {
   const { id } = useParams();
-  const [quantity] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState('');
   const [isAdded, setIsAdded] = useState(false);
@@ -31,8 +31,9 @@ const ProductDescriptiontest = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   
-  const { addToCart } = useCart();
+  const { addToCart: updateLocalCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   // Fetch single product by ID
@@ -103,7 +104,7 @@ const ProductDescriptiontest = () => {
       isNew: product.IsNew || false,
       discount: product.discount || 0,
       comments: product.comments || '',
-      video: null, // Add video URL if available in your backend
+      video: null,
       features: product.highlights ? product.highlights.slice(0, 3).map(highlight => ({
         icon: null,
         text: highlight
@@ -147,14 +148,50 @@ const ProductDescriptiontest = () => {
     setSelectedImage(0);
     setSelectedImageIndex(0);
     setIsAdded(false);
+    setQuantity(1);
   }, [transformedProduct, checkWishlistStatus, selectedColor]);
 
-  const handleAddToCart = useCallback(() => {
+  // Handle add to cart with backend API
+  const handleAddToCart = useCallback(async () => {
     if (!transformedProduct || !transformedProduct.inStock) return;
-    addToCart({ ...transformedProduct, quantity, selectedColor });
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 2000);
-  }, [addToCart, transformedProduct, quantity, selectedColor]);
+    
+    try {
+      setIsAddingToCart(true);
+      
+      // Prepare data for backend
+      const cartData = {
+        productId: transformedProduct.id,
+        quantity: quantity
+      };
+      
+      console.log('Adding to cart:', cartData);
+      
+      // Call backend API
+      const response = await addtocart(cartData);
+      console.log('Cart response:', response);
+      
+      // Also update local cart context for immediate UI feedback
+      updateLocalCart({ 
+        ...transformedProduct, 
+        quantity, 
+        selectedColor 
+      });
+      
+      // Show success message
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 2000);
+      
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      const errorMessage = error?.response?.data?.message || 'Failed to add to cart. Please try again.';
+      setError(errorMessage);
+      
+      // Clear error after 3 seconds
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setIsAddingToCart(false);
+    }
+  }, [transformedProduct, quantity, selectedColor, updateLocalCart]);
 
   const handleWishlist = useCallback(() => {
     if (!transformedProduct) return;
@@ -227,6 +264,13 @@ const ProductDescriptiontest = () => {
       exit={{ opacity: 0 }}
       className="min-h-screen bg-gray-50"
     >
+      {/* Error Toast Message */}
+      {error && (
+        <div className="fixed top-20 right-4 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg animate-in slide-in-from-top">
+          {error}
+        </div>
+      )}
+      
       <Breadcrumb product={transformedProduct} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -245,11 +289,14 @@ const ProductDescriptiontest = () => {
               selectedColor={selectedColor}
               onColorSelect={setSelectedColor}
               calculateDeliveryDate={calculateDeliveryDate}
+              quantity={quantity}
+              onQuantityChange={setQuantity}
             />
             <ProductActions 
               product={transformedProduct}
               isAdded={isAdded}
               isInWishlistState={isInWishlistState}
+              isAddingToCart={isAddingToCart}
               onAddToCart={handleAddToCart}
               onWishlist={handleWishlist}
             />
