@@ -17,13 +17,12 @@ import {
 import ProductCatalogtest from '../pages/ProductCatalogtest';
 import Cart from '../pages/Cart';
 import Checkout from '../pages/Checkout';
-import { getMe, updateProfile, uploadProfilePicture, deleteProfilePicture, getmyorders } from '@/services/api';
+import { getMe, updateProfile, uploadProfilePicture, deleteProfilePicture, getmyorders, getmycart } from '@/services/api';
 import { getImageUrl } from '@/utils/imageUtils';
 const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { cartItems } = useCart();
   const { wishlistItems } = useWishlist();
   const { user: authUser, logout } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
@@ -32,7 +31,7 @@ const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
-  
+
   
   // Get active tab from URL params or state
   const getActiveTabFromUrl = () => {
@@ -153,6 +152,7 @@ const Dashboard = () => {
   const [formData, setFormData] = useState({ ...user });
   const [profileErrors, setProfileErrors] = useState({});
   const [orderItems , setOrderItems] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   // const [orders, setOrders] = useState([])
 
   const fetchOrders = async () => {
@@ -165,6 +165,21 @@ const Dashboard = () => {
   useEffect( () => {
     fetchOrders();
   }, []);
+
+  const fetchCartItems = async() => {
+    try {
+      const res = await getmycart();
+      console.log('Cart response:', res);
+      setCartItems(res.items); 
+    } catch (error) {
+      console.log("Backend error:", error.response?.data || error.message);  
+    }
+  }
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
   const [orders] = useState([
     {
       id: 'ORD-001',
@@ -179,6 +194,7 @@ const Dashboard = () => {
     },
 
   ]);
+
 
   const getStatusColor = (status) => {
     switch(status) {
@@ -348,11 +364,10 @@ const Dashboard = () => {
     switch(activeTab) {
       case 'overview':
         return (
-          <div className="space-y-6 hidden">
+          <div className="space-y-6 ">
             <DashboardStats 
-              orders={orders}
+              orders={orderItems}
               cartItems={cartItems}
-              wishlistItems={wishlistItems}
               joinDate={user.joinDate}
             />
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -365,7 +380,7 @@ const Dashboard = () => {
                   View All
                 </button>
               </div>
-              <OrdersList orders={orders.slice(0, 3)} getStatusColor={getStatusColor} />
+              <OrdersList orders={orderItems.slice(0, 1)} getStatusColor={getStatusColor} />
             </div>
             <QuickActions cartItemsCount={cartItems.length} />
           </div>

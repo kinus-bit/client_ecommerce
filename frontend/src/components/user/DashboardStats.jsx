@@ -20,20 +20,16 @@ const DashboardStats = ({ orders, cartItems, wishlistItems, joinDate }) => {
       change: cartItems.length > 0 ? 'Ready to checkout' : 'Cart is empty'
     },
     { 
-      label: 'Wishlist', 
-      value: wishlistItems.length, 
-      icon: Heart, 
-      color: 'bg-rose-500',
-      change: `${wishlistItems.length} saved items`
-    },
-    { 
       label: 'Member Since', 
-      value: joinDate.split(',')[0], 
+      value: joinDate, 
       icon: Calendar, 
       color: 'bg-green-500',
       change: 'Active member'
     }
   ];
+  console.log("joining date", joinDate)
+
+  console.log("testing cart items" ,cartItems)
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
