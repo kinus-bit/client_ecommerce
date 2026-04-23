@@ -59,7 +59,7 @@ const InformationStep = ({ formData, errors, onInputChange }) => {
             <p className="text-red-500 text-xs mt-1">{errors.contact}</p>
           )}
           <p className="text-xs text-gray-500 mt-1">
-            Enter your M-pesa number so we can reach out to you for payment confirmation
+            Enter your M-pesa number so we can reach out to you
           </p>
         </div>
       </div>
