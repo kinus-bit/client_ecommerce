@@ -179,14 +179,14 @@ const ProductCatalog = () => {
   const visibleProducts = sortedProducts.slice(0, visibleCount);
   const hasMoreProducts = visibleCount < sortedProducts.length;
 
-  const handleFilterChange = (action) => {
-    setVisibleCount(5);
-    if (action === 'clear') {
-      setSelectedCategory('all');
-      setSelectedSubCategory('all');
-      setSearchTerm('');
-    }
-  };
+  // const handleFilterChange = (action) => {
+  //   setVisibleCount(5);
+  //   if (action === 'clear') {
+  //     setSelectedCategory('all');
+  //     setSelectedSubCategory('all');
+  //     setSearchTerm('');
+  //   }
+  // };
 
   const handleClick = () => {
     window.location.href = "https://wa.me/254768332588";
