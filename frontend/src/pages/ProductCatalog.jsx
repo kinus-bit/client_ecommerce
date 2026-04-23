@@ -1,7 +1,7 @@
 // pages/ProductCatalog.jsx
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { Filter, Grid, List, Star, ChevronDown, X, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getAllProducts, getallcategories, getallsubcategories } from '@/services/api';
 import { useEffect } from 'react';
+import { IconContext } from 'react-icons'; 
+import { FaWhatsapp } from 'react-icons/fa';
 
 // Icon mapping for categories
 const getCategoryIcon = (categoryName) => {
@@ -186,6 +188,9 @@ const ProductCatalog = () => {
     }
   };
 
+  const handleClick = (e) => {
+    window.location.href = "https://wa.me/0768332588";
+  }
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -683,6 +688,25 @@ const ProductCatalog = () => {
                             <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                               {product.subCategory?.name || product.subCategory || 'General'}
                             </span>
+                           
+
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                // Add to cart logic that will be implemented later
+                              }}
+                            >
+                               <IconContext.Provider value={{ color: "green", className: "global-class-name" }}>
+                              <div className="text-sm text-white bg-green-500 px-3 py-1 rounded-full flex items-center gap-1">
+                               
+                                chat
+                                <FaWhatsapp onClick={handleClick}/>
+                            
+                              </div>
+                            </IconContext.Provider>
+                            </motion.button>
                             
                             <motion.button
                               whileHover={{ scale: 1.05 }}
