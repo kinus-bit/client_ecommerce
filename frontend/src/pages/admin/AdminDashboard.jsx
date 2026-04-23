@@ -10,26 +10,73 @@ import {
 } from 'lucide-react';
 import AdminStatsCard from '../../components/admin/AdminStatsCard';
 import AdminTable from '../../components/admin/AdminTable';
+import { getallorders, getAllProducts, getallusers } from '@/services/api';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const AdminDashboard = () => {
-  const stats = [
-    { title: 'Total Orders', value: '1,429', icon: ShoppingBag, color: 'blue' },
-    { title: 'Total Users', value: '3,542', icon: Users, color: 'purple' },
-    { title: 'Total Products', value: '847', icon: Package, color: 'orange' },
+
+
+  const [orderItems , setOrderItems] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  
+    const fetchOrders = async () => {
+      const res = await getallorders();
+      console.log(res.orders);
+      // setOrders(res.items);
+      setOrderItems(res.orders);
+  }
+
+    
+  useEffect( () => {
+    fetchOrders();
+  }, []);
+
+    const fetchUsers = async () => {
+      const res = await getallusers();
+      console.log(res.data);
+      setUsers(res.data);
+    }
+  
+    useEffect( () => { 
+      fetchUsers();
+    },[]);
+
+    const fetchProducts = async () => {
+      try {
+        const response = await getAllProducts();
+        console.log('API Response:', response);
+        
+        setProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+    }};
+
+    useEffect( () => { 
+      fetchProducts();
+    },[]);
+
+    console.log("testing product", products)
+
+    const stats = [
+    { title: 'Total Orders', value: orderItems.length, icon: ShoppingBag, color: 'blue' },
+    { title: 'Total Users', value: users.length, icon: Users, color: 'purple' },
+    { title: 'Total Products', value:products.length, icon: Package, color: 'orange' },
   ];
 
-  const recentOrders = [
-    { id: '#ORD-001', customer: 'John Doe', amount: '$299.00', status: 'Delivered', date: '2024-01-15' },
-    { id: '#ORD-002', customer: 'Jane Smith', amount: '$159.00', status: 'Processing', date: '2024-01-14' },
-    { id: '#ORD-003', customer: 'Mike Johnson', amount: '$499.00', status: 'Shipped', date: '2024-01-13' },
-    { id: '#ORD-004', customer: 'Sarah Wilson', amount: '$89.00', status: 'Pending', date: '2024-01-12' },
-    { id: '#ORD-005', customer: 'David Brown', amount: '$1,299.00', status: 'Delivered', date: '2024-01-11' },
-  ];
+  console.log("all orders tesing", orderItems);
+
 
   const orderColumns = [
-    { header: 'Order ID', accessor: 'id' },
-    { header: 'Customer', accessor: 'customer' },
-    { header: 'Amount', accessor: 'amount' },
+    { header: 'Order ID', accessor: '_id' },
+    { 
+      header: 'Customer',
+      accessor: 'user',
+      render: (value) => value?.name
+    },
+    { header: 'Amount', accessor: 'totalAmount' },
     { 
       header: 'Status', 
       accessor: 'status',
@@ -47,7 +94,7 @@ const AdminDashboard = () => {
         );
       }
     },
-    { header: 'Date', accessor: 'date' },
+    { header: 'Date', accessor: 'createdAt' },
   ];
 
   return (
@@ -55,7 +102,7 @@ const AdminDashboard = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-6 hidden"
+      className="p-6 "
     >
       {/* Page Header */}
       <div className="mb-8">
@@ -82,18 +129,12 @@ const AdminDashboard = () => {
             Top Products
           </h3>
           <div className="space-y-4">
-            {[
-              { name: 'iPhone 15 Pro', sales: 245, revenue: '$244,755' },
-              { name: 'MacBook Pro', sales: 189, revenue: '$245,211' },
-              { name: 'Wireless Headphones', sales: 423, revenue: '$84,177' },
-              { name: 'Samsung Galaxy S24', sales: 156, revenue: '$140,244' },
-            ].map((product, index) => (
-              <div key={index} className="flex items-center justify-between">
+            {products.slice(0,5).map((product, _id) => (
+              <div key={_id} className="flex items-center justify-between">
                 <div>
                   <p className="font-medium text-gray-900">{product.name}</p>
-                  <p className="text-sm text-gray-600">{product.sales} sales</p>
                 </div>
-                <p className="font-semibold text-gray-900">{product.revenue}</p>
+                <p className="font-semibold text-gray-900">${product.price}</p>
               </div>
             ))}
           </div>
@@ -106,7 +147,7 @@ const AdminDashboard = () => {
         </h2>
         <AdminTable 
           columns={orderColumns}
-          data={recentOrders}
+          data={orderItems}
           itemsPerPage={5}
         />
       </div>

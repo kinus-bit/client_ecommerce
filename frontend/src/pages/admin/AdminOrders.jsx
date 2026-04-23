@@ -22,10 +22,7 @@ const AdminOrders = () => {
       fetchOrders();
     }, []);
 
-  const orders = [
-    { id: '#ORD-001', customer: 'John Doe', amount: 299, status: 'Delivered', date: '2024-01-15', items: 2 },
-    { id: '#ORD-002', customer: 'Jane Smith', amount: 159, status: 'Processing', date: '2024-01-14', items: 1 },
-  ];
+    console.log("order item testing", orderItems)
 
   const getStatusIcon = (status) => {
     switch(status) {
