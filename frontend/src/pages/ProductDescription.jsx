@@ -12,6 +12,8 @@ import {
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { getAllProducts, getProductById } from '@/services/api';
+import { FaWhatsapp } from 'react-icons/fa';
+import { IconContext } from 'react-icons';
 
 const ProductDescription = () => {
   const { id } = useParams();
@@ -120,6 +122,10 @@ const ProductDescription = () => {
     setShowShareOptions(false);
     
   }, [product]);
+
+    const handleClick = () => {
+    window.location.href = "https://wa.me/254740390815";
+  }
 
   const handleWishlist = useCallback(() => {
     if (!product) return;
@@ -497,19 +503,20 @@ const ProductDescription = () => {
                 </Link>
               </motion.button>
               
-              <motion.button
+              {/* <motion.button
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
-                onClick={handleWishlist}
-                className={`px-6 py-3 border rounded-lg font-medium flex items-center justify-center gap-2 transition-all ${
-                  isInWishlistState
-                    ? 'border-red-200 bg-red-50 text-red-600'
-                    : 'border-gray-300 hover:bg-gray-50 text-gray-700'
-                }`}
-              >
-                <Heart className={`w-5 h-5 ${isInWishlistState ? 'fill-current' : ''}`} />
-                <span className="hidden sm:inline">{isInWishlistState ? 'Saved' : 'Save'}</span>
-              </motion.button>    
+                className={"px-6 py-3 border rounded-lg font-medium flex items-center justify-center gap-2 transition-all"}
+              > */}
+                            <IconContext.Provider value={{ color: "green", className: "global-class-name" }}>
+                              <div className="text-sm text-white bg-green-500 px-6 py-3 rounded-full flex items-center justify-center gap-2 transition-all">
+                               
+                                chat
+                                <FaWhatsapp onClick={handleClick}/>
+                            
+                              </div>
+                            </IconContext.Provider>
+              {/* </motion.button>     */}
             </div>
 
             {/* Features Grid */}

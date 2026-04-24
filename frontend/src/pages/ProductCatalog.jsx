@@ -189,7 +189,7 @@ const ProductCatalog = () => {
   // };
 
   const handleClick = () => {
-    window.location.href = "https://wa.me/254768332588";
+    window.location.href = "https://wa.me/254740390815";
   }
   return (
     <motion.div
