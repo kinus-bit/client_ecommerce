@@ -163,7 +163,7 @@ const AdminSettings = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-4 sm:p-6"
+      className="p-4 sm:p-6 hidden"
     >
       {/* Removed 'hidden' class to make the page visible */}
       <div className="mb-6 sm:mb-8">
