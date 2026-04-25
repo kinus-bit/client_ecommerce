@@ -334,16 +334,16 @@ const welcomeEmail = (name) => {
 const orderConfirmationEmail = (name, order) => {
     const itemsHtml = order.items.map(item => `
         <tr>
-            <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; color: #333;">
                 ${item.name}
             </td>
-            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
+            <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: center; color: #333;">
                 ${item.quantity}
             </td>
-            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+            <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right; color: #333;">
                 $${item.price.toFixed(2)}
             </td>
-            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+            <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right; color: #333;">
                 $${(item.price * item.quantity).toFixed(2)}
             </td>
         </tr>
@@ -358,78 +358,145 @@ const orderConfirmationEmail = (name, order) => {
             <title>Order Confirmation</title>
             <style>
                 body {
-                    font-family: Arial, sans-serif;
+                    font-family: 'Segoe UI', Arial, sans-serif;
                     line-height: 1.6;
                     color: #333;
                     max-width: 600px;
                     margin: 0 auto;
                     padding: 20px;
+                    background-color: #f5f5f5;
                 }
                 .header {
-                    background-color: #4CAF50;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     color: white;
-                    padding: 20px;
+                    padding: 30px;
                     text-align: center;
-                    border-radius: 5px 5px 0 0;
+                    border-radius: 10px 10px 0 0;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 28px;
                 }
                 .content {
-                    background-color: #f9f9f9;
+                    background-color: #ffffff;
                     padding: 30px;
-                    border-radius: 0 0 5px 5px;
+                    border-radius: 0 0 10px 10px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 }
                 .order-details {
-                    background-color: white;
+                    background-color: #f8f9fa;
                     padding: 20px;
                     margin: 20px 0;
-                    border-radius: 5px;
-                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    border: 1px solid #e9ecef;
+                }
+                .order-details h3 {
+                    color: #495057;
+                    margin-top: 0;
+                    margin-bottom: 15px;
+                    padding-bottom: 10px;
+                    border-bottom: 2px solid #dee2e6;
                 }
                 table {
                     width: 100%;
                     border-collapse: collapse;
+                    margin: 15px 0;
+                    background-color: #ffffff;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
                 }
                 th {
-                    background-color: #f5f5f5;
-                    padding: 10px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 12px;
+                    text-align: left;
+                    font-weight: 600;
+                    font-size: 14px;
+                }
+                th:first-child {
                     text-align: left;
                 }
+                th:nth-child(2) {
+                    text-align: center;
+                }
+                th:nth-child(3),
+                th:nth-child(4) {
+                    text-align: right;
+                }
+                td {
+                    padding: 12px;
+                    border-bottom: 1px solid #f0f0f0;
+                }
                 .total {
-                    font-size: 18px;
-                    font-weight: bold;
                     text-align: right;
                     margin-top: 20px;
+                    padding-top: 15px;
+                    border-top: 2px solid #e9ecef;
+                }
+                .total p {
+                    font-size: 18px;
+                    margin: 5px 0;
+                }
+                .total strong {
+                    color: #667eea;
+                    font-size: 20px;
                 }
                 .footer {
                     text-align: center;
-                    margin-top: 20px;
+                    margin-top: 30px;
+                    padding-top: 20px;
                     font-size: 12px;
-                    color: #666;
+                    color: #6c757d;
+                    border-top: 1px solid #e9ecef;
                 }
                 .status {
                     display: inline-block;
-                    padding: 5px 10px;
-                    background-color: #4CAF50;
+                    padding: 5px 12px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     color: white;
-                    border-radius: 3px;
+                    border-radius: 20px;
                     font-size: 12px;
+                    font-weight: 600;
+                }
+                .info-row {
+                    margin: 10px 0;
+                }
+                .info-label {
+                    font-weight: 600;
+                    color: #495057;
+                    min-width: 100px;
+                    display: inline-block;
+                }
+                .info-value {
+                    color: #6c757d;
                 }
             </style>
         </head>
         <body>
             <div class="header">
-                <h1>Order Confirmation</h1>
+                <h1>🎉 Order Confirmation</h1>
             </div>
             <div class="content">
-                <p>Hello ${name},</p>
+                <p>Hello <strong>${name}</strong>,</p>
                 <p>Thank you for your order! Your order has been received and is being processed.</p>
                 
                 <div class="order-details">
-                    <h3>Order Details</h3>
-                    <p><strong>Order Number:</strong> ${order._id}</p>
-                    <p><strong>Order Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
-                    <p><strong>Order Status:</strong> <span class="status">${order.status}</span></p>
+                    <h3>📋 Order Details</h3>
+                    <div class="info-row">
+                        <span class="info-label">Order Number:</span>
+                        <span class="info-value">${order._id}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Order Date:</span>
+                        <span class="info-value">${new Date(order.createdAt).toLocaleString()}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Order Status:</span>
+                        <span class="status">${order.status.toUpperCase()}</span>
+                    </div>
                     
-                    <h3>Items Ordered</h3>
+                    <h3>🛍️ Items Ordered</h3>
                     <table>
                         <thead>
                             <tr>
@@ -445,21 +512,28 @@ const orderConfirmationEmail = (name, order) => {
                     </table>
                     
                     <div class="total">
-                        <p><strong>Total: $${order.totalAmount.toFixed(2)}</strong></p>
+                        <p><strong>Total Amount: $${order.totalAmount.toFixed(2)}</strong></p>
                     </div>
                 </div>
                 
                 <div class="order-details">
-                    <h3>Shipping Information</h3>
-                    <p><strong>Phone:</strong> ${order.contact}</p>
-                    <p><strong>Address:</strong> ${order.shippingAddress}</p>
+                    <h3>🚚 Shipping Information</h3>
+                    <div class="info-row">
+                        <span class="info-label">Phone Number:</span>
+                        <span class="info-value">${order.contact}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Shipping Address:</span>
+                        <span class="info-value">${order.shippingAddress}</span>
+                    </div>
                 </div>
                 
                 <p>We'll notify you once your order ships. If you have any questions, please contact our support team.</p>
-                <p>Best regards,<br>Your App Team</p>
+                <p>Best regards,<br><strong>Your App Team</strong></p>
             </div>
             <div class="footer">
                 <p>This is an automated message, please do not reply to this email.</p>
+                <p>&copy; ${new Date().getFullYear()} S. All rights reserved.</p>
             </div>
         </body>
         </html>
