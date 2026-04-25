@@ -529,7 +529,7 @@ const orderConfirmationEmail = (name, order) => {
                 </div>
                 
                 <p>We'll notify you once your order ships. If you have any questions, please contact our support team.</p>
-                <p>Best regards,<br><strong>Your App Team</strong></p>
+                <p>Best regards,<br><strong>Shopease Team</strong></p>
             </div>
             <div class="footer">
                 <p>This is an automated message, please do not reply to this email.</p>
