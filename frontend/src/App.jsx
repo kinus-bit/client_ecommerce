@@ -23,16 +23,15 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import EmailVerifiedSuccess from './pages/auth/EmailVerifiedSuccess';
 import ResetPassword from './pages/auth/ResetPassword';
-import { AuthProvider } from './context/AuthContext';
 import { ProfileForm } from './components/user';
 import ProductCatalogtest from './pages/ProductCatalogtest';
 import ProductDescriptiontest from './pages/ProductDescriptiontest';
 import AdminRoutes from './routes/AdminRoutes';
+import RoleDashboard from './pages/RoleDashboard';
 
 function App() {
   return (
     
-    <AuthProvider>
       <CartProvider>
         <WishlistProvider>
           <Router>
@@ -76,13 +75,12 @@ function App() {
                   <Route path="/verifyemail/:token" element={<VerifyEmail/>} />
                   <Route path="/verifysuccess" element={<EmailVerifiedSuccess/>} />
                   <Route path="/resetpassword/:token" element={<ResetPassword/>} />
-                  <Route path="/dashboard" element={
+                  <Route path="/dashboard/*" element={
                     <ProtectedRoute>
-                      <Dashboard/>
+                      <RoleDashboard/>
                     </ProtectedRoute>
                   }/>
-                   {/* Admin Routes */}
-                  <Route path="/admin/*" element={<AdminRoutes />} />
+
                 </Routes>
               </AnimatePresence>
               <Footer/>
@@ -91,7 +89,7 @@ function App() {
           </Router>
         </WishlistProvider>
       </CartProvider>
-    </AuthProvider>
+  
   
   );
 }

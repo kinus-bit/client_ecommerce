@@ -9,8 +9,8 @@ const { sendEmail } = require('../config/mailer');
 const { emailVerificationTemplate, emailVerifiedSuccessTemplate, passwordResetEmail, passwordResetSuccessEmail, welcomeEmail } = require('../utils/emailTemplates');
 
 // Generate JWT Token
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, role) => {
+    return jwt.sign({ id, role }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     });
 };
@@ -93,7 +93,7 @@ const register = async (req, res) => {
         }
 
         // Generate token for a new user
-        const token = generateToken(user._id);
+        const token = generateToken(user._id, user.role);
 
         res.status(201).json({
             success: true,
@@ -316,7 +316,7 @@ const login = async (req, res) => {
         if(user && isMatched){
             return  res.status(200).json({
                 success: true,
-                token: generateToken(user._id),
+                token: generateToken(user._id, user.role),
                 user: {
                    id: user._id,
                    name: user.name,

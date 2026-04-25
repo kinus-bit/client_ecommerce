@@ -5,7 +5,6 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { LogOut, Menu, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
-import { useAuth } from '../context/AuthContext';
 import {
   DashboardSidebar,
   DashboardStats,
@@ -24,7 +23,6 @@ const Dashboard = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const { wishlistItems } = useWishlist();
-  const { user: authUser, logout } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState(false);

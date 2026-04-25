@@ -16,11 +16,9 @@ import {
   TrendingUp,
   Menu
 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
 
 const AdminSidebar = ({ isCollapsed, toggleSidebar }) => {
-  const { logout } = useAuth();
-  const [unreadCount] = useState(3); // This would come from your API
+  const [unreadCount, setUnreadCount] = useState(3); 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -50,14 +48,13 @@ const AdminSidebar = ({ isCollapsed, toggleSidebar }) => {
   }, [isMobileOpen, isMobile]);
 
   const menuItems = [
-    { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/admin/products', label: 'Products', icon: Package },
-    { path: '/admin/orders', label: 'Orders', icon: ShoppingCart },
-    { path: '/admin/users', label: 'Users', icon: Users },
-    { path: '/admin/categories', label: 'Categories', icon: Tags },
-    { path: '/admin/subcategories', label: 'Subcategories', icon: Tags },
-    { path: '/admin/notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
-    { path: '/admin/settings', label: 'Settings', icon: Settings },
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/dashboard/products', label: 'Products', icon: Package },
+    { path: '/dashboard/orders', label: 'Orders', icon: ShoppingCart },
+    { path: '/dashboard/users', label: 'Users', icon: Users },
+    { path: '/dashboard/categories', label: 'Categories', icon: Tags },
+    { path: '/dashboard/subcategories', label: 'Subcategories', icon: Tags },
+    { path: '/dashboard/notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
   ];
 
   // Mobile menu button
