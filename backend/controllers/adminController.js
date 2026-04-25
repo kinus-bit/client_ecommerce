@@ -1,3 +1,4 @@
+const Notification = require('../models/Notification');
 const User = require('../models/User');
 
 // @desc    Get all users
@@ -181,6 +182,12 @@ const getUserStats = async (req, res) => {
             .select('-password')
             .sort('-createdAt')
             .limit(5);
+        
+        // Recent notifications
+        const recentNotifications = await Notification.find()
+            .populate('recipient', 'name email')
+            .sort('-createdAt')
+            .limit(20);
 
         res.status(200).json({
             success: true,
@@ -188,7 +195,8 @@ const getUserStats = async (req, res) => {
                 totalUsers,
                 adminCount,
                 userCount,
-                recentUsers
+                recentUsers,
+                recentNotifications
             }
         });
     } catch (error) {
