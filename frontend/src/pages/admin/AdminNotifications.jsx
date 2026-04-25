@@ -1,79 +1,74 @@
 // pages/admin/AdminNotifications.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Bell, 
   ShoppingBag, 
   AlertCircle, 
-  CheckCircle, 
-  Package,
   Trash2,
   Check,
   Clock
 } from 'lucide-react';
+import { 
+  getNotifications, 
+  markAllNotificationsAsRead, 
+  markNotificationAsRead 
+} from '@/services/api';
 
 const AdminNotifications = () => {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'order',
-      title: 'New Order Received',
-      message: 'Order #ORD-001 for $299.00 from John Doe',
-      time: '5 minutes ago',
-      read: false
-    },
-    {
-      id: 2,
-      type: 'order',
-      title: 'New Order Received',
-      message: 'Order #ORD-002 for $159.00 from Jane Smith',
-      time: '15 minutes ago',
-      read: false
-    },
-    {
-      id: 3,
-      type: 'stock',
-      title: 'Low Stock Alert',
-      message: 'iPhone 15 Pro has only 3 units left',
-      time: '1 hour ago',
-      read: false
-    },
-    {
-      id: 4,
-      type: 'order',
-      title: 'Order Shipped',
-      message: 'Order #ORD-003 has been shipped',
-      time: '2 hours ago',
-      read: true
-    },
-    {
-      id: 5,
-      type: 'stock',
-      title: 'Out of Stock',
-      message: 'MacBook Pro is out of stock',
-      time: '3 hours ago',
-      read: true
-    }
-  ]);
-
+  const [notifications, setNotifications] = useState([]);
   const [filter, setFilter] = useState('all');
+  const [loading, setLoading] = useState(false);
 
-  const markAsRead = (id) => {
-    setNotifications(notifications.map(notif => 
-      notif.id === id ? { ...notif, read: true } : notif
-    ));
+  const fetchNotifications = async () => {
+    try {
+      const res = await getNotifications();
+      console.log("Backend notification response:", res.data);
+      setNotifications(res.data);
+    } catch (error) {
+      console.log("Backend response error:", error.response?.data || error.message);
+    }
+  }
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  // Mark a single notification as read
+  const markAsRead = async (id) => {
+    try {
+      setLoading(true);
+      const res = await markNotificationAsRead(id);
+      console.log("Backend message:",res.message);
+      
+      setNotifications(prevNotifications => 
+        prevNotifications.map(notif => 
+          notif._id === id ? { ...notif, isRead: true } : notif
+        )
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(notif => ({ ...notif, read: true })));
-  };
-
-  const deleteNotification = (id) => {
-    setNotifications(notifications.filter(notif => notif.id !== id));
-  };
-
-  const deleteAll = () => {
-    setNotifications([]);
+  // Mark all notifications as read
+  const markAllAsRead = async () => {
+    try {
+      setLoading(true);
+      const res = await markAllNotificationsAsRead();
+      console.log("Backend message:", res.message);
+      
+      setNotifications(prevNotifications => 
+        prevNotifications.map(notif => ({ ...notif, isRead: true }))
+      );
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      // Optional: Show error toast/notification
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getIcon = (type) => {
@@ -99,12 +94,12 @@ const AdminNotifications = () => {
   };
 
   const filteredNotifications = notifications.filter(notif => {
-    if (filter === 'unread') return !notif.read;
-    if (filter === 'read') return notif.read;
+    if (filter === 'unread') return !notif.isRead;
+    if (filter === 'read') return notif.isRead;
     return true;
   });
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
     <motion.div
@@ -126,21 +121,16 @@ const AdminNotifications = () => {
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
-              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm sm:text-base"
+              disabled={loading}
+              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Check className="w-3 h-3 sm:w-4 sm:h-4" />
+              {loading ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Check className="w-3 h-3 sm:w-4 sm:h-4" />
+              )}
               <span className="hidden sm:inline">Mark all as read</span>
               <span className="sm:hidden">Mark all</span>
-            </button>
-          )}
-          {notifications.length > 0 && (
-            <button
-              onClick={deleteAll}
-              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 border border-red-200 rounded-lg text-red-600 hover:bg-red-50 transition-colors text-sm sm:text-base"
-            >
-              <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Delete all</span>
-              <span className="sm:hidden">Delete</span>
             </button>
           )}
         </div>
@@ -166,7 +156,7 @@ const AdminNotifications = () => {
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          Unread
+          Unread ({unreadCount})
         </button>
         <button
           onClick={() => setFilter('read')}
@@ -190,12 +180,12 @@ const AdminNotifications = () => {
         ) : (
           filteredNotifications.map((notification, index) => (
             <motion.div
-              key={notification.id}
+              key={notification._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               className={`bg-white rounded-xl border transition-all hover:shadow-md ${
-                !notification.read ? 'border-l-4 border-l-amber-500' : 'border-gray-200'
+                !notification.isRead ? 'border-l-4 border-l-amber-500' : 'border-gray-200'
               }`}
             >
               <div className="p-3 sm:p-4">
@@ -209,7 +199,7 @@ const AdminNotifications = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-0">
                       <div className="flex-1 min-w-0">
-                        <h3 className={`text-sm sm:text-base font-medium ${!notification.read ? 'text-gray-900' : 'text-gray-600'}`}>
+                        <h3 className={`text-sm sm:text-base font-medium ${!notification.isRead ? 'text-gray-900' : 'text-gray-600'}`}>
                           {notification.title}
                         </h3>
                         <p className="text-xs sm:text-sm text-gray-600 mt-1 break-words">
@@ -218,29 +208,23 @@ const AdminNotifications = () => {
                         <div className="flex items-center gap-3 sm:gap-4 mt-2">
                           <span className="text-xs text-gray-400 flex items-center gap-1">
                             <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                            {notification.time}
+                            {new Date(notification.createdAt).toLocaleString()}
                           </span>
                         </div>
                       </div>
                       
                       {/* Actions */}
                       <div className="flex items-center gap-1 sm:gap-2 ml-auto sm:ml-0">
-                        {!notification.read && (
+                        {!notification.isRead && (
                           <button
-                            onClick={() => markAsRead(notification.id)}
-                            className="p-1.5 sm:p-1 text-gray-400 hover:text-amber-500 transition-colors"
+                            onClick={() => markAsRead(notification._id)}
+                            disabled={loading}
+                            className="p-1.5 sm:p-2 text-gray-400 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Mark as read"
                           >
                             <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           </button>
                         )}
-                        <button
-                          onClick={() => deleteNotification(notification.id)}
-                          className="p-1.5 sm:p-1 text-gray-400 hover:text-red-500 transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </button>
                       </div>
                     </div>
                   </div>

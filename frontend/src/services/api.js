@@ -111,6 +111,10 @@ export const createorder = (orderdata) => API.post('/order/', orderdata);//shipm
 export const getmyorders = () => API.get('/order/my-orders');
 export const getallorders = () => API.get('/order/');
 export const getallorderbyuserId = (id) => API.get(`/order/user/${id}`);
+export const getNotifications = () => API.get('/order/notifications');
+export const markAllNotificationsAsRead = () => API.put('/order/notifications/read-all');
+export const markNotificationAsRead = (id) => API.put(`/order/notifications/${id}/read`);
+
 
 
 export default API;

@@ -16,11 +16,29 @@ import {
   TrendingUp,
   Menu
 } from 'lucide-react';
+import { getNotifications } from '@/services/api';
 
 const AdminSidebar = ({ isCollapsed, toggleSidebar }) => {
-  const [unreadCount, setUnreadCount] = useState(3); 
+  const [unreadCount, setUnreadCount] = useState(''); 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+   
+  
+  const fetchNotifications = async () => {
+    try {
+      const res = await getNotifications();
+      console.log("Backend notification response:", res.pagination);
+      setUnreadCount(res.pagination);
+    } catch (error) {
+      console.log("Backend response error:", error.response?.data || error.message);
+    }
+  }
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  console.log("Unread notifications:", unreadCount.unreadCount);
 
   // Check if screen is mobile
   useEffect(() => {
@@ -54,7 +72,7 @@ const AdminSidebar = ({ isCollapsed, toggleSidebar }) => {
     { path: '/dashboard/users', label: 'Users', icon: Users },
     { path: '/dashboard/categories', label: 'Categories', icon: Tags },
     { path: '/dashboard/subcategories', label: 'Subcategories', icon: Tags },
-    { path: '/dashboard/notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
+    { path: '/dashboard/notifications', label: 'Notifications', icon: Bell, badge: unreadCount.unreadCount },
   ];
 
   // Mobile menu button
@@ -142,7 +160,7 @@ const AdminSidebar = ({ isCollapsed, toggleSidebar }) => {
       <div className="p-2 sm:p-3 border-t border-gray-200 flex-shrink-0">
         <button
           onClick={() => {
-            logout();
+           
             if (isMobileView) onItemClick();
           }}
           className={`w-full flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2.5 sm:py-3 rounded-xl transition-all duration-200 ${
