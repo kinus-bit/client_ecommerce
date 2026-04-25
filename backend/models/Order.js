@@ -10,8 +10,7 @@ const orderItemSchema = new mongoose.Schema({
   quantity: Number,
 });
 
-const orderSchema = new mongoose.Schema(
-  {
+const orderSchema = new mongoose.Schema({
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -34,9 +33,17 @@ const orderSchema = new mongoose.Schema(
     contact: {
       type: String,
       required: true,
+    },
+    createdAt: {
+      type:Date,
+      default: Date.now
     }
-  },
-  { timestamps: true }
-);
+
+});
+
+// Indexes for better query performance
+orderSchema.index({ user: 1, createdAt: -1 });
+orderSchema.index({ status: 1 });
+orderSchema.index({ createdAt: -1 });
 
 module.exports =  mongoose.model("Order", orderSchema);

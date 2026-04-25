@@ -331,10 +331,146 @@ const welcomeEmail = (name) => {
     `;
 };
 
+const orderConfirmationEmail = (name, order) => {
+    const itemsHtml = order.items.map(item => `
+        <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                ${item.name}
+            </td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
+                ${item.quantity}
+            </td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+                $${item.price.toFixed(2)}
+            </td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+                $${(item.price * item.quantity).toFixed(2)}
+            </td>
+        </tr>
+    `).join('');
+
+    return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Order Confirmation</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                .header {
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    border-radius: 5px 5px 0 0;
+                }
+                .content {
+                    background-color: #f9f9f9;
+                    padding: 30px;
+                    border-radius: 0 0 5px 5px;
+                }
+                .order-details {
+                    background-color: white;
+                    padding: 20px;
+                    margin: 20px 0;
+                    border-radius: 5px;
+                    border: 1px solid #ddd;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th {
+                    background-color: #f5f5f5;
+                    padding: 10px;
+                    text-align: left;
+                }
+                .total {
+                    font-size: 18px;
+                    font-weight: bold;
+                    text-align: right;
+                    margin-top: 20px;
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 20px;
+                    font-size: 12px;
+                    color: #666;
+                }
+                .status {
+                    display: inline-block;
+                    padding: 5px 10px;
+                    background-color: #4CAF50;
+                    color: white;
+                    border-radius: 3px;
+                    font-size: 12px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Order Confirmation</h1>
+            </div>
+            <div class="content">
+                <p>Hello ${name},</p>
+                <p>Thank you for your order! Your order has been received and is being processed.</p>
+                
+                <div class="order-details">
+                    <h3>Order Details</h3>
+                    <p><strong>Order Number:</strong> ${order._id}</p>
+                    <p><strong>Order Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+                    <p><strong>Order Status:</strong> <span class="status">${order.status}</span></p>
+                    
+                    <h3>Items Ordered</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsHtml}
+                        </tbody>
+                    </table>
+                    
+                    <div class="total">
+                        <p><strong>Total: $${order.totalAmount.toFixed(2)}</strong></p>
+                    </div>
+                </div>
+                
+                <div class="order-details">
+                    <h3>Shipping Information</h3>
+                    <p><strong>Phone:</strong> ${order.contact}</p>
+                    <p><strong>Address:</strong> ${order.shippingAddress}</p>
+                </div>
+                
+                <p>We'll notify you once your order ships. If you have any questions, please contact our support team.</p>
+                <p>Best regards,<br>Your App Team</p>
+            </div>
+            <div class="footer">
+                <p>This is an automated message, please do not reply to this email.</p>
+            </div>
+        </body>
+        </html>
+    `;
+};
+
 module.exports = {
     emailVerificationTemplate,
     emailVerifiedSuccessTemplate,
     passwordResetEmail,
     passwordResetSuccessEmail,
-    welcomeEmail
+    welcomeEmail,
+    orderConfirmationEmail
 };

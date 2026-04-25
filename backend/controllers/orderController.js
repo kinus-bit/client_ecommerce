@@ -1,5 +1,8 @@
 const Order = require("../models/Order.js");
 const Cart = require("../models/Cart.js");
+const User = require("../models/User.js");
+const { sendEmail} = require("../config/mailer.js");
+const { orderConfirmationEmail } = require("../utils/emailTemplates.js");
 
 // Create order from cart
 exports.createOrder = async (req, res) => {
@@ -37,9 +40,33 @@ exports.createOrder = async (req, res) => {
     cart.totalPrice = 0;
     await cart.save();
 
-    res.status(201).json({ success: true, order });
+    //populate order with product details
+    const populatedOrder = await Order.findById(order._id)
+    .populate('user' , 'name email')
+    .populate('items.product' , 'name price');
+
+    //send order confirmation email
+    try {
+      const user = await User.findById(req.user.id);
+      const emailHtml = orderConfirmationEmail(user.name , populatedOrder);
+      await sendEmail({
+        email: user.email,
+        subject: `Order Confirmation - ${populatedOrder._id}`,
+        html: emailHtml
+      })
+    } catch (error) {
+      console.log('Order confirmation email could not be sent:', error);  
+    }
+
+
+    res.status(201).json({ 
+      success: true,
+      order,
+      message: 'order placed successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ 
+      success: false,
+      message: err.message });
   }
 };
 
