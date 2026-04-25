@@ -10,15 +10,28 @@ import {
 } from 'lucide-react';
 import AdminStatsCard from '../../components/admin/AdminStatsCard';
 import AdminTable from '../../components/admin/AdminTable';
-import { getallorders, getAllProducts, getallusers } from '@/services/api';
+import { getallorders, getAllProducts, getallusers, getMe } from '@/services/api';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { getUsername } from '@/utils/auth';
 
 const AdminDashboard = () => {
 
   const [orderItems , setOrderItems] = useState([]);
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [admin, setAdmin] = useState('');
+
+  const fetchadmin = async () => {
+    const res = await getMe();
+    console.log("me:",res.user);
+    setAdmin(res.user);
+  }
+
+  useEffect( () => { 
+    fetchadmin();
+  },[]);
+
 
   const fetchOrders = async () => {
     const res = await getallorders();
@@ -32,7 +45,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     const res = await getallusers();
-    console.log(res.data);
+    console.log("user:",res.data);
     setUsers(res.data);
   }
 
@@ -105,7 +118,7 @@ const AdminDashboard = () => {
           Dashboard Overview
         </h1>
         <p className="text-sm sm:text-base mt-1 text-gray-600">
-          Welcome back! Here's what's happening with your store today.
+          Welcome admin,<span className='font-bold'>{admin.name}</span> ! Here's what's happening with your store today.
         </p>
       </div>
 
@@ -132,7 +145,7 @@ const AdminDashboard = () => {
                   </p>
                 </div>
                 <p className="font-semibold text-gray-900 text-sm sm:text-base">
-                  ${product.price}
+                  Ksh{product.price}
                 </p>
               </div>
             ))}

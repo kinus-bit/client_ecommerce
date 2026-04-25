@@ -339,7 +339,7 @@ const ProductDescription = () => {
                 />
                 {transformedProduct.originalPrice && (
                   <div className="absolute top-4 left-4 bg-amber-500 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-                    Save ${transformedProduct.originalPrice - transformedProduct.price}
+                    Save Ksh{transformedProduct.originalPrice - transformedProduct.price}
                   </div>
                 )}
                 {transformedProduct.IsNew && (
@@ -417,10 +417,10 @@ const ProductDescription = () => {
             {/* Price */}
             <div className="mb-6">
               <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-bold text-gray-900">${transformedProduct.price}</span>
+                <span className="text-4xl font-bold text-gray-900">Ksh{transformedProduct.price}</span>
                 {transformedProduct.originalPrice && (
                   <>
-                    <span className="text-lg text-gray-400 line-through">${transformedProduct.originalPrice}</span>
+                    <span className="text-lg text-gray-400 line-through">Ksh{transformedProduct.originalPrice}</span>
                     <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded">
                       Save {transformedProduct.discount}%
                     </span>
@@ -524,7 +524,7 @@ const ProductDescription = () => {
               <div className="text-center">
                 <Truck className="w-5 h-5 text-amber-500 mx-auto mb-2" />
                 <p className="text-xs font-medium text-gray-900">Free Shipping</p>
-                <p className="text-xs text-gray-500">On orders $50+</p>
+                <p className="text-xs text-gray-500">On orders ksh5000+</p>
               </div>
               <div className="text-center">
                 <Shield className="w-5 h-5 text-amber-500 mx-auto mb-2" />
@@ -665,7 +665,7 @@ const ProductDescription = () => {
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     </div>
                     <h3 className="font-medium text-gray-900 text-sm mb-1 truncate">{item.name}</h3>
-                    <p className="text-amber-600 font-bold">${item.price}</p>
+                    <p className="text-amber-600 font-bold">Ksh{item.price}</p>
                   </motion.div>
                 </Link>
               ))}
@@ -696,7 +696,7 @@ const ProductDescription = () => {
                     <div className="flex items-center gap-2">
                       <p className="text-amber-600 font-bold">${relatedProduct.price}</p>
                       {relatedProduct.originalPrice && (
-                        <p className="text-xs text-gray-400 line-through">${relatedProduct.originalPrice}</p>
+                        <p className="text-xs text-gray-400 line-through">Ksh{relatedProduct.originalPrice}</p>
                       )}
                     </div>
                   </motion.div>

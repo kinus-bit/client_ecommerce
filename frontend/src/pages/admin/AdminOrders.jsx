@@ -46,7 +46,7 @@ const AdminOrders = () => {
       accessor: 'items',
       render:(value) => value?.length
     },
-    { header: 'Amount', accessor: 'totalAmount', render: (value) => `$${value}` },
+    { header: 'Amount', accessor: 'totalAmount', render: (value) => `Ksh${value}` },
     { 
       header: 'Status', 
       accessor: 'status',

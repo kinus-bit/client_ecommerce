@@ -28,7 +28,7 @@ const OrderCard = ({ order, getStatusColor }) => {
                   {item.quantity}x {item.name}
                 </span>
                 <span className="text-gray-900 font-medium">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  Ksh{(item.price * item.quantity).toFixed(2)}
                 </span>
               </div>
             ))}
@@ -37,7 +37,7 @@ const OrderCard = ({ order, getStatusColor }) => {
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="flex justify-between">
               <span className="font-semibold text-gray-900">Total</span>
-              <span className="font-bold text-gray-900">${order.totalAmount}</span>
+              <span className="font-bold text-gray-900">Ksh{order.totalAmount}</span>
             </div>
           </div>
         </div>

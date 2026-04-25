@@ -651,7 +651,7 @@ const ProductCatalog = () => {
                           
                           {/* Price */}
                           <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-gray-900 px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg">
-                            ${product.price}
+                            Ksh{product.price}
                           </div>
                         </div>
                         

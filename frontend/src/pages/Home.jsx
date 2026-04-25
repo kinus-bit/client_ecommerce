@@ -419,7 +419,7 @@ const Home = () => {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute top-4 right-4 bg-amber-400 text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
-                    ${product.price}
+                    Ksh{product.price}
                   </div>
                   {/* {product.sales > 1000 && (
                     <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
@@ -441,7 +441,7 @@ const Home = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-gray-900">
-                      ${product.price}
+                      Ksh{product.price}
                     </span>
                     {/* -------  -------------------------FUNCTIONALITY OF ADD TO CART TO BE IMPLEMENTED LATER -------------------------------------------- */}
                     <button className="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-amber-400 hover:text-gray-900 transition-colors">

@@ -59,10 +59,10 @@ const ProductInfo = ({
       {/* Price */}
       <div className="mb-6">
         <div className="flex items-baseline gap-3">
-          <span className="text-4xl font-bold text-gray-900">${product.price}</span>
+          <span className="text-4xl font-bold text-gray-900">Ksh{product.price}</span>
           {product.originalPrice && (
             <>
-              <span className="text-lg text-gray-400 line-through">${product.originalPrice}</span>
+              <span className="text-lg text-gray-400 line-through">Ksh{product.originalPrice}</span>
               <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded">
                 Save {product.discount}%
               </span>

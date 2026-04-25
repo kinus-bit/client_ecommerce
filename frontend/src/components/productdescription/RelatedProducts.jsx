@@ -26,9 +26,9 @@ const RelatedProducts = ({ products }) => {
               </div>
               <h3 className="font-medium text-gray-900 text-sm mb-1 truncate">{relatedProduct.name}</h3>
               <div className="flex items-center gap-2">
-                <p className="text-amber-600 font-bold">${relatedProduct.price}</p>
+                <p className="text-amber-600 font-bold">Ksh{relatedProduct.price}</p>
                 {relatedProduct.originalPrice && (
-                  <p className="text-xs text-gray-400 line-through">${relatedProduct.originalPrice}</p>
+                  <p className="text-xs text-gray-400 line-through">Ksh{relatedProduct.originalPrice}</p>
                 )}
               </div>
             </motion.div>

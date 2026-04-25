@@ -188,7 +188,7 @@ const AdminProducts = () => {
     { 
       header: 'Price', 
       accessor: 'price', 
-      render: (value) => `$${value}` 
+      render: (value) => `Ksh${value}` 
     },
     { header: 'Stock', accessor: 'stock' },
     { 
@@ -597,7 +597,7 @@ const AdminProducts = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Price * ($)
+                Price * (Ksh)
               </label>
               <input
                 type="number"
@@ -612,7 +612,7 @@ const AdminProducts = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Original Price ($)
+                Original Price (Ksh)
               </label>
               <input
                 type="number"

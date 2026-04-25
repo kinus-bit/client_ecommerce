@@ -28,7 +28,7 @@ const ProductImageGallery = ({
           />
           {product.originalPrice && (
             <div className="absolute top-4 left-4 bg-amber-500 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-              Save ${product.originalPrice - product.price}
+              Save Ksh{product.originalPrice - product.price}
             </div>
           )}
           {product.isNew && (

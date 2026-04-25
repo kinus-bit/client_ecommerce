@@ -25,7 +25,7 @@ const RecentlyViewed = ({ products }) => {
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
               </div>
               <h3 className="font-medium text-gray-900 text-sm mb-1 truncate">{item.name}</h3>
-              <p className="text-amber-600 font-bold">${item.price}</p>
+              <p className="text-amber-600 font-bold">Ksh{item.price}</p>
             </motion.div>
           </Link>
         ))}

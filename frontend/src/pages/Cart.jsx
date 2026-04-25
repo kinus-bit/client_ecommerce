@@ -133,7 +133,7 @@ const Cart = () => {
                                   {item.product.name}
                                 </h3>
                                 <p className="text-sm text-gray-600 mb-2">
-                                  ${item.price} each
+                                  Ksh{item.price} each
                                 </p>
                                 {item.product.discount > 0 && (
                                   <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
@@ -144,7 +144,7 @@ const Cart = () => {
                               
                               <div className="text-right">
                                 <p className="font-semibold text-gray-900">
-                                  ${getItemTotal(item)}
+                                  Ksh{getItemTotal(item)}
                                 </p>
                               </div>
                             </div>
@@ -206,7 +206,7 @@ const Cart = () => {
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium text-gray-900">${cartItems.totalPrice}</span>
+                    <span className="font-medium text-gray-900">Ksh{cartItems.totalPrice}</span>
                   </div>
                   
                   <div className="flex justify-between text-sm">
@@ -215,13 +215,6 @@ const Cart = () => {
                       {shippingCost}
                     </span>
                   </div>
-                  
-                  {shippingCost > 0 && subtotal < 50 && (
-                    <p className="text-xs text-amber-600 flex items-center gap-1">
-                      <Truck className="w-3 h-3" />
-                      Add ${(50 - subtotal).toFixed(2)} more for free shipping
-                    </p>
-                  )}
 
                   <div className="border-t border-gray-200 pt-3 mt-3">
                     <div className="flex justify-between">
