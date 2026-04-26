@@ -341,10 +341,10 @@ const orderConfirmationEmail = (name, order) => {
                 ${item.quantity}
             </td>
             <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right; color: #333;">
-                $${item.price.toFixed(2)}
+                Ksh${item.price.toFixed(2)}
             </td>
             <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right; color: #333;">
-                $${(item.price * item.quantity).toFixed(2)}
+                Ksh${(item.price * item.quantity).toFixed(2)}
             </td>
         </tr>
     `).join('');
@@ -512,7 +512,7 @@ const orderConfirmationEmail = (name, order) => {
                     </table>
                     
                     <div class="total">
-                        <p><strong>Total Amount: $${order.totalAmount.toFixed(2)}</strong></p>
+                        <p><strong>Total Amount: Ksh${order.totalAmount.toFixed(2)}</strong></p>
                     </div>
                 </div>
                 
@@ -550,10 +550,10 @@ const adminOrderNotificationEmail = (order, user) => {
                 ${item.quantity}
             </td>
             <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right; color: #333;">
-                $${item.price.toFixed(2)}
+                Ksh${item.price.toFixed(2)}
             </td>
             <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right; color: #333;">
-                $${(item.price * item.quantity).toFixed(2)}
+                Ksh${(item.price * item.quantity).toFixed(2)}
             </td>
         </tr>
     `).join('');
@@ -763,7 +763,7 @@ const adminOrderNotificationEmail = (order, user) => {
                     </table>
                     
                     <div class="total">
-                        <p><strong>Total Amount: $${order.totalAmount.toFixed(2)}</strong></p>
+                        <p><strong>Total Amount: Ksh${order.totalAmount.toFixed(2)}</strong></p>
                     </div>
                 </div>
                 
@@ -780,7 +780,7 @@ const adminOrderNotificationEmail = (order, user) => {
                 </div>
                 
                 <div style="text-align: center;">
-                    <a href="${process.env.FRONTEND_URL}/admin/orders" class="button">📊 View Order Details</a>
+                    <a href="${process.env.FRONTEND_URL}/dashboard/orders" class="button">📊 View Order Details</a>
                 </div>
                 
                 <p>Please process this order as soon as possible. The customer is waiting for confirmation.</p>
